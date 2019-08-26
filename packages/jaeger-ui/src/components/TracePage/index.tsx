@@ -56,6 +56,9 @@ import { EmbeddedState } from '../../types/embedded';
 import filterSpans from '../../utils/filter-spans';
 import updateUiFind from '../../utils/update-ui-find';
 
+
+import DetailTraceTable from './DetailTraceTable/index';
+
 import './index.css';
 
 type TDispatchProps = {
@@ -363,9 +366,11 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       trace: data,
       updateNextViewRangeTime: this.updateNextViewRangeTime,
       updateViewRangeTime: this.updateViewRangeTime,
+
     };
 
     return (
+
       <div>
         {archiveEnabled && (
           <ArchiveNotifier acknowledge={this.acknowledgeArchive} archivedState={archiveTraceState} />
@@ -396,6 +401,8 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
               />
             </section>
           ))}
+
+        <DetailTraceTable traceProps={data}/>
       </div>
     );
   }

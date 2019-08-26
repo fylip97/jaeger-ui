@@ -1,0 +1,75 @@
+#mainDiv{
+ width: 100%
+}
+
+#title{
+  color: #232232;
+  width: 100%;
+  padding-top: 0.3%;
+  padding-bottom: 0.3%;
+  padding-left: 0.4%;
+  font-size: 123%;
+  background: #ECECEC;
+  margin-bottom: 0.0%
+}
+
+#DetailTraceTableTH{
+
+  background: #ECECEC;
+  border: 1px solid #CCCCCC;
+
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #232323;
+  font-weight: 15;
+  font-size: 123%;
+  line-height: 2em;
+  padding-left: 1em;
+}
+
+
+#DetailTraceTableTD{
+
+  border-left: 1px solid #CCCCCC;
+  border-right: 1px solid #CCCCCC;
+  width: 10%;
+  padding-left: 1em;
+
+}
+
+
+#DetailTraceTableChildTD{
+
+  border-left: 1px solid #CCCCCC;
+  border-right: 1px solid #CCCCCC;
+  width: 10%;
+  padding-left: 4em;
+
+}
+
+
+#DetailTraceTableTbody{
+
+  border-left: 1px solid #CCCCCC;
+  border-right: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+
+}
+#DetailTraceTableTR{
+  border-top: 1px solid #FFFFFF;
+
+
+}
+
+#DetailTraceTableTR:hover {
+
+  background: #FAFAFA;
+  color: black;
+  cursor: pointer;
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+
+
+}
+
+
+
