@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import { Span, Trace } from '../../../types/trace';
 import { TableSpan } from './types'
+import { getDetailTableContent } from './exclusivtime'
+import { fullTableContent } from './exclusivtime'
+
 
 
 import './index.css';
@@ -27,7 +30,8 @@ export default class DetailTraceTable extends Component<Props, State>{
     var allSpans = this.props.traceProps.spans;
     var allSpansDiffOpName = new Array();
 
-    // find spans with diff operationName
+    
+
     for (var i = 0; i < allSpans.length; i++) {
 
       if (allSpansDiffOpName.length == 0) {
@@ -47,79 +51,7 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     var allSpansTrace = Array();
 
-    for (var i = 0; i < allSpansDiffOpName.length; i++) {
-
-      var exc = 0;
-      var excAvg = 0;
-      var excMin = allSpans[0].duration;
-      var excMax = 0;
-      //avg && min && max
-      var total = 0;
-      var avg = 0;
-      var min = allSpans[0].duration;
-      var max = 0;
-      var count = 0;
-      var durationCount = 0;
-      for (var j = 0; j < allSpans.length; j++) {
-        if (allSpansDiffOpName[i] === allSpans[j].operationName) {
-          count += 1;
-          total += allSpans[j].duration;
-          if (min > allSpans[j].duration) {
-            min = allSpans[j].duration;
-          }
-          if (max < allSpans[j].duration) {
-            max = allSpans[j].duration;
-          }
-
-          //Für jeden Span mit gleichem operationName 
-          //Hab ich Kinder?
-
-          if (allSpans[j].hasChildren) {
-            var sumAllChildInSpan = 0;
-            // wenn ich kinder habe dann suche meine Kinder
-            for (var l = 0; l < allSpans.length; l++) {
-              //bin ich ein Kind?
-              if (allSpans[l].references.length == 1) {
-                //bin ich kind von diesem span?
-                if (allSpans[j].spanID == allSpans[l].references[0].spanID) {
-
-                  sumAllChildInSpan = sumAllChildInSpan + allSpans[l].duration
-                }
-              }
-            }
-            if (excMin > (allSpans[j].duration - sumAllChildInSpan)) {
-              excMin = allSpans[j].duration - sumAllChildInSpan;
-            }
-            if (excMax < (allSpans[j].duration - sumAllChildInSpan)) {
-              excMax = allSpans[j].duration - sumAllChildInSpan;
-            }
-            exc = exc + allSpans[j].duration - sumAllChildInSpan;
-
-          } else {
-            if (excMin > (allSpans[j].duration)) {
-              excMin = allSpans[j].duration;
-            }
-            if (excMax < allSpans[j].duration) {
-              excMax = allSpans[j].duration;
-            }
-            exc = exc + allSpans[j].duration;
-          }
-        }
-
-      }
-
-      excAvg = (exc / count);
-      avg = total / count;
-
-      var tableSpan = {
-        name: allSpansDiffOpName[i], count: count, total: Math.round((total / 1000) * 100) / 100,
-        avg: Math.round((avg / 1000) * 100) / 100, min: Math.round((min / 1000) * 100) / 100,
-        max: Math.round((max / 1000) * 100) / 100, isDetail: false, key: allSpansDiffOpName[i], child: false, parentElement: "none", exc: exc / 1000,
-        excAvg: Math.round((excAvg / 1000) * 100) / 100, excMin: Math.round((excMin / 1000) * 100) / 100, excMax: Math.round((excMax / 1000) * 100) / 100
-      };
-
-      allSpansTrace.push(tableSpan);
-    }
+    allSpansTrace = fullTableContent(allSpansDiffOpName, allSpans);
 
     this.state = {
       allSpans: allSpansTrace,
@@ -139,9 +71,6 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     var isClicked;
     var rememberIndex = 0;
-
-
-    // wurde schon gecklickt?
     for (var i = 0; i < allSpans.length; i++) {
       if (allSpans[i].name === selectedSpan.name) {
         isClicked = allSpans[i].child
@@ -175,37 +104,8 @@ export default class DetailTraceTable extends Component<Props, State>{
         }
       }
 
-      for (var i = 0; i < diffServiceName.length; i++) {
-        var total = 0;
-        var count = 0;
-        var avg = 0;
-        var min = sameOperationName[0].duration;
-        var max = 0;
-        for (var j = 0; j < sameOperationName.length; j++) {
-          if (diffServiceName[i].process.serviceName === sameOperationName[j].process.serviceName) {
-            if (min > sameOperationName[j].duration) {
-              min = sameOperationName[j].duration;
-            }
-            if (max < sameOperationName[j].duration) {
-              max = sameOperationName[j].duration;
-            }
-            total += sameOperationName[j].duration;
-            count += 1;
-          }
-        }
-        avg = total / count;
+      addItemArray = getDetailTableContent(diffServiceName, sameOperationName, wholeTraceSpans, selectedSpan.name);
 
-        var safeItem = {
-          name: sameOperationName[i].process.serviceName, count: count,
-          total: Math.round((total / 1000) * 100) / 100, avg: Math.round((avg / 1000) * 100) / 100, min: Math.round((min / 1000) * 100) / 100,
-          max: Math.round((max / 1000) * 100) / 100, isDetail: true, key: sameOperationName[i].operationName + i,
-          child: false, parentElement: selectedSpan.name,
-        };
-
-        addItemArray.push(safeItem);
-      }
-
-      // an welche stelle soll es geaddet werden
       var rememberIndex = 0;
 
       for (var i = 0; i < allSpans.length; i++) {
@@ -215,13 +115,11 @@ export default class DetailTraceTable extends Component<Props, State>{
       }
 
 
-      // wird geaddet
       for (var i = 0; i < addItemArray.length; i++) {
         allSpans.splice(rememberIndex + 1, 0, addItemArray[i]);
         rememberIndex += 1;
       }
 
-      // wird gelöscht
     } else {
       var tempArray = new Array();
       var nextParantElement = false;
@@ -283,15 +181,15 @@ export default class DetailTraceTable extends Component<Props, State>{
         return (
           <tr id="DetailTraceTableTR" key={key}>
             <td id="DetailTraceTableChildTD">{name}</td>
-            <td id="DetailTraceTableChildTD">{count}</td>
-            <td id="DetailTraceTableChildTD">{total + "ms"}</td>
-            <td id="DetailTraceTableChildTD">{avg + "ms"}</td>
-            <td id="DetailTraceTableChildTD">{min + "ms"}</td>
-            <td id="DetailTraceTableChildTD">{max + "ms"}</td>
-            <td id="DetailTraceTableChildTD">{exc + 'ms'}</td>
-            <td id="DetailTraceTableChildTD">{excAvg + 'ms'}</td>
-            <td id="DetailTraceTableChildTD">{excMin + 'ms'}</td>
-            <td id="DetailTraceTableChildTD">{excMax + 'ms'}</td>
+            <td id="DetailTraceTableTD">{count}</td>
+            <td id="DetailTraceTableTD">{total + "ms"}</td>
+            <td id="DetailTraceTableTD">{avg + "ms"}</td>
+            <td id="DetailTraceTableTD">{min + "ms"}</td>
+            <td id="DetailTraceTableTD">{max + "ms"}</td>
+            <td id="DetailTraceTableTD">{exc + 'ms'}</td>
+            <td id="DetailTraceTableTD">{excAvg + 'ms'}</td>
+            <td id="DetailTraceTableTD">{excMin + 'ms'}</td>
+            <td id="DetailTraceTableTD">{excMax + 'ms'}</td>
           </tr>
         )
 
