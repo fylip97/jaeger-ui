@@ -61,6 +61,7 @@ import DetailTraceTable from './DetailTraceTable/index';
 
 import './index.css';
 
+
 type TDispatchProps = {
   acknowledgeArchive: (id: string) => void;
   archiveTrace: (id: string) => void;
@@ -90,6 +91,7 @@ type TState = {
   headerHeight: number | TNil;
   slimView: boolean;
   traceGraphView: boolean;
+  selectedTraceGraphView: number;
   viewRange: IViewRange;
 };
 
@@ -138,6 +140,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       headerHeight: null,
       slimView: Boolean(embedded && embedded.timeline.collapseTitle),
       traceGraphView: false,
+      selectedTraceGraphView: 1,
       viewRange: {
         time: {
           current: [0, 1],
@@ -278,13 +281,48 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     this.setState({ slimView: !slimView });
   };
 
-  toggleTraceGraphView = () => {
-    const { traceGraphView } = this.state;
+
+
+
+  toggleTraceGraphView = (index: number) => {
+    var { traceGraphView } = this.state;
+    var { selectedTraceGraphView } = this.state;
+
     if (this.props.trace && this.props.trace.data) {
       this.traceDagEV = calculateTraceDagEV(this.props.trace.data);
     }
-    this.setState({ traceGraphView: !traceGraphView });
+
+    if (index == 0) {
+     
+      ++selectedTraceGraphView;
+      if (selectedTraceGraphView > 3) {
+        selectedTraceGraphView = 1;
+      }
+
+    } else {
+      if (index == 1) {
+        selectedTraceGraphView = 1;
+      } else if (index == 2) {
+        selectedTraceGraphView = 2;
+      } else if (index == 3) {
+        selectedTraceGraphView = 3;
+      }
+
+    }
+
+    if (selectedTraceGraphView == 1) {
+      traceGraphView = false;
+    } else {
+      traceGraphView = true;
+    }
+
+    this.setState({ traceGraphView: traceGraphView, selectedTraceGraphView: selectedTraceGraphView });
   };
+
+
+
+
+
 
   archiveTrace = () => {
     const { id, archiveTrace } = this.props;
@@ -317,7 +355,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
 
   render() {
     const { archiveEnabled, archiveTraceState, embedded, id, searchUrl, uiFind, trace } = this.props;
-    const { slimView, traceGraphView, headerHeight, viewRange } = this.state;
+    const { slimView, traceGraphView, selectedTraceGraphView, headerHeight, viewRange } = this.state;
     if (!trace || trace.state === fetchedState.LOADING) {
       return <LoadingIndicator className="u-mt-vast" centered />;
     }
@@ -345,6 +383,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       slimView,
       textFilter: uiFind,
       traceGraphView,
+      selectedTraceGraphView,
       viewRange,
       canCollapse: !embedded || !embedded.timeline.hideSummary || !embedded.timeline.hideMinimap,
       clearSearch: this.clearSearch,
@@ -379,16 +418,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
           <TracePageHeader {...headerProps} />
         </div>
         {headerHeight &&
-          (traceGraphView ? (
-            <section style={{ paddingTop: headerHeight }}>
-              <TraceGraph
-                headerHeight={headerHeight}
-                ev={this.traceDagEV}
-                uiFind={uiFind}
-                uiFindVertexKeys={graphFindMatches}
-              />
-            </section>
-          ) : (
+          (selectedTraceGraphView == 1 ? (
             <section style={{ paddingTop: headerHeight }}>
               <TraceTimelineViewer
                 registerAccessors={this._scrollManager.setAccessors}
@@ -400,9 +430,20 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                 viewRange={viewRange}
               />
             </section>
-          ))}
-
-        <DetailTraceTable traceProps={data}/>
+          ) : selectedTraceGraphView == 2 ? (
+            <section style={{ paddingTop: headerHeight }}>
+              <TraceGraph
+                headerHeight={headerHeight}
+                ev={this.traceDagEV}
+                uiFind={uiFind}
+                uiFindVertexKeys={graphFindMatches}
+              />
+            </section>
+          ) : (
+                <section style={{ paddingTop: headerHeight }}>
+                  <DetailTraceTable traceProps={data} />
+                </section>
+              ))}
       </div>
     );
   }

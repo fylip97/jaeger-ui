@@ -20,18 +20,34 @@ import { trackAltViewOpen } from './TracePageHeader.track';
 import prefixUrl from '../../../utils/prefix-url';
 
 type Props = {
-  onTraceGraphViewClicked: () => void;
+  onTraceGraphViewClicked: (index:number) => void;
   traceGraphView: boolean;
   traceID: string;
+  selectedTraceGraphView: number;
 };
 
-export default function AltViewOptions(props: Props) {
-  const { onTraceGraphViewClicked, traceGraphView, traceID } = props;
+export default function AltViewOptions(props: Props) { 
+  const { onTraceGraphViewClicked, traceGraphView, traceID, selectedTraceGraphView, } = props;
+
+  var tempArray = [1,2,3];
+
+  var tempArray2 = new Array();
+  for(var i=0;i<tempArray.length;i++){
+    if(tempArray[i]!=selectedTraceGraphView){
+      tempArray2.push(tempArray[i]);
+    }
+  }
+
   const menu = (
     <Menu>
       <Menu.Item>
-        <a onClick={onTraceGraphViewClicked} role="button">
-          {traceGraphView ? 'Trace Timeline' : 'Trace Graph'}
+        <a onClick={() => onTraceGraphViewClicked(tempArray2[0])} role="button">
+          {tempArray2[0]==1 ? 'Trace Timeline' : tempArray2[0] ==2 ? 'Trace Graph' : 'Trace Details'}
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a onClick={() => onTraceGraphViewClicked(tempArray2[1])} role="button">
+          {tempArray2[1]==1 ? 'Trace Timeline' : tempArray2[1] ==2 ? 'Trace Graph' : 'Trace Details'}
         </a>
       </Menu.Item>
       <Menu.Item>
@@ -58,8 +74,8 @@ export default function AltViewOptions(props: Props) {
   );
   return (
     <Dropdown overlay={menu}>
-      <Button className="ub-mr2" htmlType="button" onClick={onTraceGraphViewClicked}>
-        {traceGraphView ? 'Trace Graph' : 'Trace Timeline'} <Icon type="down" />
+      <Button className="ub-mr2" htmlType="button" onClick={() => onTraceGraphViewClicked(0)}>
+        {selectedTraceGraphView==1 ? 'Trace Timeline' : selectedTraceGraphView ==2 ? 'Trace Graph' : 'Trace Details'} <Icon type="down" />
       </Button>
     </Dropdown>
   );

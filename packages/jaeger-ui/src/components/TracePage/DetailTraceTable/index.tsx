@@ -5,8 +5,6 @@ import { TableSpan } from './types'
 import { getDetailTableContent } from './exclusivtime'
 import { fullTableContent } from './exclusivtime'
 
-
-
 import './index.css';
 import { all } from 'q';
 
@@ -30,7 +28,7 @@ export default class DetailTraceTable extends Component<Props, State>{
     var allSpans = this.props.traceProps.spans;
     var allSpansDiffOpName = new Array();
 
-    
+
 
     for (var i = 0; i < allSpans.length; i++) {
 
@@ -122,7 +120,6 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     } else {
       var tempArray = new Array();
-      var nextParantElement = false;
       for (var i = 0; i < allSpans.length; i++) {
         if (allSpans[i].parentElement !== selectedSpan.name) {
           tempArray.push(allSpans[i]);
@@ -145,7 +142,7 @@ export default class DetailTraceTable extends Component<Props, State>{
   renderTableHeader() {
     return (<tr>
       <th id="DetailTraceTableTH" key='name'>Name</th>
-      <th id="DetailTraceTableTH" key='count'>Count </th>
+      <th id="DetailTraceTableTH" key='count'>Count</th>
       <th id="DetailTraceTableTH" key='total'>Total</th>
       <th id="DetailTraceTableTH" key='avg'>Avg</th>
       <th id="DetailTraceTableTH" key='min'>Min</th>
@@ -179,7 +176,7 @@ export default class DetailTraceTable extends Component<Props, State>{
         )
       } else {
         return (
-          <tr id="DetailTraceTableTR" key={key}>
+          <tr id="DetailTraceTableTR1" key={key}>
             <td id="DetailTraceTableChildTD">{name}</td>
             <td id="DetailTraceTableTD">{count}</td>
             <td id="DetailTraceTableTD">{total + "ms"}</td>
