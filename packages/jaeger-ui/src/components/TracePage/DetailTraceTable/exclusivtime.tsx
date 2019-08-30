@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import colorGenerator from '../../../utils/color-generator';
 import { Span, Trace } from '../../../types/trace';
 
 
@@ -17,6 +17,7 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
         var avg = 0;
         var min = span2[0].duration;
         var max = 0;
+        var color;
 
         var resultArray = new Array();
 
@@ -47,12 +48,17 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
         avg = total / count;
         excAvg = exc / count;
 
+        color = colorGenerator.getColorByKey(span1[i].process.serviceName)
+
         var safeItem = {
             name: span1[i].process.serviceName, count: count,
-            total: (Math.round((total / 1000) * 100) / 100).toFixed(2), avg: (Math.round((avg / 1000) * 100) / 100).toFixed(2), min: (Math.round((min / 1000) * 100) / 100).toFixed(2),
+            total: (Math.round((total / 1000) * 100) / 100).toFixed(2), avg: (Math.round((avg / 1000) * 100) / 100).toFixed(2),
+            min: (Math.round((min / 1000) * 100) / 100).toFixed(2),
             max: (Math.round((max / 1000) * 100) / 100).toFixed(2), isDetail: true, key: span1[i].operationName + i,
-            child: false, parentElement: selectedName, exc: (Math.round((exc / 1000)*100)/100).toFixed(2),
-            excAvg: (Math.round((excAvg / 1000) * 100) / 100).toFixed(2), excMin: (Math.round((excMin / 1000) * 100) / 100).toFixed(2), excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2)
+            child: false, parentElement: selectedName, exc: (Math.round((exc / 1000) * 100) / 100).toFixed(2),
+            excAvg: (Math.round((excAvg / 1000) * 100) / 100).toFixed(2), excMin: (Math.round((excMin / 1000) * 100) / 100).toFixed(2),
+            excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2),
+            color: color
         };
 
         addItemArray.push(safeItem);
@@ -112,10 +118,13 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         avg = total / count;
 
         var tableSpan = {
-            name: span1[i], count: count, total: (Math.round((total / 1000) * 100) / 100).toFixed(2),
-            avg: (Math.round((avg / 1000) * 100) / 100).toFixed(2), min: Math.round((min / 1000) * 100) / 100,
-            max: (Math.round((max / 1000) * 100) / 100).toFixed(2), isDetail: false, key: span1[i], child: false, parentElement: "none", exc: (Math.round((exc / 1000)*100)/100).toFixed(2),
-            excAvg: (Math.round((excAvg / 1000) * 100) / 100).toFixed(2), excMin: (Math.round((excMin / 1000) * 100) / 100).toFixed(2), excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2)
+            name: span1[i], count: count, total: (Math.round((total / 1000) * 100) / 100),
+            avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
+            max: (Math.round((max / 1000) * 100) / 100), isDetail: false, key: span1[i], child: false, parentElement: "none",
+            exc: (Math.round((exc / 1000) * 100) / 100),
+            excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
+            excMax: (Math.round((excMax / 1000) * 100) / 100),
+            color: ""
         };
 
         allSpansTrace.push(tableSpan);

@@ -3,12 +3,10 @@
 }
 
 #title{
-  color: #232232;
   width: 100%;
   padding-top: 0.3%;
   padding-bottom: 0.3%;
   padding-left: 0.4%;
-  font-size: 123%;
   background: #ECECEC;
   margin-bottom: 0.0%
 }
@@ -17,11 +15,10 @@
 
   background: #ECECEC;
   border: 1px solid #CCCCCC;
-
+  font-size: 109%;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #232323;
   font-weight: 15;
-  font-size: 123%;
   line-height: 2em;
   padding-left: 1em;
 }
@@ -76,6 +73,12 @@
   background: #ECECEC;
 
 
+}
+
+#serviceBorder{
+  border-left: 4px solid transparent; 
+  padding-left: 0.6em;
+  
 }
 
 

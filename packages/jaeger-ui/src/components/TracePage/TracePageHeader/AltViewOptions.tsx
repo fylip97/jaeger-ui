@@ -29,25 +29,25 @@ type Props = {
 export default function AltViewOptions(props: Props) { 
   const { onTraceGraphViewClicked, traceGraphView, traceID, selectedTraceGraphView, } = props;
 
-  var tempArray = [1,2,3];
+  var diffTraceGraphView = [1,2,3];
 
-  var tempArray2 = new Array();
-  for(var i=0;i<tempArray.length;i++){
-    if(tempArray[i]!=selectedTraceGraphView){
-      tempArray2.push(tempArray[i]);
+  var possibTraceGraphView = new Array();
+  for(var i=0;i<diffTraceGraphView.length;i++){
+    if(diffTraceGraphView[i]!=selectedTraceGraphView){
+      possibTraceGraphView.push(diffTraceGraphView[i]);
     }
   }
 
   const menu = (
     <Menu>
       <Menu.Item>
-        <a onClick={() => onTraceGraphViewClicked(tempArray2[0])} role="button">
-          {tempArray2[0]==1 ? 'Trace Timeline' : tempArray2[0] ==2 ? 'Trace Graph' : 'Trace Details'}
+        <a onClick={() => onTraceGraphViewClicked(possibTraceGraphView[0])} role="button">
+          {possibTraceGraphView[0]==1 ? 'Trace Timeline' : possibTraceGraphView[0] ==2 ? 'Trace Graph' : 'Trace Details'}
         </a>
       </Menu.Item>
       <Menu.Item>
-        <a onClick={() => onTraceGraphViewClicked(tempArray2[1])} role="button">
-          {tempArray2[1]==1 ? 'Trace Timeline' : tempArray2[1] ==2 ? 'Trace Graph' : 'Trace Details'}
+        <a onClick={() => onTraceGraphViewClicked(possibTraceGraphView[1])} role="button">
+          {possibTraceGraphView[1]==1 ? 'Trace Timeline' : possibTraceGraphView[1] ==2 ? 'Trace Graph' : 'Trace Details'}
         </a>
       </Menu.Item>
       <Menu.Item>

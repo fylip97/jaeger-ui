@@ -15,4 +15,6 @@ export type TableSpan = {
   child: boolean;
   parentElement: string;
 
+  color: string;
+
 }
