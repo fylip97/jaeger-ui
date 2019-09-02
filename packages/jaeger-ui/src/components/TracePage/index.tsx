@@ -293,7 +293,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     }
 
     if (index == 0) {
-     
+
       ++selectedTraceGraphView;
       if (selectedTraceGraphView > 3) {
         selectedTraceGraphView = 1;
@@ -441,7 +441,9 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
             </section>
           ) : (
                 <section style={{ paddingTop: headerHeight }}>
-                  <DetailTraceTable traceProps={data} />
+                  <DetailTraceTable traceProps={data}
+                    uiFindVertexKeys={graphFindMatches}
+                  />
                 </section>
               ))}
       </div>

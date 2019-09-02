@@ -8,6 +8,8 @@ import { fullTableContent } from './exclusivtime'
 import { sortTable } from './sortTable'
 import { Icon } from 'antd';
 
+import { TNil } from '../../../types';
+import { searchInTable } from './searchInTable';
 
 import './index.css';
 import { all } from 'q';
@@ -17,6 +19,7 @@ import { all } from 'q';
 
 type Props = {
   traceProps: Trace,
+  uiFindVertexKeys: Set<string> | TNil;
 };
 
 type State = {
@@ -42,8 +45,6 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     var allSpans = this.props.traceProps.spans;
     var allSpansDiffOpName = new Array();
-
-
 
     for (var i = 0; i < allSpans.length; i++) {
 
@@ -83,6 +84,7 @@ export default class DetailTraceTable extends Component<Props, State>{
     }
 
 
+    searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
 
 
@@ -165,29 +167,30 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     });
 
+    searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
 
   renderTableHeader() {
     return (<tr>
-      <th id="DetailTraceTableTH" key='name'>Name <div id= "buttonPosition"><button className="sortButton" id="nameButton" onClick={this.state.nameButton ? () => this.sortClick('name-Up', 'nameButton',false) : () => this.sortClick('name-Down', 'nameButton',true)} > {this.state.nameButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='name'>Name <div id="buttonPosition"><button className="sortButton" id="nameButton" onClick={this.state.nameButton ? () => this.sortClick('name-Up', 'nameButton', false) : () => this.sortClick('name-Down', 'nameButton', true)} > {this.state.nameButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='count'>Count <div id= "buttonPosition"><button className="sortButton" id="countButton" onClick={this.state.countButton ? () => this.sortClick('count-Up', 'countButton',false) : () => this.sortClick('count-Down', 'countButton',true)} > {this.state.countButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='count'>Count <div id="buttonPosition"><button className="sortButton" id="countButton" onClick={this.state.countButton ? () => this.sortClick('count-Up', 'countButton', false) : () => this.sortClick('count-Down', 'countButton', true)} > {this.state.countButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='total'>Total<div id= "buttonPosition"> <button className="sortButton" id="totalButton" onClick={this.state.totalButton ? () => this.sortClick('total-Up', 'totalButton',false) : () => this.sortClick('total-Down', 'totalButton',true)} > {this.state.totalButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='total'>Total<div id="buttonPosition"> <button className="sortButton" id="totalButton" onClick={this.state.totalButton ? () => this.sortClick('total-Up', 'totalButton', false) : () => this.sortClick('total-Down', 'totalButton', true)} > {this.state.totalButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='avg'>Avg <div id= "buttonPosition"><button className="sortButton" id="avgButton" onClick={this.state.avgButton ? () => this.sortClick('avg-Up', 'avgButton',false) : () => this.sortClick('avg-Down', 'avgButton',true)} > {this.state.avgButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='avg'>Avg <div id="buttonPosition"><button className="sortButton" id="avgButton" onClick={this.state.avgButton ? () => this.sortClick('avg-Up', 'avgButton', false) : () => this.sortClick('avg-Down', 'avgButton', true)} > {this.state.avgButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='min'>Min <div id= "buttonPosition"><button className="sortButton" id="minButton" onClick={this.state.minButton ? () => this.sortClick('min-Up', 'minButton',false) : () => this.sortClick('min-Down', 'minButton',true)} > {this.state.minButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='min'>Min <div id="buttonPosition"><button className="sortButton" id="minButton" onClick={this.state.minButton ? () => this.sortClick('min-Up', 'minButton', false) : () => this.sortClick('min-Down', 'minButton', true)} > {this.state.minButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='max'>Max  <div id= "buttonPosition"><button className="sortButton" id="maxButton" onClick={this.state.maxButton ? () => this.sortClick('max-Up', 'maxButton',false) : () => this.sortClick('max-Down', 'maxButton',true)} > {this.state.maxButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='max'>Max  <div id="buttonPosition"><button className="sortButton" id="maxButton" onClick={this.state.maxButton ? () => this.sortClick('max-Up', 'maxButton', false) : () => this.sortClick('max-Down', 'maxButton', true)} > {this.state.maxButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='exc'>Total Exc <div id= "buttonPosition"><button className="sortButton" id="excButton" onClick={this.state.excButton ? () => this.sortClick('exc-Up', 'excButton',false) : () => this.sortClick('exc-Down', 'excButton',true)} > {this.state.excButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='exc'>Total Exc <div id="buttonPosition"><button className="sortButton" id="excButton" onClick={this.state.excButton ? () => this.sortClick('exc-Up', 'excButton', false) : () => this.sortClick('exc-Down', 'excButton', true)} > {this.state.excButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='excAvg'>Exc. Avg <div id= "buttonPosition"><button className="sortButton" id="excAvgButton" onClick={this.state.excAvgButton ? () => this.sortClick('excAvg-Up', 'excAvgButton',false) : () => this.sortClick('excAvg-Down', 'excAvgButton',true)} > {this.state.excAvgButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='excAvg'>Exc. Avg <div id="buttonPosition"><button className="sortButton" id="excAvgButton" onClick={this.state.excAvgButton ? () => this.sortClick('excAvg-Up', 'excAvgButton', false) : () => this.sortClick('excAvg-Down', 'excAvgButton', true)} > {this.state.excAvgButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='excMin'>Exc. Min <div id= "buttonPosition"><button className="sortButton" id="excMinButton" onClick={this.state.excMinButton ? () => this.sortClick('excMin-Up', 'excMinButton',false) : () => this.sortClick('excMin-Down', 'excMinButton',true)} > {this.state.excMinButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='excMin'>Exc. Min <div id="buttonPosition"><button className="sortButton" id="excMinButton" onClick={this.state.excMinButton ? () => this.sortClick('excMin-Up', 'excMinButton', false) : () => this.sortClick('excMin-Down', 'excMinButton', true)} > {this.state.excMinButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
-      <th id="DetailTraceTableTH" key='excMax'>Exc. Max <div id= "buttonPosition"><button className="sortButton" id="excMaxButton" onClick={this.state.excMaxButton ? () => this.sortClick('excMax-Up', 'excMaxButton',false) : () => this.sortClick('excMax-Down', 'excMaxButton',true)} > {this.state.excMaxButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      <th id="DetailTraceTableTH" key='excMax'>Exc. Max <div id="buttonPosition"><button className="sortButton" id="excMaxButton" onClick={this.state.excMaxButton ? () => this.sortClick('excMax-Up', 'excMaxButton', false) : () => this.sortClick('excMax-Down', 'excMaxButton', true)} > {this.state.excMaxButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
     </tr>
     );
@@ -196,10 +199,10 @@ export default class DetailTraceTable extends Component<Props, State>{
 
   renderTableData() {
     return this.state.allSpans.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, isDetail, key, exc, excAvg, excMin, excMax, color } = oneSpan
+      const { name, count, total, avg, min, max, isDetail, key, exc, excAvg, excMin, excMax, color, searchColor } = oneSpan
       if (!oneSpan.isDetail) {
         return (
-          <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)}>
+          <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)} style={{  background:searchColor }}>
             <td id="DetailTraceTableTD" title={name}>{name} </td>
             <td id="DetailTraceTableTD">{count}</td>
             <td id="DetailTraceTableTD">{total.toFixed(2) + "ms"}</td>
@@ -214,8 +217,8 @@ export default class DetailTraceTable extends Component<Props, State>{
         )
       } else {
         return (
-          <tr id="DetailTraceTableTR1" key={key}>
-            <td id="DetailTraceTableChildTD"><label id="serviceBorder" style={{ borderColor: color }}>{name}</label></td>
+          <tr id="DetailTraceTableTR1" key={key} style ={{background: searchColor}}>
+            <td id="DetailTraceTableChildTD" ><label id="serviceBorder" style={{ borderColor: color }}>{name}</label></td>
             <td id="DetailTraceTableTD">{count}</td>
             <td id="DetailTraceTableTD">{total + "ms"}</td>
             <td id="DetailTraceTableTD">{avg + "ms"}</td>
@@ -235,6 +238,12 @@ export default class DetailTraceTable extends Component<Props, State>{
 
 
 
+  componentDidUpdate(props:any) {
+    if ((this.props.uiFindVertexKeys !==props.uiFindVertexKeys)) 
+    {
+      searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
+    }
+  }
 
 
 
@@ -312,7 +321,7 @@ export default class DetailTraceTable extends Component<Props, State>{
 
   setAllButtonTransparent() {
 
-    var allIds = ['nameButton','countButton', 'totalButton', 'avgButton', 'minButton', 'maxButton', 'excButton', 'excAvgButton', 'excMinButton', 'excMaxButton'];
+    var allIds = ['nameButton', 'countButton', 'totalButton', 'avgButton', 'minButton', 'maxButton', 'excButton', 'excAvgButton', 'excMinButton', 'excMaxButton'];
 
     for (var i = 0; i < allIds.length; i++) {
       var element = document.getElementById(allIds[i]);

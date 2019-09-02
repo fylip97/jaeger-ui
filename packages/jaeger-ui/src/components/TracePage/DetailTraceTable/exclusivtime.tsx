@@ -58,7 +58,7 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
             child: false, parentElement: selectedName, exc: (Math.round((exc / 1000) * 100) / 100).toFixed(2),
             excAvg: (Math.round((excAvg / 1000) * 100) / 100).toFixed(2), excMin: (Math.round((excMin / 1000) * 100) / 100).toFixed(2),
             excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2),
-            color: color
+            color: color, seachColor: "red"
         };
 
         addItemArray.push(safeItem);
@@ -122,7 +122,7 @@ export function fullTableContent(span1: string[], span2: Span[]) {
             exc: (Math.round((exc / 1000) * 100) / 100),
             excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
             excMax: (Math.round((excMax / 1000) * 100) / 100),
-            color: ""
+            color: "", seachColor: "transparent"
         };
 
         allSpansTrace.push(tableSpan);

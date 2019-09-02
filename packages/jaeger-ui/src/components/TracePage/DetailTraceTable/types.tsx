@@ -16,5 +16,6 @@ export type TableSpan = {
   parentElement: string;
 
   color: string;
+  searchColor: string;
 
 }
