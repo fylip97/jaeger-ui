@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { TableSpan } from './types'
 
-
+/**
+ * sort the array
+ * @param array input which is sorted
+ * @param key which attribute is used for sorting
+ * @param upDown How should the data be sorted? Up or down
+ */
 export function sortTable(array: TableSpan[], key: string, upDown: string) {
     var isDetailArray = new Array();
     var isNoDetail = new Array();
@@ -12,7 +17,6 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
         } else {
             isNoDetail.push(array[i]);
         }
-
     }
     if (upDown === "Up") {
         isNoDetail = sortByKeyUp(isNoDetail, key);
@@ -69,9 +73,9 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
 }
 
 /**
- * fgfgf
- * @param tempArray gdfgf 
- * @param key gfg
+ * array is grouped by key
+ * @param tempArray input whitch is grouped
+ * @param key 
  */
 function groupBy(tempArray: TableSpan[], key: string) {
     var groupedArray = new Array();
@@ -83,15 +87,23 @@ function groupBy(tempArray: TableSpan[], key: string) {
     return groupedArray;
 }
 
+/**
+ * sort up
+ * @param array input whitch is sorted 
+ * @param key attribut which is used for sorting
+ */
 function sortByKeyUp(array: TableSpan[], key: string) {
-
-    //sort 
     return array.sort(function (a, b) {
         var x = (a as any)[key]; var y = (b as any)[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
 }
 
+/**
+ * sort down 
+ * @param array input whitch is sorted 
+ * @param key attribut whitch is used for sorting
+ */
 function sortByKeyDown(array: TableSpan[], key: string) {
     return array.sort(function (a, b) {
         var x = (a as any)[key]; var y = (b as any)[key];

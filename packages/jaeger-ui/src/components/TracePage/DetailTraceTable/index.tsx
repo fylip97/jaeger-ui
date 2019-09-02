@@ -13,6 +13,7 @@ import { searchInTable } from './searchInTable';
 
 import './index.css';
 import { all } from 'q';
+import BreakableText from '../../common/BreakableText';
 
 
 
@@ -82,12 +83,15 @@ export default class DetailTraceTable extends Component<Props, State>{
       excMaxButton: true,
 
     }
-
-
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
 
-
+  /**
+   * when clicking on column
+   *  shows the child if the column has not been clicked before
+   *  does not show the children any more if the column has been clicked before
+   * @param selectedSpan the column who is been clicked
+   */
   clickColumn(selectedSpan: TableSpan) {
 
     var wholeTraceSpans = this.props.traceProps.spans;
@@ -196,13 +200,17 @@ export default class DetailTraceTable extends Component<Props, State>{
     );
   }
 
-
+/**
+ * render the table data
+ *  first return is for span operationname
+ *  second return for the child 
+ */
   renderTableData() {
     return this.state.allSpans.map((oneSpan, index) => {
       const { name, count, total, avg, min, max, isDetail, key, exc, excAvg, excMin, excMax, color, searchColor } = oneSpan
       if (!oneSpan.isDetail) {
         return (
-          <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)} style={{  background:searchColor }}>
+          <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)} style={{ background: searchColor }}>
             <td id="DetailTraceTableTD" title={name}>{name} </td>
             <td id="DetailTraceTableTD">{count}</td>
             <td id="DetailTraceTableTD">{total.toFixed(2) + "ms"}</td>
@@ -217,7 +225,7 @@ export default class DetailTraceTable extends Component<Props, State>{
         )
       } else {
         return (
-          <tr id="DetailTraceTableTR1" key={key} style ={{background: searchColor}}>
+          <tr id="DetailTraceTableTR1" key={key} style={{ background: searchColor }}>
             <td id="DetailTraceTableChildTD" ><label id="serviceBorder" style={{ borderColor: color }}>{name}</label></td>
             <td id="DetailTraceTableTD">{count}</td>
             <td id="DetailTraceTableTD">{total + "ms"}</td>
@@ -236,71 +244,80 @@ export default class DetailTraceTable extends Component<Props, State>{
   }
 
 
-
-
-  componentDidUpdate(props:any) {
-    if ((this.props.uiFindVertexKeys !==props.uiFindVertexKeys)) 
-    {
+  /**
+   * if the search props change the search function is called
+   * @param props all props 
+   */
+  componentDidUpdate(props: any) {
+    if ((this.props.uiFindVertexKeys !== props.uiFindVertexKeys)) {
       searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
     }
   }
 
 
-
+  /**
+   * sorts table according to selected parameters
+   * @param name whitch parameter is clicked
+   * @param buttonId button with this name is clicked
+   * @param status  status of the button 
+   */
   sortClick(name: string, buttonId: string, status: boolean) {
 
     this.setAllButtonTransparent();
 
-    if ('countButton' === buttonId) {
-      this.setState({
-        countButton: status,
-      })
+    switch (buttonId) {
+      case 'countButton':
+        this.setState({
+          countButton: status,
+        })
+        break;
+      case 'totalButton':
+        this.setState({
+          totalButton: status,
+        })
+        break;
+      case 'avgButton':
+        this.setState({
+          avgButton: status,
+        })
+        break;
+      case 'minButton':
+        this.setState({
+          minButton: status,
+        })
+        break;
+      case 'maxButton':
+        this.setState({
+          maxButton: status,
+        })
+        break;
+      case 'excButton':
+        this.setState({
+          excButton: status,
+        })
+        break;
+      case 'excAvgButton':
+        this.setState({
+          excAvgButton: status,
+        })
+        break;
+      case 'excMinButton':
+        this.setState({
+          excMinButton: status,
+        })
+        break;
+      case 'excMaxButton':
+        this.setState({
+          excMaxButton: status,
+        })
+        break;
 
-    } else if ('totalButton' === buttonId) {
-      this.setState({
-        totalButton: status,
-      })
-
-    } else if ('avgButton' === buttonId) {
-      this.setState({
-        avgButton: status,
-      })
-    } else if ('minButton' === buttonId) {
-      this.setState({
-        minButton: status,
-      })
-    } else if ('maxButton' === buttonId) {
-      this.setState({
-        maxButton: status,
-      })
-    } else if ('excButton' === buttonId) {
-      this.setState({
-        excButton: status,
-      })
-
-    } else if ('excAvgButton' === buttonId) {
-      this.setState({
-        excAvgButton: status,
-      })
-
-    } else if ('excMinButton' === buttonId) {
-      this.setState({
-        excMinButton: status,
-      })
-
-    } else if ('excMaxButton' === buttonId) {
-      this.setState({
-        excMaxButton: status,
-      })
-
-    } else if ('nameButton' === buttonId) {
-      this.setState({
-        nameButton: status,
-      })
-
+      case 'nameButton':
+        this.setState({
+          nameButton: status,
+        })
+        break;
     }
-
-
     // get the color
     var element = document.getElementById(buttonId);
     element!.style.opacity = '1.0';
@@ -310,14 +327,11 @@ export default class DetailTraceTable extends Component<Props, State>{
     this.setState({
       allSpans: sortTable(this.state.allSpans, diffParameter[0], diffParameter[1]),
     })
-
   }
 
   componentDidMount() {
     this.sortClick('count-Down', 'countButton', true);
   }
-
-
 
   setAllButtonTransparent() {
 
@@ -333,7 +347,6 @@ export default class DetailTraceTable extends Component<Props, State>{
   render() {
 
     return (
-
       <div id="mainDiv">
         <h3 id='title'>Trace Detail</h3>
         <table>
@@ -345,7 +358,6 @@ export default class DetailTraceTable extends Component<Props, State>{
       </div>
     )
   }
-
 
 }
 
