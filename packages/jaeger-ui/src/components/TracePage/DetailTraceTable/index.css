@@ -31,6 +31,11 @@
   width: 10%;
   padding-left: 1em;
 
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 
 
@@ -43,6 +48,15 @@
 
 }
 
+td {
+  max-width: 30em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+
 
 #DetailTraceTableTbody{
 
@@ -53,6 +67,8 @@
 }
 #DetailTraceTableTR{
   border-top: 1px solid #FFFFFF;
+  
+   
 
 
 }
@@ -62,8 +78,7 @@
   background: #FAFAFA;
   color: black;
   cursor: pointer;
-  border-top: 1px solid #CCCCCC;
-  border-bottom: 1px solid #CCCCCC;
+
 
 
 }
@@ -79,6 +94,15 @@
   border-left: 4px solid transparent; 
   padding-left: 0.6em;
   
+}
+
+.sortButton{
+  border: none;
+  background: transparent;
+}
+
+#buttonPosition{
+  float: right;
 }
 
 

@@ -68,7 +68,6 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
 }
 
 
-
 export function fullTableContent(span1: string[], span2: Span[]) {
 
     var allSpansTrace = new Array();
@@ -85,7 +84,6 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         var min = span2[0].duration;
         var max = 0;
         var count = 0;
-        var durationCount = 0;
 
         var resultArray = new Array();
 
@@ -129,11 +127,8 @@ export function fullTableContent(span1: string[], span2: Span[]) {
 
         allSpansTrace.push(tableSpan);
     }
-
-
     return allSpansTrace;
 }
-
 
 
 function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: number[]) {

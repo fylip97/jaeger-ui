@@ -42,12 +42,12 @@ export default function AltViewOptions(props: Props) {
     <Menu>
       <Menu.Item>
         <a onClick={() => onTraceGraphViewClicked(possibTraceGraphView[0])} role="button">
-          {possibTraceGraphView[0]==1 ? 'Trace Timeline' : possibTraceGraphView[0] ==2 ? 'Trace Graph' : 'Trace Details'}
+          {possibTraceGraphView[0]==1 ? 'Trace Timeline' : possibTraceGraphView[0] ==2 ? 'Trace Graph' : 'Overview'}
         </a>
       </Menu.Item>
       <Menu.Item>
         <a onClick={() => onTraceGraphViewClicked(possibTraceGraphView[1])} role="button">
-          {possibTraceGraphView[1]==1 ? 'Trace Timeline' : possibTraceGraphView[1] ==2 ? 'Trace Graph' : 'Trace Details'}
+          {possibTraceGraphView[1]==1 ? 'Trace Timeline' : possibTraceGraphView[1] ==2 ? 'Trace Graph' : 'Overview'}
         </a>
       </Menu.Item>
       <Menu.Item>
@@ -75,7 +75,7 @@ export default function AltViewOptions(props: Props) {
   return (
     <Dropdown overlay={menu}>
       <Button className="ub-mr2" htmlType="button" onClick={() => onTraceGraphViewClicked(0)}>
-        {selectedTraceGraphView==1 ? 'Trace Timeline' : selectedTraceGraphView ==2 ? 'Trace Graph' : 'Trace Details'} <Icon type="down" />
+        {selectedTraceGraphView==1 ? 'Trace Timeline' : selectedTraceGraphView ==2 ? 'Trace Graph' : 'Overview'} <Icon type="down" />
       </Button>
     </Dropdown>
   );
