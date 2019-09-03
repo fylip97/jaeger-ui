@@ -17,6 +17,10 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
         var avg = 0;
         var min = span2[0].duration;
         var max = 0;
+        var percent = -1;
+        var allPercent = wholeTrace[0].duration;
+        var onePecent = allPercent / 100;
+        var resultArray = new Array();
         var color;
 
         var resultArray = new Array();
@@ -30,11 +34,12 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
         resultArray.push(min);
         resultArray.push(max);
         resultArray.push(count);
+        resultArray.push(percent)
 
         for (var j = 0; j < span2.length; j++) {
             if (span1[i].process.serviceName === span2[j].process.serviceName) {
 
-                resultArray = calculateContent(span2, wholeTrace, j, resultArray);
+                resultArray = calculateContent(span2, wholeTrace, j, resultArray, onePecent);
                 exc = resultArray[0];
                 excMin = resultArray[2];
                 excMax = resultArray[3];
@@ -42,6 +47,7 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
                 min = resultArray[6];
                 max = resultArray[7];
                 count = resultArray[8];
+                percent = resultArray[9];
             }
 
         }
@@ -57,8 +63,8 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
             max: (Math.round((max / 1000) * 100) / 100).toFixed(2), isDetail: true, key: span1[i].operationName + i,
             child: false, parentElement: selectedName, exc: (Math.round((exc / 1000) * 100) / 100).toFixed(2),
             excAvg: (Math.round((excAvg / 1000) * 100) / 100).toFixed(2), excMin: (Math.round((excMin / 1000) * 100) / 100).toFixed(2),
-            excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2),
-            color: color, seachColor: "red"
+            excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2), percent: (Math.round((percent/1)*100)/100),
+            color: color, seachColor: "#ECECEC"
         };
 
         addItemArray.push(safeItem);
@@ -72,6 +78,7 @@ export function fullTableContent(span1: string[], span2: Span[]) {
 
     var allSpansTrace = new Array();
 
+
     for (var i = 0; i < span1.length; i++) {
 
         var exc = 0;
@@ -84,6 +91,11 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         var min = span2[0].duration;
         var max = 0;
         var count = 0;
+        var percent = 0;
+        var allPercent = span2[0].duration;
+
+        var onePecent = allPercent / 100;
+       
 
         var resultArray = new Array();
 
@@ -96,11 +108,12 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         resultArray.push(min);
         resultArray.push(max);
         resultArray.push(count);
+        resultArray.push(percent);
 
 
         for (var j = 0; j < span2.length; j++) {
             if (span1[i] === span2[j].operationName) {
-                resultArray = calculateContent(span2, span2, j, resultArray);
+                resultArray = calculateContent(span2, span2, j, resultArray, onePecent);
                 exc = resultArray[0];
                 excMin = resultArray[2];
                 excMax = resultArray[3];
@@ -108,6 +121,7 @@ export function fullTableContent(span1: string[], span2: Span[]) {
                 min = resultArray[6];
                 max = resultArray[7];
                 count = resultArray[8];
+                percent = resultArray[9];
             }
 
         }
@@ -121,7 +135,7 @@ export function fullTableContent(span1: string[], span2: Span[]) {
             max: (Math.round((max / 1000) * 100) / 100), isDetail: false, key: span1[i], child: false, parentElement: "none",
             exc: (Math.round((exc / 1000) * 100) / 100),
             excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
-            excMax: (Math.round((excMax / 1000) * 100) / 100),
+            excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent/1)*100)/100),
             color: "", seachColor: "transparent"
         };
 
@@ -131,7 +145,8 @@ export function fullTableContent(span1: string[], span2: Span[]) {
 }
 
 
-function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: number[]) {
+function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: number[], onePercent: number) {
+
 
     resultArray[8] += 1;
     resultArray[4] += span[j].duration;
@@ -174,7 +189,7 @@ function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArr
         }
         resultArray[0] = resultArray[0] + span[j].duration;
     }
-
+    resultArray[9] = resultArray[0] / onePercent;
     return resultArray;
 
 }

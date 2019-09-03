@@ -7,14 +7,9 @@ import { getDetailTableContent } from './exclusivtime'
 import { fullTableContent } from './exclusivtime'
 import { sortTable } from './sortTable'
 import { Icon } from 'antd';
-
 import { TNil } from '../../../types';
 import { searchInTable } from './searchInTable';
-
 import './index.css';
-import { all } from 'q';
-import BreakableText from '../../common/BreakableText';
-
 
 
 
@@ -36,6 +31,7 @@ type State = {
   excAvgButton: boolean,
   excMinButton: boolean,
   excMaxButton: boolean,
+  percentButton: boolean,
 };
 
 export default class DetailTraceTable extends Component<Props, State>{
@@ -81,6 +77,7 @@ export default class DetailTraceTable extends Component<Props, State>{
       excAvgButton: true,
       excMinButton: true,
       excMaxButton: true,
+      percentButton: true,
 
     }
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
@@ -145,7 +142,6 @@ export default class DetailTraceTable extends Component<Props, State>{
         }
       }
 
-
       for (var i = 0; i < addItemArray.length; i++) {
         allSpans.splice(rememberIndex + 1, 0, addItemArray[i]);
         rememberIndex += 1;
@@ -163,7 +159,6 @@ export default class DetailTraceTable extends Component<Props, State>{
 
       allSpans = [];
       allSpans = tempArray;
-
     }
 
     this.setState({
@@ -196,18 +191,20 @@ export default class DetailTraceTable extends Component<Props, State>{
       </th>
       <th id="DetailTraceTableTH" key='excMax'>Exc. Max <div id="buttonPosition"><button className="sortButton" id="excMaxButton" onClick={this.state.excMaxButton ? () => this.sortClick('excMax-Up', 'excMaxButton', false) : () => this.sortClick('excMax-Down', 'excMaxButton', true)} > {this.state.excMaxButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
       </th>
+      <th id="DetailTraceTableTH" key='percent'>Percent<div id="buttonPosition"><button className="sortButton" id="percentButton" onClick={this.state.percentButton ? () => this.sortClick('percent-Up', 'percentButton', false) : () => this.sortClick('percent-Down', 'percentButton', true)} > {this.state.percentButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
+      </th>
     </tr>
     );
   }
 
-/**
- * render the table data
- *  first return is for span operationname
- *  second return for the child 
- */
+  /**
+   * render the table data
+   *  first return is for span operationname
+   *  second return for the child 
+   */
   renderTableData() {
     return this.state.allSpans.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, isDetail, key, exc, excAvg, excMin, excMax, color, searchColor } = oneSpan
+      const { name, count, total, avg, min, max, isDetail, key, exc, excAvg, excMin, excMax, percent, color, searchColor } = oneSpan
       if (!oneSpan.isDetail) {
         return (
           <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)} style={{ background: searchColor }}>
@@ -221,6 +218,8 @@ export default class DetailTraceTable extends Component<Props, State>{
             <td id="DetailTraceTableTD">{excAvg.toFixed(2) + 'ms'}</td>
             <td id="DetailTraceTableTD">{excMin.toFixed(2) + 'ms'}</td>
             <td id="DetailTraceTableTD">{excMax.toFixed(2) + 'ms'}</td>
+            <td id="DetailTraceTableTD">{percent + '%'}</td>
+
           </tr>
         )
       } else {
@@ -236,6 +235,7 @@ export default class DetailTraceTable extends Component<Props, State>{
             <td id="DetailTraceTableTD">{excAvg + 'ms'}</td>
             <td id="DetailTraceTableTD">{excMin + 'ms'}</td>
             <td id="DetailTraceTableTD">{excMax + 'ms'}</td>
+            <td id="DetailTraceTableTD">{percent + '%'}</td>
           </tr>
         )
 
@@ -263,7 +263,7 @@ export default class DetailTraceTable extends Component<Props, State>{
    */
   sortClick(name: string, buttonId: string, status: boolean) {
 
-    this.setAllButtonTransparent();
+    this.setAllOpacityLower();
 
     switch (buttonId) {
       case 'countButton':
@@ -317,6 +317,12 @@ export default class DetailTraceTable extends Component<Props, State>{
           nameButton: status,
         })
         break;
+
+      case 'percentButton':
+        this.setState({
+          percentButton: status,
+        })
+        break;
     }
     // get the color
     var element = document.getElementById(buttonId);
@@ -333,10 +339,9 @@ export default class DetailTraceTable extends Component<Props, State>{
     this.sortClick('count-Down', 'countButton', true);
   }
 
-  setAllButtonTransparent() {
+  setAllOpacityLower() {
 
-    var allIds = ['nameButton', 'countButton', 'totalButton', 'avgButton', 'minButton', 'maxButton', 'excButton', 'excAvgButton', 'excMinButton', 'excMaxButton'];
-
+    var allIds = ['nameButton', 'countButton', 'totalButton', 'avgButton', 'minButton', 'maxButton', 'excButton', 'excAvgButton', 'excMinButton', 'excMaxButton', 'percentButton'];
     for (var i = 0; i < allIds.length; i++) {
       var element = document.getElementById(allIds[i]);
       element!.style.opacity = '0.2';
@@ -345,7 +350,6 @@ export default class DetailTraceTable extends Component<Props, State>{
   }
 
   render() {
-
     return (
       <div id="mainDiv">
         <h3 id='title'>Trace Detail</h3>

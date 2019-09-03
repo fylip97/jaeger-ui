@@ -10,6 +10,7 @@ export type TableSpan = {
   excAvg: number;
   excMin: number;
   excMax: number;
+  percent: number;
 
   key: string;
   child: boolean;
