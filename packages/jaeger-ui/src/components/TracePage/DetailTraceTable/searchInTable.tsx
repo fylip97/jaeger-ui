@@ -10,14 +10,13 @@ import { TableSpan } from './types'
 export function searchInTable(uiFindVertexKeys: Set<string>, allTableSpans: TableSpan[]) {
 
     for (var i = 0; i < allTableSpans.length; i++) {
-        if(allTableSpans[i].parentElement ==='none'){
-        allTableSpans[i].searchColor = "transparent";
-        }else{
-            allTableSpans[i].searchColor ="#ECECEC";
+        if (allTableSpans[i].parentElement === 'none') {
+            allTableSpans[i].searchColor = "transparent";
+        } else {
+            allTableSpans[i].searchColor = "#ECECEC";
         }
     }
     if (typeof uiFindVertexKeys !== 'undefined') {
-
         uiFindVertexKeys!.forEach(function (value) {
             var uiFindVertexKeysSplit = value.split('');
             for (var i = 0; i < allTableSpans.length; i++) {

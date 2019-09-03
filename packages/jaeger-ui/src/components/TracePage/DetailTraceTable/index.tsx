@@ -10,6 +10,7 @@ import { Icon } from 'antd';
 import { TNil } from '../../../types';
 import { searchInTable } from './searchInTable';
 import './index.css';
+import { isNotClicked } from './exclusivtime'
 
 
 
@@ -36,7 +37,6 @@ type State = {
 
 export default class DetailTraceTable extends Component<Props, State>{
 
-
   constructor(props: any) {
     super(props);
 
@@ -44,7 +44,6 @@ export default class DetailTraceTable extends Component<Props, State>{
     var allSpansDiffOpName = new Array();
 
     for (var i = 0; i < allSpans.length; i++) {
-
       if (allSpansDiffOpName.length == 0) {
         allSpansDiffOpName.push(allSpans[i].operationName);
       } else {
@@ -109,30 +108,8 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     if (!isClicked) {
 
-      allSpans[rememberIndex].child = true;
-
-      for (var i = 0; i < wholeTraceSpans.length; i++) {
-        if (wholeTraceSpans[i].operationName === selectedSpan.name) {
-          sameOperationName.push(wholeTraceSpans[i]);
-        }
-      }
-
-      for (var i = 0; i < sameOperationName.length; i++) {
-        if (diffServiceName.length == 0) {
-          diffServiceName.push(sameOperationName[i]);
-        } else {
-          var remember = false;
-          for (var j = 0; j < diffServiceName.length; j++) {
-            if (diffServiceName[j].process.serviceName === sameOperationName[i].process.serviceName) {
-              remember = true;
-            }
-          } if (!remember) {
-            diffServiceName.push(sameOperationName[i]);
-          }
-        }
-      }
-
-      addItemArray = getDetailTableContent(diffServiceName, sameOperationName, wholeTraceSpans, selectedSpan.name);
+      var tempArray = isNotClicked(allSpans, rememberIndex, wholeTraceSpans, selectedSpan, sameOperationName, diffServiceName);
+      addItemArray = getDetailTableContent(tempArray[0], tempArray[1], wholeTraceSpans, selectedSpan.name);
 
       var rememberIndex = 0;
 
@@ -141,7 +118,6 @@ export default class DetailTraceTable extends Component<Props, State>{
           rememberIndex = i;
         }
       }
-
       for (var i = 0; i < addItemArray.length; i++) {
         allSpans.splice(rememberIndex + 1, 0, addItemArray[i]);
         rememberIndex += 1;
@@ -169,6 +145,9 @@ export default class DetailTraceTable extends Component<Props, State>{
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
 
+  /**
+   * render the header of the table with the buttons needed for sorting
+   */
   renderTableHeader() {
     return (<tr>
       <th id="DetailTraceTableTH" key='name'>Name <div id="buttonPosition"><button className="sortButton" id="nameButton" onClick={this.state.nameButton ? () => this.sortClick('name-Up', 'nameButton', false) : () => this.sortClick('name-Down', 'nameButton', true)} > {this.state.nameButton ? <Icon type={"up"} /> : <Icon type={"down"} />}</button></div>
@@ -207,7 +186,7 @@ export default class DetailTraceTable extends Component<Props, State>{
       const { name, count, total, avg, min, max, isDetail, key, exc, excAvg, excMin, excMax, percent, color, searchColor } = oneSpan
       if (!oneSpan.isDetail) {
         return (
-          <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)} style={{ background: searchColor }}>
+          <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)} style={{ background: searchColor, borderColor: searchColor }}>
             <td id="DetailTraceTableTD" title={name}>{name} </td>
             <td id="DetailTraceTableTD">{count}</td>
             <td id="DetailTraceTableTD">{total.toFixed(2) + "ms"}</td>
@@ -218,31 +197,29 @@ export default class DetailTraceTable extends Component<Props, State>{
             <td id="DetailTraceTableTD">{excAvg.toFixed(2) + 'ms'}</td>
             <td id="DetailTraceTableTD">{excMin.toFixed(2) + 'ms'}</td>
             <td id="DetailTraceTableTD">{excMax.toFixed(2) + 'ms'}</td>
-            <td id="DetailTraceTableTD">{percent + '%'}</td>
-
+            <td id="DetailTraceTableTD">{percent.toFixed(2) + '%'}</td>
           </tr>
         )
       } else {
         return (
-          <tr id="DetailTraceTableTR1" key={key} style={{ background: searchColor }}>
+          <tr id="DetailTraceTableTR1" key={key} style={{ background: searchColor, borderColor: searchColor }}>
             <td id="DetailTraceTableChildTD" ><label id="serviceBorder" style={{ borderColor: color }}>{name}</label></td>
             <td id="DetailTraceTableTD">{count}</td>
-            <td id="DetailTraceTableTD">{total + "ms"}</td>
-            <td id="DetailTraceTableTD">{avg + "ms"}</td>
-            <td id="DetailTraceTableTD">{min + "ms"}</td>
-            <td id="DetailTraceTableTD">{max + "ms"}</td>
-            <td id="DetailTraceTableTD">{exc + 'ms'}</td>
-            <td id="DetailTraceTableTD">{excAvg + 'ms'}</td>
-            <td id="DetailTraceTableTD">{excMin + 'ms'}</td>
-            <td id="DetailTraceTableTD">{excMax + 'ms'}</td>
-            <td id="DetailTraceTableTD">{percent + '%'}</td>
+            <td id="DetailTraceTableTD">{Number(total).toFixed(2) + "ms"}</td>
+            <td id="DetailTraceTableTD">{Number(avg).toFixed(2) + "ms"}</td>
+            <td id="DetailTraceTableTD">{Number(min).toFixed(2) + "ms"}</td>
+            <td id="DetailTraceTableTD">{Number(max).toFixed(2) + "ms"}</td>
+            <td id="DetailTraceTableTD">{Number(exc).toFixed(2) + 'ms'}</td>
+            <td id="DetailTraceTableTD">{Number(excAvg).toFixed(2) + 'ms'}</td>
+            <td id="DetailTraceTableTD">{Number(excMin).toFixed(2) + 'ms'}</td>
+            <td id="DetailTraceTableTD">{Number(excMax).toFixed(2) + 'ms'}</td>
+            <td id="DetailTraceTableTD">{Number(percent).toFixed(2) + '%'}</td>
           </tr>
         )
 
       }
     })
   }
-
 
   /**
    * if the search props change the search function is called
@@ -254,7 +231,6 @@ export default class DetailTraceTable extends Component<Props, State>{
     }
   }
 
-
   /**
    * sorts table according to selected parameters
    * @param name whitch parameter is clicked
@@ -265,66 +241,11 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     this.setAllOpacityLower();
 
-    switch (buttonId) {
-      case 'countButton':
-        this.setState({
-          countButton: status,
-        })
-        break;
-      case 'totalButton':
-        this.setState({
-          totalButton: status,
-        })
-        break;
-      case 'avgButton':
-        this.setState({
-          avgButton: status,
-        })
-        break;
-      case 'minButton':
-        this.setState({
-          minButton: status,
-        })
-        break;
-      case 'maxButton':
-        this.setState({
-          maxButton: status,
-        })
-        break;
-      case 'excButton':
-        this.setState({
-          excButton: status,
-        })
-        break;
-      case 'excAvgButton':
-        this.setState({
-          excAvgButton: status,
-        })
-        break;
-      case 'excMinButton':
-        this.setState({
-          excMinButton: status,
-        })
-        break;
-      case 'excMaxButton':
-        this.setState({
-          excMaxButton: status,
-        })
-        break;
+    this.setState((prevState) => ({
+      ...prevState,
+      [buttonId]: status,
+    }));
 
-      case 'nameButton':
-        this.setState({
-          nameButton: status,
-        })
-        break;
-
-      case 'percentButton':
-        this.setState({
-          percentButton: status,
-        })
-        break;
-    }
-    // get the color
     var element = document.getElementById(buttonId);
     element!.style.opacity = '1.0';
 
@@ -335,10 +256,16 @@ export default class DetailTraceTable extends Component<Props, State>{
     })
   }
 
+  /**
+   * as standard count is sorted 
+   */
   componentDidMount() {
     this.sortClick('count-Down', 'countButton', true);
   }
 
+  /**
+   * sets the opasity of all buttons lower
+   */
   setAllOpacityLower() {
 
     var allIds = ['nameButton', 'countButton', 'totalButton', 'avgButton', 'minButton', 'maxButton', 'excButton', 'excAvgButton', 'excMinButton', 'excMaxButton', 'percentButton'];

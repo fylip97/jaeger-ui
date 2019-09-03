@@ -1,7 +1,56 @@
 import React, { Component } from 'react';
 import colorGenerator from '../../../utils/color-generator';
-import { Span, Trace } from '../../../types/trace';
+import { Span} from '../../../types/trace';
+import { TableSpan } from './types'
 
+
+/**
+ * preprocessing the data if a column was clicked
+ * @param allSpans content that already exists
+ * @param rememberIndex position of the column in the table
+ * @param wholeTraceSpans whole trace information
+ * @param selectedSpan whole information of the clicked column
+ * @param sameOperationName all spans with the same operation name
+ * @param diffServiceName all spans with diffrent operation name 
+ */
+
+export function isNotClicked(allSpans: TableSpan[], rememberIndex: number, wholeTraceSpans: Span[],selectedSpan: TableSpan, sameOperationName: Span[], diffServiceName: Span[]){
+
+    allSpans[rememberIndex].child = true;
+    for (var i = 0; i < wholeTraceSpans.length; i++) {
+      if (wholeTraceSpans[i].operationName === selectedSpan.name) {
+        sameOperationName.push(wholeTraceSpans[i]);
+      }
+    }
+
+    for (var i = 0; i < sameOperationName.length; i++) {
+      if (diffServiceName.length == 0) {
+        diffServiceName.push(sameOperationName[i]);
+      } else {
+        var remember = false;
+        for (var j = 0; j < diffServiceName.length; j++) {
+          if (diffServiceName[j].process.serviceName === sameOperationName[i].process.serviceName) {
+            remember = true;
+          }
+        } if (!remember) {
+          diffServiceName.push(sameOperationName[i]);
+        }
+      }
+    }
+    var returnArray = new Array();
+    returnArray.push(diffServiceName);
+    returnArray.push(sameOperationName);
+    
+    return returnArray;
+  }
+
+/**
+ * get the clicked detail table content
+ * @param span1 all Spans with diffrent operation name
+ * @param span2 all Spans with same operation name
+ * @param wholeTrace whole information about the trace
+ * @param selectedName information of the clicked column
+ */
 
 export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: Span[], selectedName: string) {
     var addItemArray = new Array();
@@ -66,19 +115,21 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
             excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2), percent: (Math.round((percent/1)*100)/100),
             color: color, seachColor: "#ECECEC"
         };
-
         addItemArray.push(safeItem);
     }
 
     return addItemArray;
 }
 
+/**
+ * create the table content if no further column is called (is called by the constructor)
+ * @param span1 all Spans with diffrent operation name
+ * @param span2 all Spans 
+ */
 
 export function fullTableContent(span1: string[], span2: Span[]) {
 
     var allSpansTrace = new Array();
-
-
     for (var i = 0; i < span1.length; i++) {
 
         var exc = 0;
@@ -93,12 +144,9 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         var count = 0;
         var percent = 0;
         var allPercent = span2[0].duration;
-
         var onePecent = allPercent / 100;
        
-
         var resultArray = new Array();
-
         resultArray.push(exc);
         resultArray.push(excAvg);
         resultArray.push(excMin);
@@ -109,7 +157,6 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         resultArray.push(max);
         resultArray.push(count);
         resultArray.push(percent);
-
 
         for (var j = 0; j < span2.length; j++) {
             if (span1[i] === span2[j].operationName) {
@@ -123,12 +170,9 @@ export function fullTableContent(span1: string[], span2: Span[]) {
                 count = resultArray[8];
                 percent = resultArray[9];
             }
-
         }
-
         excAvg = (exc / count);
         avg = total / count;
-
         var tableSpan = {
             name: span1[i], count: count, total: (Math.round((total / 1000) * 100) / 100),
             avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
@@ -138,15 +182,20 @@ export function fullTableContent(span1: string[], span2: Span[]) {
             excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent/1)*100)/100),
             color: "", seachColor: "transparent"
         };
-
         allSpansTrace.push(tableSpan);
     }
     return allSpansTrace;
 }
-
+/**
+ * calculate the content of the row
+ * @param span 
+ * @param wholeTrace whole information of the trace
+ * @param j whitch row is calculated
+ * @param resultArray array with all variables who are calclated
+ * @param onePercent time which corresponds to 1%.
+ */
 
 function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: number[], onePercent: number) {
-
 
     resultArray[8] += 1;
     resultArray[4] += span[j].duration;
@@ -157,7 +206,7 @@ function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArr
         resultArray[7] = span[j].duration;
     }
 
-    //For each Span with the same operationName 
+    //For each span with the same operationName 
     //Do I have children?
     if (span[j].hasChildren) {
         var sumAllChildInSpan = 0;
@@ -165,9 +214,8 @@ function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArr
         for (var l = 0; l < wholeTrace.length; l++) {
             //i am a child?
             if (wholeTrace[l].references.length == 1) {
-                //ia am a child of this span?
+                //i am a child of this span?
                 if (span[j].spanID == wholeTrace[l].references[0].spanID) {
-
                     sumAllChildInSpan = sumAllChildInSpan + wholeTrace[l].duration
                 }
             }
@@ -179,7 +227,6 @@ function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArr
             resultArray[3] = span[j].duration - sumAllChildInSpan;
         }
         resultArray[0] = resultArray[0] + span[j].duration - sumAllChildInSpan;
-
     } else {
         if (resultArray[2] > (span[j].duration)) {
             resultArray[2] = span[j].duration;
@@ -190,6 +237,6 @@ function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArr
         resultArray[0] = resultArray[0] + span[j].duration;
     }
     resultArray[9] = resultArray[0] / onePercent;
+    
     return resultArray;
-
 }

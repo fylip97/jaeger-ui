@@ -11,11 +11,9 @@ export type TableSpan = {
   excMin: number;
   excMax: number;
   percent: number;
-
   key: string;
   child: boolean;
   parentElement: string;
-
   color: string;
   searchColor: string;
 

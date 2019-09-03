@@ -37,7 +37,6 @@
   border-right: 1px solid #CCCCCC;
   width: 9.09%;
   padding-left: 4em;
-
 }
 
 td {
@@ -51,7 +50,6 @@ td {
   border-left: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   border-bottom: 1px solid #CCCCCC;
-
 }
 
 #DetailTraceTableTR{
@@ -70,8 +68,7 @@ td {
 
 #serviceBorder{
   border-left: 4px solid transparent; 
-  padding-left: 0.6em;
-  
+  padding-left: 0.6em; 
 }
 
 .sortButton{

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { TableSpan } from './types'
 
 /**
- * sort the array
+ * sorts the table according to the key that is passed.
  * @param array input which is sorted
  * @param key which attribute is used for sorting
  * @param upDown How should the data be sorted? Up or down
@@ -23,7 +23,6 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
     } else {
         isNoDetail = sortByKeyDown(isNoDetail, key);
     }
-
     var diffParentNames = new Array();
     for (var i = 0; i < isDetailArray.length; i++) {
         if (diffParentNames.length == 0) {
@@ -39,9 +38,7 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
                 diffParentNames.push(isDetailArray[i]);
             }
         }
-
     }
-
     var tempArray = new Array();
     for (var j = 0; j < diffParentNames.length; j++) {
         tempArray = groupBy(isDetailArray, diffParentNames[j].parentElement)
@@ -51,7 +48,6 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
         } else {
             tempArray = sortByKeyDown(tempArray, key);
         }
-
         if (tempArray.length > 0) {
 
             // build whole array
@@ -61,14 +57,12 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
                     rememberIndex = i;
                 }
             }
-
             for (var i = 0; i < tempArray.length; i++) {
                 isNoDetail.splice(rememberIndex + 1, 0, tempArray[i]);
                 rememberIndex += 1;
             }
         }
     }
-
     return isNoDetail;
 }
 
