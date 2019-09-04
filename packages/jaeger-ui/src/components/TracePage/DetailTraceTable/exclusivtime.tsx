@@ -69,21 +69,8 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
         var percent = -1;
         var allPercent = wholeTrace[0].duration;
         var onePecent = allPercent / 100;
-        var resultArray = new Array();
         var color;
-
-        var resultArray = new Array();
-
-        resultArray.push(exc);
-        resultArray.push(excAvg);
-        resultArray.push(excMin);
-        resultArray.push(excMax);
-        resultArray.push(total);
-        resultArray.push(avg);
-        resultArray.push(min);
-        resultArray.push(max);
-        resultArray.push(count);
-        resultArray.push(percent)
+        var resultArray = [exc,excAvg,excMin,excMax,total,avg,min,max,count,percent];
 
         for (var j = 0; j < span2.length; j++) {
             if (span1[i].process.serviceName === span2[j].process.serviceName) {
@@ -144,19 +131,8 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         var count = 0;
         var percent = 0;
         var allPercent = span2[0].duration;
-        var onePecent = allPercent / 100;
-       
-        var resultArray = new Array();
-        resultArray.push(exc);
-        resultArray.push(excAvg);
-        resultArray.push(excMin);
-        resultArray.push(excMax);
-        resultArray.push(total);
-        resultArray.push(avg);
-        resultArray.push(min);
-        resultArray.push(max);
-        resultArray.push(count);
-        resultArray.push(percent);
+        var onePecent = allPercent / 100;  
+        var resultArray=[exc, excAvg,excMin,excMax,total,avg,min,max,count,percent];
 
         for (var j = 0; j < span2.length; j++) {
             if (span1[i] === span2[j].operationName) {
@@ -186,12 +162,23 @@ export function fullTableContent(span1: string[], span2: Span[]) {
     }
     return allSpansTrace;
 }
+
 /**
  * calculate the content of the row
  * @param span 
  * @param wholeTrace whole information of the trace
  * @param j whitch row is calculated
  * @param resultArray array with all variables who are calclated
+ *      0: exc
+ *      1: excAvg
+ *      2: excMin
+ *      3: excMax
+ *      4: total
+ *      5: avg
+ *      6: min
+ *      7: max
+ *      8: count
+ *      9: percent
  * @param onePercent time which corresponds to 1%.
  */
 
@@ -205,7 +192,6 @@ function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArr
     if (resultArray[7] < span[j].duration) {
         resultArray[7] = span[j].duration;
     }
-
     //For each span with the same operationName 
     //Do I have children?
     if (span[j].hasChildren) {
