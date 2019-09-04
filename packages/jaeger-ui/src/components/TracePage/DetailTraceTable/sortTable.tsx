@@ -7,7 +7,7 @@ import { TableSpan } from './types'
  * @param key which attribute is used for sorting
  * @param upDown How should the data be sorted? Up or down
  */
-export function sortTable(array: TableSpan[], key: string, upDown: string) {
+export function sortTable(array: TableSpan[], key: string, upDown: boolean) {
     var isDetailArray = new Array();
     var isNoDetail = new Array();
 
@@ -18,7 +18,7 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
             isNoDetail.push(array[i]);
         }
     }
-    if (upDown === "Up") {
+    if (upDown) {
         isNoDetail = sortByKeyUp(isNoDetail, key);
     } else {
         isNoDetail = sortByKeyDown(isNoDetail, key);
@@ -43,7 +43,7 @@ export function sortTable(array: TableSpan[], key: string, upDown: string) {
     for (var j = 0; j < diffParentNames.length; j++) {
         tempArray = groupBy(isDetailArray, diffParentNames[j].parentElement)
 
-        if (upDown === "Up") {
+        if (upDown) {
             tempArray = sortByKeyUp(tempArray, key);
         } else {
             tempArray = sortByKeyDown(tempArray, key);

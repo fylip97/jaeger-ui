@@ -11,7 +11,7 @@
   margin-bottom: 0.0%
 }
 
-#DetailTraceTableTH{
+.DetailTraceTableTH{
   background: #ECECEC;
   border: 1px solid #CCCCCC;
   font-size: 109%;
@@ -22,7 +22,7 @@
   padding-left: 1em;
 }
 
-#DetailTraceTableTD{
+.DetailTraceTableTD{
   border-left: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   width: 9.09%;
@@ -32,7 +32,7 @@
   text-overflow: ellipsis;
 }
 
-#DetailTraceTableChildTD{
+.DetailTraceTableChildTD{
   border-left: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   width: 9.09%;
@@ -62,11 +62,11 @@ td {
   cursor: pointer;
 }
 
-#DetailTraceTableTR1{
+.DetailTraceTableTR1{
   border-top: 1px solid #ECECEC;
 }
 
-#serviceBorder{
+.serviceBorder{
   border-left: 4px solid transparent; 
   padding-left: 0.6em; 
 }
@@ -76,7 +76,7 @@ td {
   background: transparent;
 }
 
-#buttonPosition{
+.buttonPosition{
   float: right;
 }
 
