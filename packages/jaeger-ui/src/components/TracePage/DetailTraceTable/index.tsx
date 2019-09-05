@@ -11,8 +11,9 @@ import { TNil } from '../../../types';
 import { searchInTable } from './searchInTable';
 import './index.css';
 import { isNotClicked } from './exclusivtime';
-
-
+import  {TableOverviewHeader}  from './tableOverviewHead'
+import { MainTableData } from './mainTableData'
+import { DetailTableData } from './detailTableData'
 
 type Props = {
   traceProps: Trace,
@@ -23,7 +24,6 @@ type State = {
   allSpans: TableSpan[],
   sortIndex: number,
   sortAsc: boolean,
-
 
 };
 
@@ -130,6 +130,8 @@ export default class DetailTraceTable extends Component<Props, State>{
       sortAsc: false,
     }
 
+    this.clickColumn=this.clickColumn.bind(this);
+    this.sortClick=this.sortClick.bind(this)
 
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
@@ -201,8 +203,8 @@ export default class DetailTraceTable extends Component<Props, State>{
     }
   }
 
-   sortClick(index: number) {
-    const { allSpans,sortIndex, sortAsc } = this.state;
+  sortClick(index: number) {
+    const { allSpans, sortIndex, sortAsc } = this.state;
 
     columnsArray[sortIndex].title;
 
@@ -224,37 +226,25 @@ export default class DetailTraceTable extends Component<Props, State>{
     this.sortClick(1);
   }
 
-
-
   /**
    * render the header of the table with the buttons needed for sorting
    */
-  renderTableHeader() { 
+  renderTableHeader() {
     const { sortIndex, sortAsc } = this.state;
-
     return (
       <tr>
         {columnsArray.map((element: any, index: number) => (
-          <th className="DetailTraceTableTH" key={element.title}>
-            {element.title}
-            <div className="buttonPosition">
-              <button className="sortButton" onClick={() => this.sortClick(index)}>
-                <Icon style={{ opacity: sortIndex == index ? 1.0 : 0.2 }} type={sortAsc && sortIndex == index ? "up" : "down"} />
-              </button>
-            </div>
-          </th>
+            <TableOverviewHeader element={element}
+            key={element.attribute}
+            sortIndex={sortIndex}
+            index={index}
+            sortClick={this.sortClick}
+            sortAsc={sortAsc} />
+           
         ))}
       </tr>
     );
   }
-
-   /*
-           {columnsArray.map((element: any, index: number) => (
-          <TableOverviewHead element={element} />    ############ Stateless Components
-        ))}
-
-
-    */
 
 
   /**
@@ -263,31 +253,33 @@ export default class DetailTraceTable extends Component<Props, State>{
   *  second return for the child 
   */
   renderTableData() {
+
     return this.state.allSpans.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, isDetail, key, exc, excAvg, excMin, excMax, percent, color, searchColor } = oneSpan
+      const { name, count, total, avg, min, max, key, exc, excAvg, excMin, excMax, percent, color, searchColor } = oneSpan
       const values: any[] = [name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
       const values2: any[] = [count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
 
       if (!oneSpan.isDetail) {
         return (
-          <tr id="DetailTraceTableTR" key={key} onClick={() => this.clickColumn(oneSpan)} style={{ background: searchColor, borderColor: searchColor }}>
-            {values.map((value, index) => (
-              <td className="DetailTraceTableTD" title={index == 0 ? value : ""}>{columnsArray[index].isDecimal ? value.toFixed(2) : value}{columnsArray[index].suffix}</td>
-            ))
-            }
-          </tr>
+          <MainTableData
+            key ={key}
+            oneSpan={oneSpan}
+            searchColor={searchColor}
+            values={values}
+            index={index}
+            columnsArray={columnsArray}
+            clickColumn={this.clickColumn} />
         )
       } else {
         return (
-          <tr className="DetailTraceTableTR1" key={key} style={{ background: searchColor, borderColor: searchColor }}>
-            <td className="DetailTraceTableChildTD" ><label className="serviceBorder" style={{ borderColor: color }}>{name}</label></td>
-            {values2.map((value, index) => (
-              <td className="DetailTraceTableTD" >{columnsArray[index + 1].isDecimal ? (Number)(value).toFixed(2) : value}{columnsArray[index + 1].suffix}</td>
-            ))
-            }
-          </tr>
+          <DetailTableData
+            key={oneSpan.key}
+            name={oneSpan.name}
+            searchColor={searchColor}
+            values2={values2}
+            columnsArray={columnsArray}
+            color={color} />
         )
-
       }
     })
   }
