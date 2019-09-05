@@ -13,7 +13,6 @@ import { TableSpan } from './types'
  * @param sameOperationName all spans with the same operation name
  * @param diffServiceName all spans with diffrent operation name 
  */
-
 export function isNotClicked(allSpans: TableSpan[], rememberIndex: number, wholeTraceSpans: Span[],selectedSpan: TableSpan, sameOperationName: Span[], diffServiceName: Span[]){
 
     allSpans[rememberIndex].child = true;
@@ -51,7 +50,6 @@ export function isNotClicked(allSpans: TableSpan[], rememberIndex: number, whole
  * @param wholeTrace whole information about the trace
  * @param selectedName information of the clicked column
  */
-
 export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: Span[], selectedName: string) {
     var addItemArray = new Array();
 
@@ -85,7 +83,6 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
                 count = resultArray[8];
                 percent = resultArray[9];
             }
-
         }
         avg = total / count;
         excAvg = exc / count;
@@ -113,7 +110,6 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
  * @param span1 all Spans with diffrent operation name
  * @param span2 all Spans 
  */
-
 export function fullTableContent(span1: string[], span2: Span[]) {
 
     var allSpansTrace = new Array();
@@ -181,7 +177,6 @@ export function fullTableContent(span1: string[], span2: Span[]) {
  *      9: percent
  * @param onePercent time which corresponds to 1%.
  */
-
 function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: number[], onePercent: number) {
 
     resultArray[8] += 1;

@@ -52,11 +52,11 @@ td {
   border-bottom: 1px solid #CCCCCC;
 }
 
-#DetailTraceTableTR{
+.DetailTraceTableTR{
   border-top: 1px solid #FFFFFF;
 }
 
-#DetailTraceTableTR:hover {
+.DetailTraceTableTR:hover {
   background: #FAFAFA;
   color: black;
   cursor: pointer;

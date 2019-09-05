@@ -1,17 +1,14 @@
 import React, { Component } from 'react';
-
-
 import { Trace } from '../../../types/trace';
 import { TableSpan } from './types'
 import { getDetailTableContent } from './exclusivtime'
 import { fullTableContent } from './exclusivtime'
 import { sortTable } from './sortTable'
-import { Icon } from 'antd';
 import { TNil } from '../../../types';
 import { searchInTable } from './searchInTable';
 import './index.css';
 import { isNotClicked } from './exclusivtime';
-import  {TableOverviewHeader}  from './tableOverviewHead'
+import { TableOverviewHeader } from './tableOverviewHead'
 import { MainTableData } from './mainTableData'
 import { DetailTableData } from './detailTableData'
 
@@ -119,9 +116,7 @@ export default class DetailTraceTable extends Component<Props, State>{
         }
       }
     }
-
     var allSpansTrace = Array();
-
     allSpansTrace = fullTableContent(allSpansDiffOpName, allSpans);
 
     this.state = {
@@ -129,11 +124,10 @@ export default class DetailTraceTable extends Component<Props, State>{
       sortIndex: 0,
       sortAsc: false,
     }
-
-    this.clickColumn=this.clickColumn.bind(this);
-    this.sortClick=this.sortClick.bind(this)
-
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
+
+    this.clickColumn = this.clickColumn.bind(this);
+    this.sortClick = this.sortClick.bind(this);
   }
 
   /**
@@ -156,11 +150,9 @@ export default class DetailTraceTable extends Component<Props, State>{
       if (allSpans[i].name === selectedSpan.name) {
         isClicked = allSpans[i].child
         rememberIndex = i;
-
       }
     }
     if (!isClicked) {
-
       var tempArray = isNotClicked(allSpans, rememberIndex, wholeTraceSpans, selectedSpan, sameOperationName, diffServiceName);
       addItemArray = getDetailTableContent(tempArray[0], tempArray[1], wholeTraceSpans, selectedSpan.name);
       var rememberIndex = 0;
@@ -189,7 +181,6 @@ export default class DetailTraceTable extends Component<Props, State>{
       allSpans: allSpans,
 
     });
-
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
 
@@ -203,16 +194,17 @@ export default class DetailTraceTable extends Component<Props, State>{
     }
   }
 
+  /**
+   * decides how to sort
+   * @param index is the index of the clicked column
+   */
   sortClick(index: number) {
     const { allSpans, sortIndex, sortAsc } = this.state;
-
-    columnsArray[sortIndex].title;
-
     if (sortIndex != index) {
       this.setState({
         sortIndex: index,
         sortAsc: false,
-        allSpans: sortTable(allSpans, columnsArray[index].attribute, sortAsc),
+        allSpans: sortTable(allSpans, columnsArray[index].attribute, false),
       });
     } else {
       this.setState({
@@ -234,18 +226,16 @@ export default class DetailTraceTable extends Component<Props, State>{
     return (
       <tr>
         {columnsArray.map((element: any, index: number) => (
-            <TableOverviewHeader element={element}
+          <TableOverviewHeader element={element}
             key={element.attribute}
             sortIndex={sortIndex}
             index={index}
             sortClick={this.sortClick}
             sortAsc={sortAsc} />
-           
         ))}
       </tr>
     );
   }
-
 
   /**
   * render the table data
@@ -262,7 +252,7 @@ export default class DetailTraceTable extends Component<Props, State>{
       if (!oneSpan.isDetail) {
         return (
           <MainTableData
-            key ={key}
+            key={key}
             oneSpan={oneSpan}
             searchColor={searchColor}
             values={values}
@@ -299,12 +289,3 @@ export default class DetailTraceTable extends Component<Props, State>{
   }
 
 }
-
-
-
-
-
-
-
-
-
