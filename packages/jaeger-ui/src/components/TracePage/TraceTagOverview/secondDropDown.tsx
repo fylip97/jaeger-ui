@@ -2,45 +2,61 @@ import React, { Component } from 'react';
 import { Icon } from 'antd';
 import './tagDropdown.css';
 import { Trace } from '../../../types/trace';
-import { getValue } from './dropDownValue';
+import { getValue } from './secondDropDownValue';
 import { getColumnValues } from './tableValues';
 import { TableSpan } from './types'
+import * as _ from 'lodash';
+
 
 
 
 type Props = {
     trace: Trace,
     handler: (tableSpan: TableSpan[]) => void;
-    changeIsSelected : ()=> void;
-    setTagDropdownTitle: (title: string)=> void;
+    isSelected: boolean,
+    tableValue: TableSpan[],
+    tagDropdownTitle: string,
 }
 
 type State = {
     displayMenu: boolean,
     title: string[],
     titleTag: string,
-
-
 }
 
 
-export default class TagDropdown extends Component<Props, State>{
+export default class SecondDropDown extends Component<Props, State>{
     constructor(props: any) {
         super(props);
 
-        var test = getValue(this.props.trace);
+        var list = getValue(this.props.tableValue, this.props.trace, this.props.tagDropdownTitle);
         this.state = {
             displayMenu: false,
-            title: test,
+            title: list,
             titleTag: "No Item is clicked",
         };
 
         this.showDropdownMenu = this.showDropdownMenu.bind(this);
         this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
-
+    
 
     };
+
+    componentDidUpdate=(prevProps:Props)=>{
+
+        if(prevProps.tagDropdownTitle!==this.props.tagDropdownTitle){
+           this.setState({
+               titleTag:"No Item is selected",
+           }) 
+        }
+
+        if(!_.isEqual(this.state.title,getValue(this.props.tableValue, this.props.trace, this.props.tagDropdownTitle)) ){
+            this.setState({
+            title:getValue(this.props.tableValue, this.props.trace, this.props.tagDropdownTitle)
+            })
+        }    
+    }
 
     showDropdownMenu(event: any) {
         event.preventDefault();
@@ -62,13 +78,11 @@ export default class TagDropdown extends Component<Props, State>{
             
         })
         this.props.handler(getColumnValues(title, this.props.trace));
-        this.props.changeIsSelected();
-        this.props.setTagDropdownTitle(title);
     }
 
     render() {
         return (
-            <div className="dropdown" >
+            <div className="dropdown" style={!this.props.isSelected ?{visibility:'hidden'}: {visibility:'visible'}} >
                 <div><label id="dropDownLabel" onClick={this.showDropdownMenu}>{this.state.titleTag}</label> <button id="buttonDropDown" onClick={this.showDropdownMenu}><Icon type={this.state.displayMenu ? 'up' : 'down'} /></button></div>
                 {this.state.displayMenu ? (
                     <ul>

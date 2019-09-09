@@ -4,6 +4,7 @@ import { Span} from '../../../types/trace';
 import { TableSpan } from './types'
 
 
+
 /**
  * preprocessing the data if a column was clicked
  * @param allSpans content that already exists
@@ -177,7 +178,7 @@ export function fullTableContent(span1: string[], span2: Span[]) {
  *      9: percent
  * @param onePercent time which corresponds to 1%.
  */
-function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: number[], onePercent: number) {
+export function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: number[], onePercent: number) {
 
     resultArray[8] += 1;
     resultArray[4] += span[j].duration;

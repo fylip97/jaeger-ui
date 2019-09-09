@@ -1,5 +1,5 @@
 import React from 'react';
-import './index.css';
+import './detailTableData.css';
 
 export const DetailTableData = (props: any) => {
   return (

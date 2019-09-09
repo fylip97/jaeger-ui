@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icon } from 'antd';
-import './index.css';
+import './tableOverviewHead.css';
 
 export const TableOverviewHeader = (props: any) => {
   return (

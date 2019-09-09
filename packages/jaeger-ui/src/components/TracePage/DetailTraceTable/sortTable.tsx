@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { TableSpan } from './types'
 
+
+
 /**
  * sorts the table according to the key that is passed.
  * @param array input which is sorted
  * @param key which attribute is used for sorting
  * @param upDown How should the data be sorted? Up or down
  */
-export function sortTable(array: TableSpan[], key: string, upDown: boolean) {
+export function sortTable(array: any[], key: string, upDown: boolean) {
+    console.log("test");
     var isDetailArray = new Array();
     var isNoDetail = new Array();
 

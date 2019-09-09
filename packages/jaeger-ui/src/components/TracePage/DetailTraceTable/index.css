@@ -11,73 +11,9 @@
   margin-bottom: 0.0%
 }
 
-.DetailTraceTableTH{
-  background: #ECECEC;
-  border: 1px solid #CCCCCC;
-  font-size: 109%;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #232323;
-  font-weight: 15;
-  line-height: 2em;
-  padding-left: 1em;
-}
-
-.DetailTraceTableTD{
-  border-left: 1px solid #CCCCCC;
-  border-right: 1px solid #CCCCCC;
-  width: 9.09%;
-  padding-left: 1em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.DetailTraceTableChildTD{
-  border-left: 1px solid #CCCCCC;
-  border-right: 1px solid #CCCCCC;
-  width: 9.09%;
-  padding-left: 4em;
-}
-
-td {
-  max-width: 30em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 #DetailTraceTableTbody{
   border-left: 1px solid #CCCCCC;
   border-right: 1px solid #CCCCCC;
   border-bottom: 1px solid #CCCCCC;
 }
-
-.DetailTraceTableTR{
-  border-top: 1px solid #FFFFFF;
-}
-
-.DetailTraceTableTR:hover {
-  background: #FAFAFA;
-  color: black;
-  cursor: pointer;
-}
-
-.DetailTraceTableTR1{
-  border-top: 1px solid #ECECEC;
-}
-
-.serviceBorder{
-  border-left: 4px solid transparent; 
-  padding-left: 0.6em; 
-}
-
-.sortButton{
-  border: none;
-  background: transparent;
-}
-
-.buttonPosition{
-  float: right;
-}
-
 

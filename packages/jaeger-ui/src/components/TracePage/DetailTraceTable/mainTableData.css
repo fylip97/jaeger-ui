@@ -1,0 +1,26 @@
+.DetailTraceTableTD{
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    padding-left: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  td {
+    max-width: 30em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+
+  .DetailTraceTableTR{
+    border-top: 1px solid #FFFFFF;
+  }
+  
+  .DetailTraceTableTR:hover {
+    background: #FAFAFA;
+    color: black;
+    cursor: pointer;
+  }
