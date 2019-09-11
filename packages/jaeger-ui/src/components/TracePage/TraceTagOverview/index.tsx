@@ -5,8 +5,10 @@ import SecondDropDown from './secondDropDown'
 import { Trace } from '../../../types/trace';
 import { TableOverviewHeader } from '../DetailTraceTable/tableOverviewHead';
 import { MainTableData } from '../DetailTraceTable/mainTableData';
+import { DetailTableData } from '../DetailTraceTable/detailTableData'
 import { TableSpan } from './types';
 import { sortTable } from '../DetailTraceTable/sortTable';
+import * as _ from 'lodash';
 
 type Props = {
   trace: Trace,
@@ -109,7 +111,7 @@ export default class TraceTagOverview extends Component<Props, State>{
     this.sortClick = this.sortClick.bind(this);
     this.changeIsSelected = this.changeIsSelected.bind(this);
     this.setTagDropdownTitle = this.setTagDropdownTitle.bind(this);
-  
+
   }
 
   /**
@@ -141,6 +143,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
 
+
   /**
    * is called from the child to change the state of the parent
    * @param tableValue the values of the column
@@ -150,39 +153,60 @@ export default class TraceTagOverview extends Component<Props, State>{
     this.setState({
       tableValue: tableValue
     })
+
   }
 
-  changeIsSelected(){
+  componentDidUpdate(prevProps:Props,prevState:State){
+
+    if(prevState.tableValue.length!=this.state.tableValue.length){
+      this.sortClick(1);  
+    }
+    
+  }
+
+  changeIsSelected() {
     this.setState({
-      isSelected:true,
+      isSelected: true,
     })
   }
 
-  setTagDropdownTitle(title: string){
+  setTagDropdownTitle(title: string) {
     this.setState({
       tagDropdownTitle: title,
     })
   }
 
-  renderTableData() {
 
+  renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
       const { name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent } = oneSpan
       const values: any[] = [name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
+      const values2: any[] = [count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
 
-      return (
-        <MainTableData
-          key={index}
-          oneSpan={oneSpan}
-          searchColor={'transparent'}
-          values={values}
-          index={index}
-          columnsArray={columnsArray}
-          clickColumn={this.noClick} />
-      )
+      if (!oneSpan.isDetail) {
+        return (
+          <MainTableData
+            key={name}
+            oneSpan={oneSpan}
+            searchColor={"transparent"}
+            values={values}
+            index={index}
+            columnsArray={columnsArray}
+            clickColumn={this.noClick} />
+        )
+      } else {
+        return (
+          <DetailTableData
+            key={oneSpan.name}
+            name={oneSpan.name}
+            searchColor={"#ECECEC"}
+            values2={values2}
+            columnsArray={columnsArray}
+            color={"red"} />
+        )
+      }
     })
   }
-
 
   renderTableHead() {
     var { sortAsc, sortIndex } = this.state
@@ -208,12 +232,12 @@ export default class TraceTagOverview extends Component<Props, State>{
         <h3 id="title"> Trace Tag View</h3>
         <TagDropdown trace={this.props.trace}
           handler={this.handler}
-          changeIsSelected ={ this.changeIsSelected}
+          changeIsSelected={this.changeIsSelected}
           setTagDropdownTitle={this.setTagDropdownTitle}
         />
         <SecondDropDown trace={this.props.trace}
           handler={this.handler}
-          isSelected ={this.state.isSelected}
+          isSelected={this.state.isSelected}
           tableValue={this.state.tableValue}
           tagDropdownTitle={this.state.tagDropdownTitle}
         />

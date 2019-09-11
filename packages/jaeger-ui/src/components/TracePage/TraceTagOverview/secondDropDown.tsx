@@ -3,7 +3,7 @@ import { Icon } from 'antd';
 import './tagDropdown.css';
 import { Trace } from '../../../types/trace';
 import { getValue } from './secondDropDownValue';
-import { getColumnValues } from './tableValues';
+import { getColumnValues, getColumnValuesSecondDropdown } from './tableValues';
 import { TableSpan } from './types'
 import * as _ from 'lodash';
 
@@ -77,7 +77,10 @@ export default class SecondDropDown extends Component<Props, State>{
             titleTag: title,
             
         })
-        this.props.handler(getColumnValues(title, this.props.trace));
+        this.props.handler(getColumnValuesSecondDropdown(this.props.tableValue,this.props.tagDropdownTitle,title,this.props.trace));
+        
+
+        
     }
 
     render() {

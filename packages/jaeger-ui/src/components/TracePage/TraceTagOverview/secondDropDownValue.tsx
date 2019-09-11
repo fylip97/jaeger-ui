@@ -40,7 +40,6 @@ export function getValue(tableValue: TableSpan[], trace: Trace, tagDropdownTitle
     for (var i = 0; i < list.size; i++) {
         availableTags.push(iterator.next().value)
     }
-    console.log(availableTags);
     return availableTags;
 
 
