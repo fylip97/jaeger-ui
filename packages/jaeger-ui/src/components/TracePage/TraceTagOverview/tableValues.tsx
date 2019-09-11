@@ -82,13 +82,13 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
         var oneColumn = {
             name: name, count: count, total: (Math.round((total / 1000) * 100) / 100),
             avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
-            max: (Math.round((max / 1000) * 100) / 100), isDetail: false, key: name,
+            max: (Math.round((max / 1000) * 100) / 100), isDetail: false,
             exc: (Math.round((exc / 1000) * 100) / 100),
             excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
             excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
             color: "", seachColor: "transparent"
         }
-
+        console.log(oneColumn)
         allValuesColumn.push(oneColumn);
 
     }
@@ -125,7 +125,7 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
     var oneColumn = {
         name: "rest", count: count, total: (Math.round((total / 1000) * 100) / 100),
         avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
-        max: (Math.round((max / 1000) * 100) / 100), isDetail: false, key: "rest",
+        max: (Math.round((max / 1000) * 100) / 100), isDetail: false,
         exc: (Math.round((exc / 1000) * 100) / 100),
         excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
         excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
@@ -249,13 +249,14 @@ export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], se
             var oneColumn = {
                 name: name, count: count, total: (Math.round((total / 1000) * 100) / 100),
                 avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
-                max: (Math.round((max / 1000) * 100) / 100), isDetail: true, key: "new",
+                max: (Math.round((max / 1000) * 100) / 100), isDetail: true, 
                 exc: (Math.round((exc / 1000) * 100) / 100),
                 excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
                 excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
-                color: "red", seachColor: "transparent", parentElement: actualTableValues[i].name,
+                color: "green", seachColor: "transparent", parentElement: actualTableValues[i].name,
             }
             allValuesColumn.push(oneColumn);
+            console.log(oneColumn);
 
         }
         newTableValues.push(actualTableValues[i]);

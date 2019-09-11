@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Icon } from 'antd';
+import { Button, Dropdown, Icon, Menu } from 'antd';
 import './tagDropdown.css';
 import { Trace } from '../../../types/trace';
 import { getValue } from './dropDownValue';
@@ -11,8 +11,8 @@ import { TableSpan } from './types'
 type Props = {
     trace: Trace,
     handler: (tableSpan: TableSpan[]) => void;
-    changeIsSelected : ()=> void;
-    setTagDropdownTitle: (title: string)=> void;
+    changeIsSelected: () => void;
+    setTagDropdownTitle: (title: string) => void;
 }
 
 type State = {
@@ -59,7 +59,7 @@ export default class TagDropdown extends Component<Props, State>{
     tagIsClicked(title: string) {
         this.setState({
             titleTag: title,
-            
+
         })
         this.props.handler(getColumnValues(title, this.props.trace));
         this.props.changeIsSelected();
@@ -67,23 +67,22 @@ export default class TagDropdown extends Component<Props, State>{
     }
 
     render() {
+        const menu = (<Menu>
+            {this.state.title.map((title: any, index: number) => (
+                <Menu.Item key={title}>
+                    <a onClick={() => this.tagIsClicked(title)} role="button">{title}</a>
+                </Menu.Item>
+            ))}
+        </Menu>)
         return (
-            <div className="dropdown" >
-                <div><label id="dropDownLabel" onClick={this.showDropdownMenu}>{this.state.titleTag}</label> <button id="buttonDropDown" onClick={this.showDropdownMenu}><Icon type={this.state.displayMenu ? 'up' : 'down'} /></button></div>
-                {this.state.displayMenu ? (
-                    <ul>
-                        {this.state.title.map((title: any) => (
-                            <li key={title}><label onClick={() => this.tagIsClicked(title)}>{title}</label></li>
+            <div className="dropdown">
+                <Dropdown overlay={menu} >
+                    <Button> {this.state.titleTag} <Icon type={'down'} /></Button>
+                </Dropdown>
 
-                        ))}
-                    </ul>
-                ) :
-                    (
-                        null
-                    )
-                }
             </div>
 
         );
+
     }
 }

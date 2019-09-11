@@ -1,31 +1,9 @@
 .dropdown{
-
-    width: 12%;
-    border: 1px solid #CCCCCC;
+    padding-top: 0.6em;
+    padding-bottom: 0.6em;
+    padding-left: 0.6em;
     position: relative;
     display: inline-block;
 }
 
-#dropDownLabel{
 
-    width: 100%;
-    background: transparent;
-}
-
-#buttonDropDown{
-    float: right;
-    border: none;
-    background: transparent;
-
-}
-
-ul {
-    position: absolute;
-    z-index: 1;
-    background-color: white;
-    width: 100%;
-    border: 1px solid #CCCCCC;
-    margin-top: 2px;
-
-    
-}

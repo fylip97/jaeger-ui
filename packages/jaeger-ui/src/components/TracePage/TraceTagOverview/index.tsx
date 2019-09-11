@@ -134,34 +134,27 @@ export default class TraceTagOverview extends Component<Props, State>{
     }
   }
 
-
   /**
    * 
    */
   noClick() {
 
   }
-
-
-
   /**
    * is called from the child to change the state of the parent
    * @param tableValue the values of the column
    */
   handler(tableValue: TableSpan[]) {
 
-    this.setState({
-      tableValue: tableValue
-    })
+    this.setState((previousState, currentProps) => {
+      return {
+        ...previousState,
+        tableValue: tableValue,
+        sortIndex: 1,
+        sortAsc: false,
+      };
+    });
 
-  }
-
-  componentDidUpdate(prevProps:Props,prevState:State){
-
-    if(prevState.tableValue.length!=this.state.tableValue.length){
-      this.sortClick(1);  
-    }
-    
   }
 
   changeIsSelected() {
@@ -177,6 +170,14 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+
+    if (this.state.tableValue.length != prevState.tableValue.length) {
+
+      this.sortClick(1);
+    }
+  }
+
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
       const { name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent } = oneSpan
@@ -186,7 +187,7 @@ export default class TraceTagOverview extends Component<Props, State>{
       if (!oneSpan.isDetail) {
         return (
           <MainTableData
-            key={name}
+            key={name + index}
             oneSpan={oneSpan}
             searchColor={"transparent"}
             values={values}
@@ -197,12 +198,12 @@ export default class TraceTagOverview extends Component<Props, State>{
       } else {
         return (
           <DetailTableData
-            key={oneSpan.name}
+            key={oneSpan.name + index}
             name={oneSpan.name}
             searchColor={"#ECECEC"}
             values2={values2}
             columnsArray={columnsArray}
-            color={"red"} />
+            color={"#807F7F"} />
         )
       }
     })
@@ -231,11 +232,13 @@ export default class TraceTagOverview extends Component<Props, State>{
       <div>
         <h3 id="title"> Trace Tag View</h3>
         <TagDropdown trace={this.props.trace}
+          key={'main'}
           handler={this.handler}
           changeIsSelected={this.changeIsSelected}
           setTagDropdownTitle={this.setTagDropdownTitle}
         />
         <SecondDropDown trace={this.props.trace}
+          key={'child'}
           handler={this.handler}
           isSelected={this.state.isSelected}
           tableValue={this.state.tableValue}

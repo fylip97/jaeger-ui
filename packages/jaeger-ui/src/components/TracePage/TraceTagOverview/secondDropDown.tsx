@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Icon } from 'antd';
+import { Button, Dropdown, Icon, Menu } from 'antd';
 import './tagDropdown.css';
 import { Trace } from '../../../types/trace';
 import { getValue } from './secondDropDownValue';
@@ -39,23 +39,23 @@ export default class SecondDropDown extends Component<Props, State>{
         this.showDropdownMenu = this.showDropdownMenu.bind(this);
         this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
-    
+
 
     };
 
-    componentDidUpdate=(prevProps:Props)=>{
+    componentDidUpdate = (prevProps: Props) => {
 
-        if(prevProps.tagDropdownTitle!==this.props.tagDropdownTitle){
-           this.setState({
-               titleTag:"No Item is selected",
-           }) 
+        if (prevProps.tagDropdownTitle !== this.props.tagDropdownTitle) {
+            this.setState({
+                titleTag: "No Item is selected",
+            })
         }
 
-        if(!_.isEqual(this.state.title,getValue(this.props.tableValue, this.props.trace, this.props.tagDropdownTitle)) ){
+        if (!_.isEqual(this.state.title, getValue(this.props.tableValue, this.props.trace, this.props.tagDropdownTitle))) {
             this.setState({
-            title:getValue(this.props.tableValue, this.props.trace, this.props.tagDropdownTitle)
+                title: getValue(this.props.tableValue, this.props.trace, this.props.tagDropdownTitle)
             })
-        }    
+        }
     }
 
     showDropdownMenu(event: any) {
@@ -75,30 +75,29 @@ export default class SecondDropDown extends Component<Props, State>{
     tagIsClicked(title: string) {
         this.setState({
             titleTag: title,
-            
-        })
-        this.props.handler(getColumnValuesSecondDropdown(this.props.tableValue,this.props.tagDropdownTitle,title,this.props.trace));
-        
 
-        
+        })
+        this.props.handler(getColumnValuesSecondDropdown(this.props.tableValue, this.props.tagDropdownTitle, title, this.props.trace));
+
+
+
     }
 
     render() {
-        return (
-            <div className="dropdown" style={!this.props.isSelected ?{visibility:'hidden'}: {visibility:'visible'}} >
-                <div><label id="dropDownLabel" onClick={this.showDropdownMenu}>{this.state.titleTag}</label> <button id="buttonDropDown" onClick={this.showDropdownMenu}><Icon type={this.state.displayMenu ? 'up' : 'down'} /></button></div>
-                {this.state.displayMenu ? (
-                    <ul>
-                        {this.state.title.map((title: any) => (
-                            <li key={title}><label onClick={() => this.tagIsClicked(title)}>{title}</label></li>
 
-                        ))}
-                    </ul>
-                ) :
-                    (
-                        null
-                    )
-                }
+        const menu = (<Menu>
+            {this.state.title.map((title: any, index: number) => (
+                <Menu.Item key={index}>
+                    <a onClick={() => this.tagIsClicked(title)} role="button">{title}</a>
+                </Menu.Item>
+            ))}
+        </Menu>)
+        return (
+            <div className="dropdown" style={!this.props.isSelected ? { visibility: 'hidden' } : { visibility: 'visible' }}>
+                <Dropdown overlay={menu} >
+                    <Button> {this.state.titleTag} <Icon type={'down'} /></Button>
+                </Dropdown>
+
             </div>
 
         );
