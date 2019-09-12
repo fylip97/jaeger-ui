@@ -6,7 +6,6 @@
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     width: 9.09%;
-    padding-left: 2em;
   }
 
   td {
@@ -18,14 +17,14 @@
 
   .serviceBorder{
     border-left: 4px solid transparent; 
-    padding-left: 0.6em; 
+    
   }
 
   .DetailTraceTableTD{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     width: 9.09%;
-    padding-left: 1em;
+  
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

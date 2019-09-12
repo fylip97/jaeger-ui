@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import colorGenerator from '../../../utils/color-generator';
-import { Span} from '../../../types/trace';
+import { Span } from '../../../types/trace';
 import { TableSpan } from './types'
 
 
@@ -14,35 +14,35 @@ import { TableSpan } from './types'
  * @param sameOperationName all spans with the same operation name
  * @param diffServiceName all spans with diffrent operation name 
  */
-export function isNotClicked(allSpans: TableSpan[], rememberIndex: number, wholeTraceSpans: Span[],selectedSpan: TableSpan, sameOperationName: Span[], diffServiceName: Span[]){
+export function isNotClicked(allSpans: TableSpan[], rememberIndex: number, wholeTraceSpans: Span[], selectedSpan: TableSpan, sameOperationName: Span[], diffServiceName: Span[]) {
 
     allSpans[rememberIndex].child = true;
     for (var i = 0; i < wholeTraceSpans.length; i++) {
-      if (wholeTraceSpans[i].operationName === selectedSpan.name) {
-        sameOperationName.push(wholeTraceSpans[i]);
-      }
+        if (wholeTraceSpans[i].operationName === selectedSpan.name) {
+            sameOperationName.push(wholeTraceSpans[i]);
+        }
     }
 
     for (var i = 0; i < sameOperationName.length; i++) {
-      if (diffServiceName.length == 0) {
-        diffServiceName.push(sameOperationName[i]);
-      } else {
-        var remember = false;
-        for (var j = 0; j < diffServiceName.length; j++) {
-          if (diffServiceName[j].process.serviceName === sameOperationName[i].process.serviceName) {
-            remember = true;
-          }
-        } if (!remember) {
-          diffServiceName.push(sameOperationName[i]);
+        if (diffServiceName.length == 0) {
+            diffServiceName.push(sameOperationName[i]);
+        } else {
+            var remember = false;
+            for (var j = 0; j < diffServiceName.length; j++) {
+                if (diffServiceName[j].process.serviceName === sameOperationName[i].process.serviceName) {
+                    remember = true;
+                }
+            } if (!remember) {
+                diffServiceName.push(sameOperationName[i]);
+            }
         }
-      }
     }
     var returnArray = new Array();
     returnArray.push(diffServiceName);
     returnArray.push(sameOperationName);
-    
+
     return returnArray;
-  }
+}
 
 /**
  * get the clicked detail table content
@@ -69,7 +69,7 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
         var allPercent = wholeTrace[0].duration;
         var onePecent = allPercent / 100;
         var color;
-        var resultArray = [exc,excAvg,excMin,excMax,total,avg,min,max,count,percent];
+        var resultArray = [exc, excAvg, excMin, excMax, total, avg, min, max, count, percent];
 
         for (var j = 0; j < span2.length; j++) {
             if (span1[i].process.serviceName === span2[j].process.serviceName) {
@@ -97,7 +97,7 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
             max: (Math.round((max / 1000) * 100) / 100).toFixed(2), isDetail: true, key: span1[i].operationName + i,
             child: false, parentElement: selectedName, exc: (Math.round((exc / 1000) * 100) / 100).toFixed(2),
             excAvg: (Math.round((excAvg / 1000) * 100) / 100).toFixed(2), excMin: (Math.round((excMin / 1000) * 100) / 100).toFixed(2),
-            excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2), percent: (Math.round((percent/1)*100)/100),
+            excMax: (Math.round((excMax / 1000) * 100) / 100).toFixed(2), percent: (Math.round((percent / 1) * 100) / 100),
             color: color, seachColor: "#ECECEC"
         };
         addItemArray.push(safeItem);
@@ -105,6 +105,9 @@ export function getDetailTableContent(span1: Span[], span2: Span[], wholeTrace: 
 
     return addItemArray;
 }
+
+
+
 
 /**
  * create the table content if no further column is called (is called by the constructor)
@@ -128,8 +131,8 @@ export function fullTableContent(span1: string[], span2: Span[]) {
         var count = 0;
         var percent = 0;
         var allPercent = span2[0].duration;
-        var onePecent = allPercent / 100;  
-        var resultArray=[exc, excAvg,excMin,excMax,total,avg,min,max,count,percent];
+        var onePecent = allPercent / 100;
+        var resultArray = [exc, excAvg, excMin, excMax, total, avg, min, max, count, percent];
 
         for (var j = 0; j < span2.length; j++) {
             if (span1[i] === span2[j].operationName) {
@@ -152,13 +155,14 @@ export function fullTableContent(span1: string[], span2: Span[]) {
             max: (Math.round((max / 1000) * 100) / 100), isDetail: false, key: span1[i], child: false, parentElement: "none",
             exc: (Math.round((exc / 1000) * 100) / 100),
             excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
-            excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent/1)*100)/100),
+            excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
             color: "", seachColor: "transparent"
         };
         allSpansTrace.push(tableSpan);
     }
     return allSpansTrace;
 }
+
 
 /**
  * calculate the content of the row
@@ -219,6 +223,146 @@ export function calculateContent(span: Span[], wholeTrace: Span[], j: number, re
         resultArray[0] = resultArray[0] + span[j].duration;
     }
     resultArray[9] = resultArray[0] / onePercent;
-    
+
     return resultArray;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// new
+
+export function getDiffServiceName(allSpans: Span[]) {
+
+    var diffServiceNameS = new Set();
+    for (var i = 0; i < allSpans.length; i++) {
+        diffServiceNameS.add(allSpans[i].process.serviceName);
+    }
+    // set into array
+    var diffServiceNameA = new Array();
+    var iterator = diffServiceNameS.values();
+    for (var j = 0; j < diffServiceNameS.size; j++) {
+        diffServiceNameA.push(iterator.next().value)
+    }
+    return diffServiceNameA
+}
+
+
+export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
+
+    var allSpansTrace = new Array();
+
+    for (var i = 0; i < diffServiceName.length; i++) {
+        var exc = 0;
+        var excAvg = 0;
+        var excMin = allSpans[0].duration;
+        var excMax = 0;
+        //avg && min && max
+        var total = 0;
+        var avg = 0;
+        var min = allSpans[0].duration;
+        var max = 0;
+        var count = 0;
+        var percent = 0;
+        var allPercent = allSpans[0].duration;
+        var onePecent = allPercent / 100;
+        var color;
+        var resultArray = [exc, excAvg, excMin, excMax, total, avg, min, max, count, percent];
+
+        for (var j = 0; j < allSpans.length; j++) {
+            if (allSpans[j].process.serviceName === diffServiceName[i]) {
+                resultArray = calculateContent(allSpans, allSpans, j, resultArray, onePecent);
+                exc = resultArray[0];
+                excMin = resultArray[2];
+                excMax = resultArray[3];
+                total = resultArray[4];
+                min = resultArray[6];
+                max = resultArray[7];
+                count = resultArray[8];
+                percent = resultArray[9];
+
+                color = colorGenerator.getColorByKey(allSpans[j].process.serviceName)
+            }
+        }
+
+        excAvg = (exc / count);
+        avg = total / count;
+        
+        var tableSpan = {
+            name: diffServiceName[i], count: count, total: (Math.round((total / 1000) * 100) / 100),
+            avg: 0, min: 0,
+            max: 0, isDetail: false, key: diffServiceName[i], child: false, parentElement: "none",
+            exc: 0,
+            excAvg: 0, excMin: 0,
+            excMax: 0, percent: 0,
+            color: color, seachColor: "transparent"
+        };
+        allSpansTrace.push(tableSpan);
+    }
+    return allSpansTrace;
+}
+
+
+
+export function getDetailContent(selectedSpan: Span[], diffOperationNames : string[],  allSpans: Span[]){
+
+    var detail = new Array();
+    for(var i =0; i< diffOperationNames.length; i++){
+
+        var exc = 0;
+        var excAvg = 0;
+        var excMin = allSpans[0].duration;
+        var excMax = 0;
+        //avg && min && max
+        var total = 0;
+        var avg = 0;
+        var min = allSpans[0].duration;
+        var max = 0;
+        var count = 0;
+        var percent = 0;
+        var allPercent = allSpans[0].duration;
+        var onePecent = allPercent / 100;
+        var resultArray = [exc, excAvg, excMin, excMax, total, avg, min, max, count, percent];
+
+        for(var j =0; j<selectedSpan.length;j++){
+            if(diffOperationNames[i] === selectedSpan[j].operationName){
+
+                resultArray = calculateContent(selectedSpan, allSpans, j, resultArray, onePecent);
+                exc = resultArray[0];
+                excMin = resultArray[2];
+                excMax = resultArray[3];
+                total = resultArray[4];
+                min = resultArray[6];
+                max = resultArray[7];
+                count = resultArray[8];
+                percent = resultArray[9];
+
+            }
+        }
+        excAvg = (exc / count);
+        avg = total / count;
+        var tableSpan = {
+            name: diffOperationNames[i], count: count, total: (Math.round((total / 1000) * 100) / 100),
+            avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
+            max: (Math.round((max / 1000) * 100) / 100), isDetail: true, key: diffOperationNames[i], child: false, parentElement: selectedSpan[i].process.serviceName,
+            exc: (Math.round((exc / 1000) * 100) / 100),
+            excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
+            excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
+            color: "", seachColor: "transparent"
+        };
+
+        detail.push(tableSpan);
+
+    }
+
+    return detail;
+
 }
