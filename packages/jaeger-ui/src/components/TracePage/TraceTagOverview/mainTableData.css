@@ -1,4 +1,4 @@
-.DetailTraceTableTD{
+.MainTableDataTD{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     padding-left: 1em;
@@ -15,11 +15,12 @@
   }
 
 
-  .DetailTraceTableTR{
+  .MainTableDataTR{
     border-top: 1px solid #FFFFFF;
+
   }
   
-  .DetailTraceTableTR:hover {
+  .MainTableDataTR:hover {
     background: #FAFAFA;
     color: black;
     cursor: pointer;

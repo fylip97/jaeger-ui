@@ -8,20 +8,22 @@ import { TableSpan } from './types'
 import * as _ from 'lodash';
 
 
-
-
 type Props = {
     trace: Trace,
     handler: (tableSpan: TableSpan[]) => void;
     isSelected: boolean,
     tableValue: TableSpan[],
     tagDropdownTitle: string,
+    setSecondTagDropdownTitle: (title: string) => void;
+    secondTagDropdownTitle: string,
+
 }
 
 type State = {
     displayMenu: boolean,
     title: string[],
     titleTag: string,
+    
 }
 
 
@@ -45,6 +47,8 @@ export default class SecondDropDown extends Component<Props, State>{
 
     componentDidUpdate = (prevProps: Props) => {
 
+    
+        
         if (prevProps.tagDropdownTitle !== this.props.tagDropdownTitle) {
             this.setState({
                 titleTag: "No Item is selected",
@@ -78,8 +82,7 @@ export default class SecondDropDown extends Component<Props, State>{
 
         })
         this.props.handler(getColumnValuesSecondDropdown(this.props.tableValue, this.props.tagDropdownTitle, title, this.props.trace));
-
-
+        this.props.setSecondTagDropdownTitle(title);
 
     }
 
@@ -95,7 +98,7 @@ export default class SecondDropDown extends Component<Props, State>{
         return (
             <div className="dropdown" style={!this.props.isSelected ? { visibility: 'hidden' } : { visibility: 'visible' }}>
                 <Dropdown overlay={menu} >
-                    <Button> {this.state.titleTag} <Icon type={'down'} /></Button>
+                    <Button> {this.props.secondTagDropdownTitle} <Icon type={'down'} /></Button>
                 </Dropdown>
 
             </div>

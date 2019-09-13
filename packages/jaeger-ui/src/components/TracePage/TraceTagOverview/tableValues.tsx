@@ -78,18 +78,7 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
 
         excAvg = exc / count;
         avg = total / count;
-
-        var oneColumn = {
-            name: name, count: count, total: (Math.round((total / 1000) * 100) / 100),
-            avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
-            max: (Math.round((max / 1000) * 100) / 100), isDetail: false,
-            exc: (Math.round((exc / 1000) * 100) / 100),
-            excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
-            excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
-            color: "", seachColor: "transparent"
-        }
-        console.log(oneColumn)
-        allValuesColumn.push(oneColumn);
+        allValuesColumn.push(buildOneColumn(name, count, total, avg, min, max, false, exc, excAvg, excMin, excMax, percent, "", "transparent", ""));
 
     }
 
@@ -120,18 +109,10 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
         percent = resultArray[9];
 
     }
-    excAvg = exc/count;
-    avg = total/count;
-    var oneColumn = {
-        name: "rest", count: count, total: (Math.round((total / 1000) * 100) / 100),
-        avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
-        max: (Math.round((max / 1000) * 100) / 100), isDetail: false,
-        exc: (Math.round((exc / 1000) * 100) / 100),
-        excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
-        excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
-        color: "", seachColor: "transparent"
-    }
-    allValuesColumn.push(oneColumn);
+    excAvg = exc / count;
+    avg = total / count;
+
+    allValuesColumn.push(buildOneColumn("rest", count, total, avg, min, max, false, exc, excAvg, excMin, excMax, percent, "", "transparent", ""));
     return allValuesColumn;
 }
 
@@ -142,7 +123,6 @@ export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], se
     var allSpans = trace.spans;
     var allSpansWithMoreKeys = new Array();
     var newTableValues = new Array();
-
 
     // save all Spans with more than one tag key
     for (var i = 0; i < allSpans.length; i++) {
@@ -167,106 +147,114 @@ export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], se
             }
         }
         if (check && check2) {
-            allSpansWithSelectedTagKey.push(allSpansWithMoreKeys[i])
+            allSpansWithSelectedTagKey.push(allSpansWithMoreKeys[i]);
         }
     }
 
     for (var i = 0; i < actualTableValues.length; i++) {
-        // same Value firstDropdown
-        var sameValue = new Array();
+        if (!actualTableValues[i].isDetail) {
+            // same Value firstDropdown
+            var sameValue = new Array();
 
-        for (var j = 0; j < allSpansWithSelectedTagKey.length; j++) {
-            var check = false;
-            for (var l = 0; l < allSpansWithSelectedTagKey[j].tags.length; l++) {
+            for (var j = 0; j < allSpansWithSelectedTagKey.length; j++) {
+                var check = false;
+                for (var l = 0; l < allSpansWithSelectedTagKey[j].tags.length; l++) {
 
 
-                if (actualTableValues[i].name === allSpansWithSelectedTagKey[j].tags[l].value) {
-                    check = true;
+                    if (actualTableValues[i].name === allSpansWithSelectedTagKey[j].tags[l].value) {
+                        check = true;
+                    }
                 }
-
-            }
-            if (check) {
-                sameValue.push(allSpansWithSelectedTagKey[j]);
-
-            }
-        }
-        // finde verschiede values im zweiten dropdown
-        var diffSecondValues = new Set();
-        for (var j = 0; j < sameValue.length; j++) {
-            for (var l = 0; l < sameValue[j].tags.length; l++) {
-
-                if (sameValue[j].tags[l].key === selectedTagKeySecond) {
-                    diffSecondValues.add(sameValue[j].tags[l].value);
+                if (check) {
+                    sameValue.push(allSpansWithSelectedTagKey[j]);
                 }
             }
-        }
-        // set into array
-        var diffSecondValuesA = new Array();
-        var iterator = diffSecondValues.values();
-        for (var j = 0; j < diffSecondValues.size; j++) {
-            diffSecondValuesA.push(iterator.next().value)
-        }
-        var allValuesColumn = Array();
-        for (var j = 0; j < diffSecondValuesA.length; j++) {
+            // finde verschiede values im zweiten dropdown
+            var diffSecondValues = new Set();
+            for (var j = 0; j < sameValue.length; j++) {
+                for (var l = 0; l < sameValue[j].tags.length; l++) {
 
-            // werte setzten
-            var exc = 0;
-            var excAvg = 0;
-            var excMin = allSpans[0].duration;
-            var excMax = 0;
-            var name = "" + diffSecondValuesA[j];
-            var count = 0;
-            var total = 0;
-            var avg = 0;
-            var min = allSpans[0].duration;
-            var max = 0;
-            var percent = 0;
-            var allPercent = allSpans[0].duration;
-            var onePecent = allPercent / 100;
-            var resultArray = [exc, excAvg, excMin, excMax, total, avg, min, max, count, percent];
-
-            for (var l = 0; l < sameValue.length; l++) {
-
-                for (var a = 0; a < sameValue[l].tags.length; a++) {
-
-                    if (diffSecondValuesA[j] === sameValue[l].tags[a].value) {
-                        // rechne
-                        resultArray = calculateContent(sameValue, allSpans, l, resultArray, onePecent);
-                        exc = resultArray[0];
-                        excMin = resultArray[2];
-                        excMax = resultArray[3];
-                        total = resultArray[4];
-                        min = resultArray[6];
-                        max = resultArray[7];
-                        count = resultArray[8];
-                        percent = resultArray[9];
+                    if (sameValue[j].tags[l].key === selectedTagKeySecond) {
+                        diffSecondValues.add(sameValue[j].tags[l].value);
                     }
                 }
             }
-            excAvg = exc / count;
-            avg = total / count;
-
-            var oneColumn = {
-                name: name, count: count, total: (Math.round((total / 1000) * 100) / 100),
-                avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
-                max: (Math.round((max / 1000) * 100) / 100), isDetail: true, 
-                exc: (Math.round((exc / 1000) * 100) / 100),
-                excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
-                excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
-                color: "green", seachColor: "transparent", parentElement: actualTableValues[i].name,
+            // set into array
+            var diffSecondValuesA = new Array();
+            var iterator = diffSecondValues.values();
+            for (var j = 0; j < diffSecondValues.size; j++) {
+                diffSecondValuesA.push(iterator.next().value)
             }
-            allValuesColumn.push(oneColumn);
-            console.log(oneColumn);
+            var allValuesColumn = Array();
+            for (var j = 0; j < diffSecondValuesA.length; j++) {
 
-        }
-        newTableValues.push(actualTableValues[i]);
+                // werte setzten
+                var exc = 0;
+                var excAvg = 0;
+                var excMin = allSpans[0].duration;
+                var excMax = 0;
+                var name = "" + diffSecondValuesA[j];
+                var count = 0;
+                var total = 0;
+                var avg = 0;
+                var min = allSpans[0].duration;
+                var max = 0;
+                var percent = 0;
+                var allPercent = allSpans[0].duration;
+                var onePecent = allPercent / 100;
+                var resultArray = [exc, excAvg, excMin, excMax, total, avg, min, max, count, percent];
 
-        if (allValuesColumn.length != 0) {
-            for (var j = 0; j < allValuesColumn.length; j++) {
-                newTableValues.push(allValuesColumn[j]);
+                for (var l = 0; l < sameValue.length; l++) {
+
+                    for (var a = 0; a < sameValue[l].tags.length; a++) {
+                        if (diffSecondValuesA[j] === sameValue[l].tags[a].value) {
+
+                            resultArray = calculateContent(sameValue, allSpans, l, resultArray, onePecent);
+                            exc = resultArray[0];
+                            excMin = resultArray[2];
+                            excMax = resultArray[3];
+                            total = resultArray[4];
+                            min = resultArray[6];
+                            max = resultArray[7];
+                            count = resultArray[8];
+                            percent = resultArray[9];
+                        }
+                    }
+                }
+                excAvg = exc / count;
+                avg = total / count;
+
+                allValuesColumn.push(buildOneColumn(name, count, total, avg, min, max, true, exc, excAvg, excMin, excMax, percent, "", "transparent", actualTableValues[i].name));
             }
 
+
+            newTableValues.push(actualTableValues[i]);
+
+
+            if (allValuesColumn.length != 0) {
+                for (var j = 0; j < allValuesColumn.length; j++) {
+                    newTableValues.push(allValuesColumn[j]);
+                }
+            }
         }
     }
     return newTableValues;
+}
+
+function buildOneColumn(name: string, count: number, total: number, avg: number,
+    min: number, max: number, isDetail: boolean, exc: number, excAvg: number,
+    excMin: number, excMax: number, percent: number, color: string, seachColor: string,
+    parentElement: string) {
+
+    var oneColumn = {
+        name: name, count: count, total: (Math.round((total / 1000) * 100) / 100),
+        avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
+        max: (Math.round((max / 1000) * 100) / 100), isDetail: isDetail,
+        exc: (Math.round((exc / 1000) * 100) / 100),
+        excAvg: (Math.round((excAvg / 1000) * 100) / 100), excMin: (Math.round((excMin / 1000) * 100) / 100),
+        excMax: (Math.round((excMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
+        color: color, seachColor: seachColor, parentElement: parentElement,
+    }
+    return oneColumn;
+
 }

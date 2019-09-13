@@ -11,9 +11,7 @@ import { searchInTable } from './searchInTable';
 import './index.css';
 import { isNotClicked } from './exclusivtime';
 import { TableOverviewHeader } from './tableOverviewHead';
-import { MainTableData } from './mainTableData';
 import { DetailTableContent } from './detailTableContent'
-import { DetailTableData } from './detailTableData';
 import { MainTableContent } from './mainTableContent';
 import { getDetailContent } from './exclusivtime';
 
@@ -103,45 +101,6 @@ export default class DetailTraceTable extends Component<Props, State>{
   constructor(props: any) {
     super(props);
 
-
-    /*
-    var allSpans = this.props.traceProps.spans;
-    var allSpansDiffOpName = new Array();
-
-    for (var i = 0; i < allSpans.length; i++) {
-      if (allSpansDiffOpName.length == 0) {
-        allSpansDiffOpName.push(allSpans[i].operationName);
-      } else {
-        var sameName = false;
-        for (var j = 0; j < allSpansDiffOpName.length; j++) {
-          if (allSpansDiffOpName[j] === allSpans[i].operationName) {
-            sameName = true;
-          }
-        }
-        if (!sameName) {
-          allSpansDiffOpName.push(allSpans[i].operationName);
-        }
-      }
-    }
-    var allSpansTrace = Array();
-    allSpansTrace = fullTableContent(allSpansDiffOpName, allSpans);
-
-    this.state = {
-      allSpans: allSpansTrace,
-      sortIndex: 0,
-      sortAsc: false,
-    }
-
-    searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
-
-    this.clickColumn = this.clickColumn.bind(this);
-    this.sortClick = this.sortClick.bind(this);
-    */
-
-    // ----------------------------------------------------------------------------------------------------------
-    //----------------------new------------------------------------------------------------------------
-
-
     var allSpans = new Array();
     allSpans = this.props.traceProps.spans;
     var diffServiceName = getDiffServiceName(allSpans)
@@ -157,14 +116,14 @@ export default class DetailTraceTable extends Component<Props, State>{
 
   }
 
-   /**
-   * when clicking on column
-   *  shows the child if the column has not been clicked before
-   *  does not show the children any more if the column has been clicked before
-   * @param selectedSpan the column who is been clicked
-   */
+  /**
+  * when clicking on column
+  *  shows the child if the column has not been clicked before
+  *  does not show the children any more if the column has been clicked before
+  * @param selectedSpan the column who is been clicked
+  */
   clickColumn2(selectedSpan: TableSpan) {
-    
+
     var allSpans = this.props.traceProps.spans;
     var spanServName = new Array();
     var allTableSpans = this.state.allSpans;
@@ -183,7 +142,7 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     if (!isClicked) {
 
-      allTableSpans[rememberIndex].child= true;
+      allTableSpans[rememberIndex].child = true;
       for (var i = 0; i < allSpans.length; i++) {
 
         if (selectedSpan.name === allSpans[i].process.serviceName) {
@@ -277,7 +236,7 @@ export default class DetailTraceTable extends Component<Props, State>{
   renderTableHeader() {
     const { sortIndex, sortAsc } = this.state;
     return (
-      <tr>
+      <tr id="test">
         {columnsArray.map((element: any, index: number) => (
           <TableOverviewHeader element={element}
             key={element.attribute}
@@ -300,12 +259,10 @@ export default class DetailTraceTable extends Component<Props, State>{
     return this.state.allSpans.map((oneSpan, index) => {
       const { name, count, total, avg, min, max, key, exc, excAvg, excMin, excMax, percent, color, searchColor } = oneSpan
       const values: any[] = [count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
-      const values2: any[] = [name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
-
       if (!oneSpan.isDetail) {
         return (
           <MainTableContent
-            key={key+index+"main"}
+            key={key + index + "main"}
             oneSpan={oneSpan}
             name={oneSpan.name}
             searchColor={searchColor}
@@ -319,7 +276,7 @@ export default class DetailTraceTable extends Component<Props, State>{
       } else {
         return (
           <DetailTableContent
-            key={oneSpan.key+index+"child"}
+            key={oneSpan.key + index + "child"}
             name={oneSpan.name}
             searchColor={searchColor}
             values={values}
@@ -334,7 +291,7 @@ export default class DetailTraceTable extends Component<Props, State>{
     return (
       <div id="mainDiv">
         <h3 id='title'>Trace Detail</h3>
-        <table>
+        <table id="test" >
           <tbody id="DetailTraceTableTbody">
             {this.renderTableHeader()}
             {this.renderTableData()}

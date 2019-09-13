@@ -1,11 +1,12 @@
-.DetailTraceTableTR1{
+.DetailTraceTableTR{
     border-top: 1px solid #ECECEC;
   }
 
-  .DetailTraceTableChildTD{
-    border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #CCCCCC;
-    width: 9.09%;
+  .DetailTableContentTDL{
+    padding-left: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   td {
@@ -20,10 +21,9 @@
     padding-left: 0.6em; 
   }
 
-  .DetailTraceTableTD{
+  .DetailTableContentTD{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
-    width: 9.09%;
     padding-left: 1em;
     white-space: nowrap;
     overflow: hidden;

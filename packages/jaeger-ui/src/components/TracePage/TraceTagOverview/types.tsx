@@ -11,5 +11,6 @@ export type TableSpan = {
   excMax: number;
   percent: number;
   isDetail: boolean;
+  parentElement: string;
 
 }

@@ -4,10 +4,12 @@ import TagDropdown from './tagDropdown'
 import SecondDropDown from './secondDropDown'
 import { Trace } from '../../../types/trace';
 import { TableOverviewHeader } from '../DetailTraceTable/tableOverviewHead';
-import { MainTableData } from '../DetailTraceTable/mainTableData';
-import { DetailTableData } from '../DetailTraceTable/detailTableData'
+import { MainTableData } from './mainTableData';
+import { DetailTableData } from './detailTableData'
 import { TableSpan } from './types';
 import { sortTable } from '../DetailTraceTable/sortTable';
+
+import PopupSQL from './popupSQL';
 import * as _ from 'lodash';
 
 type Props = {
@@ -20,6 +22,11 @@ type State = {
   sortAsc: boolean,
   isSelected: boolean,
   tagDropdownTitle: string,
+  secondTagDropdownTitle: string,
+
+  showPopup: boolean,
+  popupContent: string,
+
 
 };
 
@@ -105,13 +112,19 @@ export default class TraceTagOverview extends Component<Props, State>{
       sortAsc: false,
       isSelected: false,
       tagDropdownTitle: "",
+
+      showPopup: false,
+      secondTagDropdownTitle: "No item selected",
+      popupContent: "",
+  
     }
 
     this.handler = this.handler.bind(this);
     this.sortClick = this.sortClick.bind(this);
     this.changeIsSelected = this.changeIsSelected.bind(this);
     this.setTagDropdownTitle = this.setTagDropdownTitle.bind(this);
-
+    this.setSecondDropdownTitle = this.setSecondDropdownTitle.bind(this);
+    this.togglePopup = this.togglePopup.bind(this);
   }
 
   /**
@@ -134,12 +147,7 @@ export default class TraceTagOverview extends Component<Props, State>{
     }
   }
 
-  /**
-   * 
-   */
-  noClick() {
 
-  }
   /**
    * is called from the child to change the state of the parent
    * @param tableValue the values of the column
@@ -168,6 +176,11 @@ export default class TraceTagOverview extends Component<Props, State>{
       tagDropdownTitle: title,
     })
   }
+  setSecondDropdownTitle(title:string){
+    this.setState({
+      secondTagDropdownTitle: title,
+    })
+  }
 
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -178,9 +191,20 @@ export default class TraceTagOverview extends Component<Props, State>{
     }
   }
 
+
+  togglePopup(popupContent:string) {
+
+    this.setState({
+      showPopup: !this.state.showPopup,
+      popupContent: popupContent,
+    })
+  }
+
+  
+
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent } = oneSpan
+      const { name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent} = oneSpan
       const values: any[] = [name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
       const values2: any[] = [count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
 
@@ -191,9 +215,9 @@ export default class TraceTagOverview extends Component<Props, State>{
             oneSpan={oneSpan}
             searchColor={"transparent"}
             values={values}
-            index={index}
-            columnsArray={columnsArray}
-            clickColumn={this.noClick} />
+            columnsArray={columnsArray} 
+            togglePopup={this.togglePopup}
+            tagDropdownTitle={this.state.tagDropdownTitle} />
         )
       } else {
         return (
@@ -203,7 +227,9 @@ export default class TraceTagOverview extends Component<Props, State>{
             searchColor={"#ECECEC"}
             values2={values2}
             columnsArray={columnsArray}
-            color={"#807F7F"} />
+            color={"#807F7F"} 
+            togglePopup ={this.togglePopup}
+            secondTagDropdownTitle ={this.state.secondTagDropdownTitle}/>
         )
       }
     })
@@ -226,7 +252,6 @@ export default class TraceTagOverview extends Component<Props, State>{
 
   }
 
-
   render() {
     return (
       <div>
@@ -236,6 +261,7 @@ export default class TraceTagOverview extends Component<Props, State>{
           handler={this.handler}
           changeIsSelected={this.changeIsSelected}
           setTagDropdownTitle={this.setTagDropdownTitle}
+          setSecondDropdownTitle={this.setSecondDropdownTitle}
         />
         <SecondDropDown trace={this.props.trace}
           key={'child'}
@@ -243,13 +269,25 @@ export default class TraceTagOverview extends Component<Props, State>{
           isSelected={this.state.isSelected}
           tableValue={this.state.tableValue}
           tagDropdownTitle={this.state.tagDropdownTitle}
+          setSecondTagDropdownTitle={this.setSecondDropdownTitle}
+          secondTagDropdownTitle={this.state.secondTagDropdownTitle}
         />
+
+        {this.state.showPopup ?
+          <PopupSQL
+            closePopup={this.togglePopup}
+            popupContent={this.state.popupContent}
+           
+          />
+          : null
+        }
         <table>
           <tbody id="DetailTraceTableTbody">
             {this.renderTableHead()}
             {this.renderTableData()}
           </tbody>
         </table>
+
       </div>
     )
   }

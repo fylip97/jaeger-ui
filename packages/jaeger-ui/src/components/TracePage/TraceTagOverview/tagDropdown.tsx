@@ -13,14 +13,13 @@ type Props = {
     handler: (tableSpan: TableSpan[]) => void;
     changeIsSelected: () => void;
     setTagDropdownTitle: (title: string) => void;
+    setSecondDropdownTitle: (title:string) => void;
 }
 
 type State = {
     displayMenu: boolean,
     title: string[],
     titleTag: string,
-
-
 }
 
 
@@ -32,14 +31,12 @@ export default class TagDropdown extends Component<Props, State>{
         this.state = {
             displayMenu: false,
             title: test,
-            titleTag: "No Item is clicked",
+            titleTag: "No item selected",
         };
 
         this.showDropdownMenu = this.showDropdownMenu.bind(this);
         this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
-
-
     };
 
     showDropdownMenu(event: any) {
@@ -53,7 +50,6 @@ export default class TagDropdown extends Component<Props, State>{
         this.setState({ displayMenu: false }, () => {
             document.removeEventListener('click', this.hideDropdownMenu);
         });
-
     }
 
     tagIsClicked(title: string) {
@@ -63,7 +59,8 @@ export default class TagDropdown extends Component<Props, State>{
         })
         this.props.handler(getColumnValues(title, this.props.trace));
         this.props.changeIsSelected();
-        this.props.setTagDropdownTitle(title);
+        this.props.setTagDropdownTitle(title)
+        this.props.setSecondDropdownTitle("No item selected");
     }
 
     render() {
@@ -83,6 +80,5 @@ export default class TagDropdown extends Component<Props, State>{
             </div>
 
         );
-
     }
 }

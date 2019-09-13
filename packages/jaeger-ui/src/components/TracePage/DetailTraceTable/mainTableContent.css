@@ -1,11 +1,11 @@
-.DetailTraceTableTR1{
+.MainTableContentTR1{
     border-top: 1px solid #ECECEC;
   }
 
   .DetailTraceTableChildTD{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
-    width: 9.09%;
+    
   }
 
   td {
@@ -20,12 +20,17 @@
     
   }
 
-  .DetailTraceTableTD{
+  .MainTableContentTD{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
-    width: 9.09%;
-  
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-left: 1em;
+  }
+
+  .MainTableContentTR1:hover {
+    background: #FAFAFA;
+    color: black;
+    cursor: pointer;
   }

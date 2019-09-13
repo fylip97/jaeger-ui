@@ -4,7 +4,7 @@ import './tableOverviewHead.css';
 
 export const TableOverviewHeader = (props: any) => {
   return (
-    <th className="DetailTraceTableTH">
+    <th className="DetailTraceTableTH"  style= {{width: Math.round(window.innerWidth * 0.2)}}>
       {props.element.title}
       <div className="buttonPosition">
         <button className="sortButton" onClick={() => props.sortClick(props.index)}>
