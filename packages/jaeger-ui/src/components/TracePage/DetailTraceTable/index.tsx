@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import { TableSpan } from './types';
-import { getDetailTableContent } from './exclusivtime';
+
 import { getDiffServiceName } from './exclusivtime';
 import { getMainContent } from './exclusivtime';
-import { fullTableContent } from './exclusivtime';
+
 import { sortTable } from './sortTable';
 import { TNil } from '../../../types';
 import { searchInTable } from './searchInTable';
 import './index.css';
-import { isNotClicked } from './exclusivtime';
 import { TableOverviewHeader } from './tableOverviewHead';
 import { DetailTableContent } from './detailTableContent'
 import { MainTableContent } from './mainTableContent';
@@ -111,7 +110,7 @@ export default class DetailTraceTable extends Component<Props, State>{
       sortAsc: false,
     }
     this.sortClick = this.sortClick.bind(this);
-    this.clickColumn2 = this.clickColumn2.bind(this);
+    this.clickColumn = this.clickColumn.bind(this);
 
 
   }
@@ -122,7 +121,7 @@ export default class DetailTraceTable extends Component<Props, State>{
   *  does not show the children any more if the column has been clicked before
   * @param selectedSpan the column who is been clicked
   */
-  clickColumn2(selectedSpan: TableSpan) {
+  clickColumn(selectedSpan: TableSpan) {
 
     var allSpans = this.props.traceProps.spans;
     var spanServName = new Array();
@@ -269,7 +268,7 @@ export default class DetailTraceTable extends Component<Props, State>{
             values={values}
             index={index}
             columnsArray={columnsArray}
-            clickColumn2={this.clickColumn2}
+            clickColumn={this.clickColumn}
             color={color}
           />
         )
