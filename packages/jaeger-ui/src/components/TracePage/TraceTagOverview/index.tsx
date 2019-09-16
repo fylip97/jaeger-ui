@@ -116,7 +116,7 @@ export default class TraceTagOverview extends Component<Props, State>{
       showPopup: false,
       secondTagDropdownTitle: "No item selected",
       popupContent: "",
-  
+
     }
 
     this.handler = this.handler.bind(this);
@@ -132,17 +132,18 @@ export default class TraceTagOverview extends Component<Props, State>{
    * @param index the index of the clicked column
    */
   sortClick(index: number) {
+    
     const { tableValue, sortIndex, sortAsc } = this.state;
     if (sortIndex != index) {
       this.setState({
         sortIndex: index,
         sortAsc: false,
-        tableValue: sortTable(tableValue, columnsArray[index].attribute, false),
+        tableValue: this.splitRest(tableValue, index, false),
       });
     } else {
       this.setState({
         sortAsc: !sortAsc,
-        tableValue: sortTable(tableValue, columnsArray[index].attribute, !sortAsc),
+        tableValue: this.splitRest(tableValue, index, !sortAsc),
       });
     }
   }
@@ -154,6 +155,9 @@ export default class TraceTagOverview extends Component<Props, State>{
    */
   handler(tableValue: TableSpan[]) {
 
+    const { sortIndex, sortAsc } = this.state;
+
+
     this.setState((previousState, currentProps) => {
       return {
         ...previousState,
@@ -163,7 +167,33 @@ export default class TraceTagOverview extends Component<Props, State>{
       };
     });
 
+    this.setState({
+      tableValue: this.splitRest(tableValue, 1, false)
+    })
   }
+
+
+  splitRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
+
+    var rememberIndex = -1;
+    console.log(tableValue);
+    var sortArray = new Array();
+    for (var i = 0; i < tableValue.length; i++) {
+      if (tableValue[i].name !== 'rest') {
+        sortArray.push(tableValue[i]);
+      }
+      else {
+        rememberIndex = i;
+      }
+    }
+    sortArray = sortTable(sortArray, columnsArray[sortIndex].attribute, sortAsc);
+    if (rememberIndex != -1) {
+      sortArray.push(tableValue[rememberIndex]);
+    }
+    return sortArray
+  }
+
+
 
   changeIsSelected() {
     this.setState({
@@ -176,7 +206,7 @@ export default class TraceTagOverview extends Component<Props, State>{
       tagDropdownTitle: title,
     })
   }
-  setSecondDropdownTitle(title:string){
+  setSecondDropdownTitle(title: string) {
     this.setState({
       secondTagDropdownTitle: title,
     })
@@ -187,12 +217,13 @@ export default class TraceTagOverview extends Component<Props, State>{
 
     if (this.state.tableValue.length != prevState.tableValue.length) {
 
-      this.sortClick(1);
+      console.log("hey");
+      //this.sortClick(1);
     }
   }
 
 
-  togglePopup(popupContent:string) {
+  togglePopup(popupContent: string) {
 
     this.setState({
       showPopup: !this.state.showPopup,
@@ -200,11 +231,11 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
-  
+
 
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent} = oneSpan
+      const { name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent } = oneSpan
       const values: any[] = [name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
       const values2: any[] = [count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
 
@@ -215,7 +246,7 @@ export default class TraceTagOverview extends Component<Props, State>{
             oneSpan={oneSpan}
             searchColor={"transparent"}
             values={values}
-            columnsArray={columnsArray} 
+            columnsArray={columnsArray}
             togglePopup={this.togglePopup}
             tagDropdownTitle={this.state.tagDropdownTitle} />
         )
@@ -227,9 +258,9 @@ export default class TraceTagOverview extends Component<Props, State>{
             searchColor={"#ECECEC"}
             values2={values2}
             columnsArray={columnsArray}
-            color={"#807F7F"} 
-            togglePopup ={this.togglePopup}
-            secondTagDropdownTitle ={this.state.secondTagDropdownTitle}/>
+            color={"#807F7F"}
+            togglePopup={this.togglePopup}
+            secondTagDropdownTitle={this.state.secondTagDropdownTitle} />
         )
       }
     })
@@ -277,7 +308,7 @@ export default class TraceTagOverview extends Component<Props, State>{
           <PopupSQL
             closePopup={this.togglePopup}
             popupContent={this.state.popupContent}
-           
+
           />
           : null
         }

@@ -26,7 +26,6 @@ type State = {
     
 }
 
-
 export default class SecondDropDown extends Component<Props, State>{
     constructor(props: any) {
         super(props);

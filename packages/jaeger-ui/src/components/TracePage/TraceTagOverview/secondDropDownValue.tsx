@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { TableSpan } from './types'
 import { Trace } from '../../../types/trace';
 
+
+/**
+ * return the value of the second dropdown
+ * @param tableValue actual table values
+ * @param trace whole information about the trace
+ * @param tagDropdownTitle the title of the first dropdown. it is needed to find out what is being searched for
+ */
 export function getValue(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
 
     var allSpans = trace.spans

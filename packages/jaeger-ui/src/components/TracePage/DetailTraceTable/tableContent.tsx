@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import colorGenerator from '../../../utils/color-generator';
 import { Span } from '../../../types/trace';
-import { TableSpan } from './types'
-
 
 
 /**
@@ -84,11 +82,15 @@ export function getDiffServiceName(allSpans: Span[]) {
     return diffServiceNameA
 }
 
+/**
+ * returns the content of the table
+ * @param allSpans all spans contained in the trace
+ * @param diffServiceName list of all diffrent service names
+ */
 
 export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
 
     var allSpansTrace = new Array();
-
     for (var i = 0; i < diffServiceName.length; i++) {
         var exc = 0;
         var excAvg = 0;
@@ -126,7 +128,7 @@ export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
         avg = total / count;
 
         var tableSpan = {
-            name: diffServiceName[i], count: count, total: (Math.round((total / 1000) * 100) / 100),
+            name: diffServiceName[i], count: count, total: 0,
             avg: 0, min: 0,
             max: 0, isDetail: false, key: diffServiceName[i], child: false, parentElement: "none",
             exc: 0,
@@ -139,7 +141,12 @@ export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
     return allSpansTrace;
 }
 
-
+/**
+ * returns the detail content of the table
+ * @param selectedSpan spna who is selected
+ * @param diffOperationNames list of the diffrent operation names who are in the selected span 
+ * @param allSpans list off all Spans in the trace
+ */
 
 export function getDetailContent(selectedSpan: Span[], diffOperationNames: string[], allSpans: Span[]) {
 

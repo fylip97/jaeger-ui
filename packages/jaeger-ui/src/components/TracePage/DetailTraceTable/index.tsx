@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import { TableSpan } from './types';
 
-import { getDiffServiceName } from './exclusivtime';
-import { getMainContent } from './exclusivtime';
+import { getDiffServiceName } from './tableContent';
+import { getMainContent } from './tableContent';
 
 import { sortTable } from './sortTable';
 import { TNil } from '../../../types';
@@ -12,7 +12,7 @@ import './index.css';
 import { TableOverviewHeader } from './tableOverviewHead';
 import { DetailTableContent } from './detailTableContent'
 import { MainTableContent } from './mainTableContent';
-import { getDetailContent } from './exclusivtime';
+import { getDetailContent } from './tableContent';
 
 type Props = {
   traceProps: Trace,

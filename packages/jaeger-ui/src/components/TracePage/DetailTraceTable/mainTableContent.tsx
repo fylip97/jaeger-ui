@@ -1,6 +1,11 @@
 import React from 'react';
 import './mainTableContent.css';
 
+/**
+ * returns the detail table content
+ * @param props all information needed to create the table
+ */
+
 export const MainTableContent = (props: any) => {
   return (
     <tr className="MainTableContentTR1" style={{ background: props.searchColor, borderColor: props.searchColor }}>

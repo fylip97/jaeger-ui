@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
-import { calculateContent } from '../DetailTraceTable/exclusivtime';
+import { calculateContent } from '../DetailTraceTable/tableContent';
 import { TableSpan } from './types';
 
 
-
+/**
+ * returns the values of the table shown after the selection of the first dropdown   
+ * @param selectedTagKey the key which was selected
+ * @param trace 
+ */
 export function getColumnValues(selectedTagKey: string, trace: Trace) {
 
     var allSpansWithSelectedKey = new Array();
@@ -30,15 +34,12 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
         }
     }
 
-
-
     // set into array
     var diffrentKeyValuesA = new Array();
     var iterator = diffrentKeyValues.values();
     for (var i = 0; i < diffrentKeyValues.size; i++) {
         diffrentKeyValuesA.push(iterator.next().value)
     }
-
 
     var allValuesColumn = Array();
     for (var i = 0; i < diffrentKeyValuesA.length; i++) {
@@ -116,8 +117,13 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
     return allValuesColumn;
 }
 
-
-
+/**
+ * returns the values of the table shown after the selection of the second dropdown 
+ * @param actualTableValues actual values of the table
+ * @param selectedTagKey first key which is selected
+ * @param selectedTagKeySecond second key which is selected
+ * @param trace whole information about the trace
+ */
 export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace) {
 
     var allSpans = trace.spans;

@@ -6,14 +6,12 @@ import { getValue } from './dropDownValue';
 import { getColumnValues } from './tableValues';
 import { TableSpan } from './types'
 
-
-
 type Props = {
     trace: Trace,
     handler: (tableSpan: TableSpan[]) => void;
     changeIsSelected: () => void;
     setTagDropdownTitle: (title: string) => void;
-    setSecondDropdownTitle: (title:string) => void;
+    setSecondDropdownTitle: (title: string) => void;
 }
 
 type State = {
@@ -22,15 +20,14 @@ type State = {
     titleTag: string,
 }
 
-
 export default class TagDropdown extends Component<Props, State>{
     constructor(props: any) {
         super(props);
 
-        var test = getValue(this.props.trace);
+        var content = getValue(this.props.trace);
         this.state = {
             displayMenu: false,
-            title: test,
+            title: content,
             titleTag: "No item selected",
         };
 
@@ -38,14 +35,19 @@ export default class TagDropdown extends Component<Props, State>{
         this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
     };
-
+    /**
+     * show the dropdown menu 
+     * @param event 
+     */
     showDropdownMenu(event: any) {
         event.preventDefault();
         this.setState({ displayMenu: true }, () => {
             document.addEventListener('click', this.hideDropdownMenu);
         });
     }
-
+    /**
+     * hide the dropdown
+     */
     hideDropdownMenu() {
         this.setState({ displayMenu: false }, () => {
             document.removeEventListener('click', this.hideDropdownMenu);
@@ -55,7 +57,6 @@ export default class TagDropdown extends Component<Props, State>{
     tagIsClicked(title: string) {
         this.setState({
             titleTag: title,
-
         })
         this.props.handler(getColumnValues(title, this.props.trace));
         this.props.changeIsSelected();

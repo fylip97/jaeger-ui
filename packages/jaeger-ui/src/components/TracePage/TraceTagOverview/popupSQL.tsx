@@ -7,7 +7,9 @@ type Props = {
     popupContent: string,
     
 }
-
+/**
+ * render the popup that is needed for sql
+ */
 export default class PopupSQL extends Component<Props>{
 
     render(){

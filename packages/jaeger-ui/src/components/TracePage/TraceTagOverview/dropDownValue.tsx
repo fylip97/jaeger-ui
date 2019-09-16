@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 
-
-
+/**
+ * returns the value of the dropdown
+ * @param trace all informations about the trace
+ */
 export function getValue(trace: Trace) {
 
     var allTagKeys = new Set();
