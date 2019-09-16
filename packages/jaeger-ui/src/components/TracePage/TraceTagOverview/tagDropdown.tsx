@@ -30,7 +30,6 @@ export default class TagDropdown extends Component<Props, State>{
             title: content,
             titleTag: "No item selected",
         };
-
         this.showDropdownMenu = this.showDropdownMenu.bind(this);
         this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
@@ -53,7 +52,10 @@ export default class TagDropdown extends Component<Props, State>{
             document.removeEventListener('click', this.hideDropdownMenu);
         });
     }
-
+    /**
+     * called when item was clicked from dropdown
+     * @param title this item was clicked 
+     */
     tagIsClicked(title: string) {
         this.setState({
             titleTag: title,
@@ -77,9 +79,7 @@ export default class TagDropdown extends Component<Props, State>{
                 <Dropdown overlay={menu} >
                     <Button> {this.state.titleTag} <Icon type={'down'} /></Button>
                 </Dropdown>
-
             </div>
-
         );
     }
 }

@@ -14,7 +14,6 @@ export function getValue(trace: Trace) {
             allTagKeys.add(allSpans[i].tags[j].key);
         }
     }
-
     var allTagKeysA = new Array();
     var iterator = allTagKeys.values();
     for (var i = 0; i < allTagKeys.size; i++) {

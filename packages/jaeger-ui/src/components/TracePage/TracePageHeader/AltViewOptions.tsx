@@ -42,17 +42,17 @@ export default function AltViewOptions(props: Props) {
     <Menu>
       <Menu.Item>
         <a onClick={() => onTraceGraphViewClicked(possibTraceGraphView[0])} role="button">
-          {possibTraceGraphView[0]==1 ? 'Trace Timeline' : possibTraceGraphView[0] ==2 ? 'Trace Graph' : possibTraceGraphView[0] ==3 ?'Trace Overview' :'Trace Page View'}
+          {possibTraceGraphView[0]==1 ? 'Trace Timeline' : possibTraceGraphView[0] ==2 ? 'Trace Graph' : possibTraceGraphView[0] ==3 ?'Trace Overview' :'Trace Tag View'}
         </a>
       </Menu.Item>
       <Menu.Item>
         <a onClick={() => onTraceGraphViewClicked(possibTraceGraphView[1])} role="button">
-          {possibTraceGraphView[1]==1 ? 'Trace Timeline' : possibTraceGraphView[1] ==2 ? 'Trace Graph' : possibTraceGraphView[1] == 3 ? 'Trace Overview' : 'Trace Page View'}
+          {possibTraceGraphView[1]==1 ? 'Trace Timeline' : possibTraceGraphView[1] ==2 ? 'Trace Graph' : possibTraceGraphView[1] == 3 ? 'Trace Overview' : 'Trace Tag View'}
         </a>
       </Menu.Item>
       <Menu.Item>
         <a onClick={() => onTraceGraphViewClicked(possibTraceGraphView[2])} role="button">
-          {possibTraceGraphView[2]==1 ? 'Trace Timeline' : possibTraceGraphView[2] ==2 ? 'Trace Graph' : possibTraceGraphView[2] == 3 ? 'Trace Overview' : 'Trace Page View'}
+          {possibTraceGraphView[2]==1 ? 'Trace Timeline' : possibTraceGraphView[2] ==2 ? 'Trace Graph' : possibTraceGraphView[2] == 3 ? 'Trace Overview' : 'Trace Tag View'}
         </a>
       </Menu.Item>
       <Menu.Item>
@@ -80,7 +80,7 @@ export default function AltViewOptions(props: Props) {
   return (
     <Dropdown overlay={menu}>
       <Button className="ub-mr2" htmlType="button" onClick={() => onTraceGraphViewClicked(0)}>
-        {selectedTraceGraphView==1 ? 'Trace Timeline' : selectedTraceGraphView ==2 ? 'Trace Graph' : selectedTraceGraphView ==3? 'Trace Overview': 'Trace Page View'} <Icon type="down" />
+        {selectedTraceGraphView==1 ? 'Trace Timeline' : selectedTraceGraphView ==2 ? 'Trace Graph' : selectedTraceGraphView ==3? 'Trace Overview': 'Trace Tag View'} <Icon type="down" />
       </Button>
     </Dropdown>
   );

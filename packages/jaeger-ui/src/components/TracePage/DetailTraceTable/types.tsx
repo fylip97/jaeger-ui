@@ -6,10 +6,10 @@ export type TableSpan = {
   min: number;
   max: number;
   isDetail: boolean;
-  exc: number;
-  excAvg: number;
-  excMin: number;
-  excMax: number;
+  self: number;
+  selfAvg: number;
+  selfMin: number;
+  selfMax: number;
   percent: number;
   key: string;
   child: boolean;

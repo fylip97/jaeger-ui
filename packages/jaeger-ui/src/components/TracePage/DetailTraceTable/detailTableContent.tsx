@@ -5,7 +5,6 @@ import './detailTableContent.css';
  * returns the detail table content
  * @param props all information needed to create the table
  */
-
 export const DetailTableContent = (props: any) => {
   return (
     <tr className="DetailTraceTableTR" style={{ background: props.searchColor, borderColor: props.searchColor }}>

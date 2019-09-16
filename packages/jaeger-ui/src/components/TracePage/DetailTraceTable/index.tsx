@@ -64,26 +64,26 @@ const columnsArray: any[] = [
     "isDecimal": true
   },
   {
-    "title": "Total Exc",
-    "attribute": "exc",
+    "title": "Total Self",
+    "attribute": "self",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Exc Avg",
-    "attribute": "excAvg",
+    "title": "Self Avg",
+    "attribute": "selfAvg",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Exc Min",
-    "attribute": "excMin",
+    "title": "Self Min",
+    "attribute": "selfMin",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Exc Max",
-    "attribute": "excMax",
+    "title": "Self Max",
+    "attribute": "selfMax",
     "suffix": "ms",
     "isDecimal": true
   },
@@ -126,16 +126,13 @@ export default class DetailTraceTable extends Component<Props, State>{
     var allSpans = this.props.traceProps.spans;
     var spanServName = new Array();
     var allTableSpans = this.state.allSpans;
-
     var isClicked;
-
     // find the index wehre u should add
     var rememberIndex = 0;
     for (var i = 0; i < this.state.allSpans.length; i++) {
       if (selectedSpan.name === this.state.allSpans[i].name) {
         isClicked = allTableSpans[i].child
         rememberIndex = i;
-
       }
     }
 
@@ -150,7 +147,6 @@ export default class DetailTraceTable extends Component<Props, State>{
       }
 
       //find diff operationNames
-
       var diffOperationNamesS = new Set();
       for (var i = 0; i < spanServName.length; i++) {
         diffOperationNamesS.add(spanServName[i].operationName);
@@ -192,8 +188,6 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
-
-
 
   /**
    * if the search props change the search function is called
@@ -256,8 +250,8 @@ export default class DetailTraceTable extends Component<Props, State>{
   renderTableData() {
 
     return this.state.allSpans.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, key, exc, excAvg, excMin, excMax, percent, color, searchColor } = oneSpan
-      const values: any[] = [count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
+      const { name, count, total, avg, min, max, key, self, selfAvg, selfMin, selfMax, percent, color, searchColor } = oneSpan
+      const values: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
       if (!oneSpan.isDetail) {
         return (
           <MainTableContent
@@ -299,5 +293,4 @@ export default class DetailTraceTable extends Component<Props, State>{
       </div>
     )
   }
-
 }

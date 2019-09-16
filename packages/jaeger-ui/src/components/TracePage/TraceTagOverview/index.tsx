@@ -68,26 +68,26 @@ const columnsArray: any[] = [
     "isDecimal": true
   },
   {
-    "title": "Total Exc",
-    "attribute": "exc",
+    "title": "Total Self",
+    "attribute": "self",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Exc Avg",
-    "attribute": "excAvg",
+    "title": "Self Avg",
+    "attribute": "selfAvg",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Exc Min",
-    "attribute": "excMin",
+    "title": "Self Min",
+    "attribute": "selfMin",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Exc Max",
-    "attribute": "excMax",
+    "title": "Self Max",
+    "attribute": "selfMax",
     "suffix": "ms",
     "isDecimal": true
   },
@@ -104,7 +104,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   constructor(props: any) {
     super(props);
     var firstInputA = Array();
-    var firstInput = { name: "", count: 0, total: 0, avg: 0, min: 0, max: 0, exc: 0, excAvg: 0, excMin: 0, excMax: 0, percent: 0 }
+    var firstInput = { name: "", count: 0, total: 0, avg: 0, min: 0, max: 0, self: 0, selfAvg: 0, selfMin: 0, selfMax: 0, percent: 0 }
     firstInputA.push(firstInput)
     this.state = {
       tableValue: firstInputA,
@@ -156,8 +156,6 @@ export default class TraceTagOverview extends Component<Props, State>{
   handler(tableValue: TableSpan[]) {
 
     const { sortIndex, sortAsc } = this.state;
-
-
     this.setState((previousState, currentProps) => {
       return {
         ...previousState,
@@ -193,8 +191,6 @@ export default class TraceTagOverview extends Component<Props, State>{
     return sortArray
   }
 
-
-
   changeIsSelected() {
     this.setState({
       isSelected: true,
@@ -212,17 +208,6 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
-
-  componentDidUpdate(prevProps: Props, prevState: State) {
-
-    if (this.state.tableValue.length != prevState.tableValue.length) {
-
-      console.log("hey");
-      //this.sortClick(1);
-    }
-  }
-
-
   togglePopup(popupContent: string) {
 
     this.setState({
@@ -231,13 +216,11 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
-
-
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent } = oneSpan
-      const values: any[] = [name, count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
-      const values2: any[] = [count, total, avg, min, max, exc, excAvg, excMin, excMax, percent];
+      const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent } = oneSpan
+      const values: any[] = [name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
+      const values2: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
 
       if (!oneSpan.isDetail) {
         return (
@@ -258,7 +241,7 @@ export default class TraceTagOverview extends Component<Props, State>{
             searchColor={"#ECECEC"}
             values2={values2}
             columnsArray={columnsArray}
-            color={"#807F7F"}
+            color={"#ECECEC"}
             togglePopup={this.togglePopup}
             secondTagDropdownTitle={this.state.secondTagDropdownTitle} />
         )
@@ -280,7 +263,6 @@ export default class TraceTagOverview extends Component<Props, State>{
         ))}
       </tr>
     )
-
   }
 
   render() {
@@ -288,7 +270,7 @@ export default class TraceTagOverview extends Component<Props, State>{
       <div>
         <h3 id="title"> Trace Tag View</h3>
         <TagDropdown trace={this.props.trace}
-          key={'main'}
+          key={'parent'}
           handler={this.handler}
           changeIsSelected={this.changeIsSelected}
           setTagDropdownTitle={this.setTagDropdownTitle}
@@ -308,7 +290,6 @@ export default class TraceTagOverview extends Component<Props, State>{
           <PopupSQL
             closePopup={this.togglePopup}
             popupContent={this.state.popupContent}
-
           />
           : null
         }

@@ -1,6 +1,4 @@
-
 import { TableSpan } from './types'
-
 
 /**
  * colors found entries in the table

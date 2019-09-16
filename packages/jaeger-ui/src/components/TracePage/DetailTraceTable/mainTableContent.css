@@ -2,11 +2,6 @@
     border-top: 1px solid #ECECEC;
   }
 
-  .DetailTraceTableChildTD{
-    border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #CCCCCC;
-    
-  }
 
   td {
     max-width: 30em;

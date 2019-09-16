@@ -16,7 +16,7 @@ export default class PopupSQL extends Component<Props>{
         return (
             <div className='popup'>
               <div className='popup_inner'>
-                <h3 className="headerPopup">Tag SQL </h3>
+                <h3 className="headerPopup">Tag: "SQL" </h3>
                 <textarea readOnly  className= "sqlContent" value={"\""+this.props.popupContent+"\""} />
               <Button className= "closeButton" onClick={()=>this.props.closePopup("")}>close </Button>
               </div>

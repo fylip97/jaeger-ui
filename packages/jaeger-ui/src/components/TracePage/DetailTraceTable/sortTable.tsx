@@ -10,10 +10,9 @@ import { TableSpan } from './types'
  * @param upDown How should the data be sorted? Up or down
  */
 export function sortTable(array: any[], key: string, upDown: boolean) {
-  
+
     var isDetailArray = new Array();
     var isNoDetail = new Array();
-
     for (var i = 0; i < array.length; i++) {
         if (array[i].isDetail == true) {
             isDetailArray.push(array[i]);
