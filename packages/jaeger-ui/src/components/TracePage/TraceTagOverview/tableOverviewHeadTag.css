@@ -1,0 +1,21 @@
+.sortButton{
+    border: none;
+    background: transparent;
+  }
+
+
+.DetailTraceTableTH{
+    background: #ECECEC;
+    border: 1px solid #CCCCCC;
+    font-size: 109%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #232323;
+    font-weight: 15;
+    line-height: 2em;
+    padding-left: 1em;
+  }
+
+  .buttonPosition{
+    float: right;
+  }
+

@@ -127,10 +127,10 @@ export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
             self: 0,
             selfAvg: 0, selfMin: 0,
             selfMax: 0, percent: 0,
-            color: color, seachColor: "transparent"
+            color: color, seachColor: "transparent",
+            
         };
         allSpansTrace.push(tableSpan);
-        console.log(allSpansTrace);
     }
     return allSpansTrace;
 }
@@ -176,7 +176,7 @@ export function getDetailContent(selectedSpan: Span[], diffOperationNames: strin
             self: (Math.round((resultArray.self / 1000) * 100) / 100),
             selfAvg: (Math.round((resultArray.selfAvg / 1000) * 100) / 100), selfMin: (Math.round((resultArray.selfMin / 1000) * 100) / 100),
             selfMax: (Math.round((resultArray.selfMax / 1000) * 100) / 100), percent: (Math.round((resultArray.percent / 1) * 100) / 100),
-            color: "", seachColor: "transparent"
+            color: "", seachColor: "transparent", colorToPercent: "rgb(204,204,204)"
         };
         detail.push(tableSpan);
     }

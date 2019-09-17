@@ -4,6 +4,7 @@ import { TableSpan } from './types';
 
 import { getDiffServiceName } from './tableContent';
 import { getMainContent } from './tableContent';
+import { generateColor } from './generateColor';
 
 import { sortTable } from './sortTable';
 import { TNil } from '../../../types';
@@ -23,6 +24,8 @@ type State = {
   allSpans: TableSpan[],
   sortIndex: number,
   sortAsc: boolean,
+
+  colorToPercent: boolean,
 
 };
 
@@ -64,25 +67,25 @@ const columnsArray: any[] = [
     "isDecimal": true
   },
   {
-    "title": "Total Self",
+    "title": "ST Total",
     "attribute": "self",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Self Avg",
+    "title": "ST Avg",
     "attribute": "selfAvg",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Self Min",
+    "title": "ST Min",
     "attribute": "selfMin",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Self Max",
+    "title": "ST Max",
     "attribute": "selfMax",
     "suffix": "ms",
     "isDecimal": true
@@ -108,9 +111,11 @@ export default class DetailTraceTable extends Component<Props, State>{
       allSpans: getMainContent(allSpans, diffServiceName),
       sortIndex: 0,
       sortAsc: false,
+      colorToPercent: false,
     }
     this.sortClick = this.sortClick.bind(this);
     this.clickColumn = this.clickColumn.bind(this);
+    this.toggleColorToPercent = this.toggleColorToPercent.bind(this);
 
 
   }
@@ -183,17 +188,29 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     this.setState({
       allSpans: allTableSpans,
+      
 
     });
 
+    allTableSpans = sortTable(generateColor(allTableSpans,this.state.colorToPercent),columnsArray[1].attribute, false);
+
+    this.setState({
+      allSpans: allTableSpans,
+    })
+
+
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
+   
+
+    
+   
   }
 
   /**
    * if the search props change the search function is called
    * @param props all props 
    */
-  componentDidUpdate(props: any) {
+  componentDidUpdate(props: any, prevState: State) {
     if ((this.props.uiFindVertexKeys !== props.uiFindVertexKeys)) {
       searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
     }
@@ -219,6 +236,16 @@ export default class DetailTraceTable extends Component<Props, State>{
     }
   }
 
+  toggleColorToPercent() {
+
+    this.setState({
+      allSpans: generateColor(this.state.allSpans, !this.state.colorToPercent),
+      colorToPercent: !this.state.colorToPercent
+    })
+  }
+
+
+
   componentDidMount() {
     this.sortClick(1);
   }
@@ -236,7 +263,8 @@ export default class DetailTraceTable extends Component<Props, State>{
             sortIndex={sortIndex}
             index={index}
             sortClick={this.sortClick}
-            sortAsc={sortAsc} />
+            sortAsc={sortAsc}
+            toggleColorToPercent={this.toggleColorToPercent} />
         ))}
       </tr>
     );
@@ -250,7 +278,7 @@ export default class DetailTraceTable extends Component<Props, State>{
   renderTableData() {
 
     return this.state.allSpans.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, key, self, selfAvg, selfMin, selfMax, percent, color, searchColor } = oneSpan
+      const { name, count, total, avg, min, max, key, self, selfAvg, selfMin, selfMax, percent, color, searchColor, colorToPercent } = oneSpan
       const values: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
       if (!oneSpan.isDetail) {
         return (
@@ -274,7 +302,9 @@ export default class DetailTraceTable extends Component<Props, State>{
             searchColor={searchColor}
             values={values}
             columnsArray={columnsArray}
-            color={color} />
+            color={color}
+            percent={percent}
+            colorToPercent={colorToPercent} />
         )
       }
     })

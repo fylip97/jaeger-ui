@@ -17,4 +17,6 @@ export type TableSpan = {
   color: string;
   searchColor: string;
 
+  colorToPercent: string;
+
 }

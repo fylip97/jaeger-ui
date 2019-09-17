@@ -87,10 +87,17 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
     var onePecent = allPercent / 100;
     var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
     for (var i = 0; i < allSpansWithoutSelectedKey.length; i++) {
-        resultArray = calculateContent(allSpansWithoutSelectedKey, allSpans, i, resultArray, onePecent);    
+        resultArray = calculateContent(allSpansWithoutSelectedKey, allSpans, i, resultArray, onePecent);
     }
+
     resultArray.selfAvg = resultArray.self / resultArray.count;
     resultArray.avg = resultArray.total / resultArray.count;
+    if (resultArray.count == 0) {
+        resultArray.avg = 0;
+        resultArray.selfAvg = 0;
+        resultArray.min = 0;
+        resultArray.selfMin = 0;
+    }
     allValuesColumn.push(buildOneColumn("rest", resultArray.count, resultArray.total, resultArray.avg, resultArray.min, resultArray.max, false, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "transparent", ""));
     return allValuesColumn;
 }

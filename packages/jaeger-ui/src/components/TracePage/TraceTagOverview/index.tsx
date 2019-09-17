@@ -3,7 +3,7 @@ import './index.css';
 import TagDropdown from './tagDropdown'
 import SecondDropDown from './secondDropDown'
 import { Trace } from '../../../types/trace';
-import { TableOverviewHeader } from '../DetailTraceTable/tableOverviewHead';
+import { TableOverviewHeaderTag } from './tableOverviewHeadTag';
 import { MainTableData } from './mainTableData';
 import { DetailTableData } from './detailTableData'
 import { TableSpan } from './types';
@@ -68,25 +68,25 @@ const columnsArray: any[] = [
     "isDecimal": true
   },
   {
-    "title": "Total Self",
+    "title": "Total ST",
     "attribute": "self",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Self Avg",
+    "title": "ST Avg",
     "attribute": "selfAvg",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Self Min",
+    "title": "ST Min",
     "attribute": "selfMin",
     "suffix": "ms",
     "isDecimal": true
   },
   {
-    "title": "Self Max",
+    "title": "ST Max",
     "attribute": "selfMax",
     "suffix": "ms",
     "isDecimal": true
@@ -174,7 +174,6 @@ export default class TraceTagOverview extends Component<Props, State>{
   splitRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
 
     var rememberIndex = -1;
-    console.log(tableValue);
     var sortArray = new Array();
     for (var i = 0; i < tableValue.length; i++) {
       if (tableValue[i].name !== 'rest') {
@@ -254,7 +253,7 @@ export default class TraceTagOverview extends Component<Props, State>{
     return (
       <tr>
         {columnsArray.map((element: any, index: number) => (
-          <TableOverviewHeader element={element}
+          <TableOverviewHeaderTag element={element}
             key={element.title}
             sortIndex={sortIndex}
             index={index}
