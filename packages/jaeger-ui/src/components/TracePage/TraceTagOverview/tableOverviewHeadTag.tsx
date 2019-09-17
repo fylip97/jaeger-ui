@@ -5,7 +5,7 @@ import './tableOverviewHeadTag.css';
 
 export const TableOverviewHeaderTag = (props: any) => {
   return (
-    <th className="DetailTraceTableTH"  style= {{width: Math.round(window.innerWidth * 0.2)}}>
+    <th className="DetailTraceTableTH"  style= {{width: Math.round(window.innerWidth * 0.2)}} title={props.element.title==="Percent"? "Share of ST Total in Duration" : ""}>
       {props.element.title}
       <div className="buttonPosition">
         <button className="sortButton" onClick={() => props.sortClick(props.index)}>

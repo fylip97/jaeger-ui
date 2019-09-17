@@ -7,7 +7,7 @@
 .DetailTraceTableTH{
     background: #ECECEC;
     border: 1px solid #CCCCCC;
-    font-size: 109%;
+    font-size: 100%;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #232323;
     font-weight: 15;
@@ -15,7 +15,12 @@
     padding-left: 1em;
   }
 
-  .buttonPosition{
+.buttonPosition{
     float: right;
   }
 
+.colorButton{
+  background: transparent;
+  border: none;
+  font-size: 10px;
+}

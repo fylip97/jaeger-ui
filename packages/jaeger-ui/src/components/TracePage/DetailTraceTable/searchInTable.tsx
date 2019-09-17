@@ -28,8 +28,6 @@ export function searchInTable(uiFindVertexKeys: Set<string>, allTableSpans: Tabl
                     }
                 }
             }
-
         });
     }
-
 }

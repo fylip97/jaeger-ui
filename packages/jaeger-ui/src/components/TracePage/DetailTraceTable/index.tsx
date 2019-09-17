@@ -117,7 +117,7 @@ export default class DetailTraceTable extends Component<Props, State>{
     this.clickColumn = this.clickColumn.bind(this);
     this.toggleColorToPercent = this.toggleColorToPercent.bind(this);
 
-
+    searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
   }
 
   /**
@@ -140,7 +140,6 @@ export default class DetailTraceTable extends Component<Props, State>{
         rememberIndex = i;
       }
     }
-
     if (!isClicked) {
 
       allTableSpans[rememberIndex].child = true;
@@ -150,22 +149,18 @@ export default class DetailTraceTable extends Component<Props, State>{
           spanServName.push(allSpans[i]);
         }
       }
-
       //find diff operationNames
       var diffOperationNamesS = new Set();
       for (var i = 0; i < spanServName.length; i++) {
         diffOperationNamesS.add(spanServName[i].operationName);
       }
-
       // set into array
       var diffOperationNamesA = new Array();
       var iterator = diffOperationNamesS.values();
       for (var j = 0; j < diffOperationNamesS.size; j++) {
         diffOperationNamesA.push(iterator.next().value)
       }
-
       var addItemArray = getDetailContent(spanServName, diffOperationNamesA, allSpans);
-
       // build the new array
       for (var i = 0; i < addItemArray.length; i++) {
 
@@ -186,24 +181,10 @@ export default class DetailTraceTable extends Component<Props, State>{
 
     }
 
-    this.setState({
-      allSpans: allTableSpans,
-      
-
-    });
-
-    allTableSpans = sortTable(generateColor(allTableSpans,this.state.colorToPercent),columnsArray[1].attribute, false);
-
-    this.setState({
-      allSpans: allTableSpans,
-    })
-
-
     searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
-   
-
-    
-   
+    this.setState({
+      allSpans: sortTable(generateColor(allTableSpans, this.state.colorToPercent), columnsArray[1].attribute, false),
+    })  
   }
 
   /**
@@ -213,6 +194,10 @@ export default class DetailTraceTable extends Component<Props, State>{
   componentDidUpdate(props: any, prevState: State) {
     if ((this.props.uiFindVertexKeys !== props.uiFindVertexKeys)) {
       searchInTable(this.props.uiFindVertexKeys!, this.state.allSpans);
+      // reload the componente
+      this.setState({
+        allSpans: this.state.allSpans
+      })
     }
   }
 
@@ -243,9 +228,7 @@ export default class DetailTraceTable extends Component<Props, State>{
       colorToPercent: !this.state.colorToPercent
     })
   }
-
-
-
+  
   componentDidMount() {
     this.sortClick(1);
   }
@@ -254,7 +237,7 @@ export default class DetailTraceTable extends Component<Props, State>{
    * render the header of the table with the buttons needed for sorting
    */
   renderTableHeader() {
-    const { sortIndex, sortAsc } = this.state;
+    const { sortIndex, sortAsc, colorToPercent } = this.state;
     return (
       <tr id="test">
         {columnsArray.map((element: any, index: number) => (
@@ -264,7 +247,8 @@ export default class DetailTraceTable extends Component<Props, State>{
             index={index}
             sortClick={this.sortClick}
             sortAsc={sortAsc}
-            toggleColorToPercent={this.toggleColorToPercent} />
+            toggleColorToPercent={this.toggleColorToPercent}
+            colorToPercent={colorToPercent} />
         ))}
       </tr>
     );

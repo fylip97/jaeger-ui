@@ -9,16 +9,6 @@ import { Span } from '../../../types/trace';
  * @param wholeTrace whole information of the trace
  * @param j whitch row is calculated
  * @param resultArray array with all variables who are calclated
- *      0: self
- *      1: selfAvg
- *      2: selfMin
- *      3: selfMax
- *      4: total
- *      5: avg
- *      6: min
- *      7: max
- *      8: count
- *      9: percent
  * @param onePercent time which corresponds to 1%.
  */
 export function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: any, onePercent: number) {
@@ -108,7 +98,7 @@ export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
         var allPercent = allSpans[0].duration;
         var onePecent = allPercent / 100;
         var color;
-        var resultArray = {self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent};
+        var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
 
         for (var j = 0; j < allSpans.length; j++) {
             if (allSpans[j].process.serviceName === diffServiceName[i]) {
@@ -117,18 +107,18 @@ export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
             }
         }
 
-        selfAvg = (self / count);
-        avg = total / count;
+        resultArray.selfAvg = resultArray.self / resultArray.count;
+        resultArray.avg = resultArray.total / resultArray.count;
 
         var tableSpan = {
-            name: diffServiceName[i], count: resultArray.count, total: 0,
-            avg: 0, min: 0,
-            max: 0, isDetail: false, key: diffServiceName[i], child: false, parentElement: "none",
-            self: 0,
-            selfAvg: 0, selfMin: 0,
-            selfMax: 0, percent: 0,
+            name: diffServiceName[i], count: resultArray.count, total: (Math.round((resultArray.total / 1000) * 100) / 100),
+            avg: Math.round((resultArray.avg / 1000) * 100) / 100, min: Math.round((resultArray.min / 1000) * 100) / 100,
+            max: Math.round((resultArray.max / 1000) * 100) / 100, isDetail: false, key: diffServiceName[i], child: false, parentElement: "none",
+            self: Math.round((resultArray.self / 1000) * 100) / 100,
+            selfAvg: Math.round((resultArray.selfAvg / 1000) * 100) / 100, selfMin: Math.round((resultArray.selfMin / 1000) * 100) / 100,
+            selfMax: Math.round((resultArray.selfMax / 1000) * 100) / 100, percent: Math.round((resultArray.percent / 1) * 100) / 100,
             color: color, seachColor: "transparent",
-            
+
         };
         allSpansTrace.push(tableSpan);
     }
@@ -159,7 +149,7 @@ export function getDetailContent(selectedSpan: Span[], diffOperationNames: strin
         var percent = 0;
         var allPercent = allSpans[0].duration;
         var onePecent = allPercent / 100;
-        var resultArray = {self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent};
+        var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
 
         for (var j = 0; j < selectedSpan.length; j++) {
             if (diffOperationNames[i] === selectedSpan[j].operationName) {
