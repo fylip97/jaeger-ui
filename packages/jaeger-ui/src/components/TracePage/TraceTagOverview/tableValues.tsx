@@ -30,17 +30,17 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
 export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace) {
 
     if (selectedTagKey === "Service Name" && selectedTagKeySecond === "Operation Name") {
-        return ServiceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
+        return serviceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
     } else if (selectedTagKey === "Operation Name" && selectedTagKeySecond === "Service Name") {
-        return ServiceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
+        return serviceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
     } else if (selectedTagKey === "Service Name") {
-        return ServicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
+        return servicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
     } else if (selectedTagKey === "Operation Name") {
-        return ServicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
+        return servicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
     } else if (selectedTagKeySecond === "Service Name") {
-        return test(actualTableValues, selectedTagKey, selectedTagKeySecond, trace,true);
+        return tagToServiceNameOrOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace,true);
     } else if (selectedTagKeySecond === "Operation Name"){
-        return test(actualTableValues, selectedTagKey, selectedTagKeySecond, trace,false);
+        return tagToServiceNameOrOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace,false);
     }
     else {
         return getColumnValuesSecondDropdown2Tags(actualTableValues, selectedTagKey, selectedTagKeySecond, trace);
@@ -353,7 +353,7 @@ function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], sele
 }
 
 
-function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceToOp: boolean) {
+function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceToOp: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
@@ -438,7 +438,7 @@ function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
 }
 
 
-function ServicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
+function servicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
@@ -519,39 +519,42 @@ function ServicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
 
 
 
-function test(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
+function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
-
+    console.log("test")
+    
     for (var i = 0; i < actualTableValues.length; i++) {
         if (!actualTableValues[i].isDetail) {
             var tempArray = new Array();
-            for (var j = 0; allSpans.length; j++) {
-                for (var l = 0; l < allSpans[l].tags.length; l++) {
-                    if (actualTableValues[i] === allSpans[j].tags[l].value) {
-                        tempArray.push(allSpans[i]);
+            for (var j = 0; j<allSpans.length; j++) {
+                for (var l = 0; l < allSpans[j].tags.length; l++) {
+                    console.log(actualTableValues[i].name)
+                    console.log(allSpans[j].tags[l].value)
+                    if (actualTableValues[i].name === allSpans[j].tags[l].value) {
+                        tempArray.push(allSpans[j]);
                     }
                 }
             }
-
-
+           
             var diffNamesS = new Set();
             for (var j = 0; j < tempArray.length; j++) {
                 if (serviceName) {
-                    diffNamesS.add(tempArray[i].process.serviceName);
+                    diffNamesS.add(tempArray[j].process.serviceName);
                 } else {
-                    diffNamesS.add(tempArray[i].operationName);
+                    diffNamesS.add(tempArray[j].operationName);
                 }
             }
-
+            
             //to Array
             var diffNamesA = new Array();
             var iterator = diffNamesS.values();
             for (var j = 0; j < diffNamesS.size; j++) {
                 diffNamesA.push(iterator.next().value)
             }
-
+            // ab hier test 
+        
             var newColumnValues = new Array()
             for (var j = 0; j < diffNamesA.length; j++) {
 
@@ -569,11 +572,11 @@ function test(actualTableValues: TableSpan[], selectedTagKey: string, selectedTa
                 var allPercent = allSpans[0].duration;
                 var onePecent = allPercent / 100;
                 var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
-
                 for (var l = 0; l < tempArray.length; l++) {
                     if (serviceName) {
                         if (diffNamesA[j] === tempArray[l].process.serviceName) {
                             resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
+                            
                         }
                     }else{
                         if (diffNamesA[j] === tempArray[l].operationName) {
@@ -581,14 +584,11 @@ function test(actualTableValues: TableSpan[], selectedTagKey: string, selectedTa
                         }
 
                     }
-
                 }
-
                 resultArray.selfAvg = resultArray.self / resultArray.count;
                 resultArray.avg = resultArray.total / resultArray.count;
                 newColumnValues.push(buildOneColumn(diffNamesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
                     resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "", actualTableValues[i].name));
-
             }
 
             allColumnValues.push(actualTableValues[i]);
@@ -602,4 +602,6 @@ function test(actualTableValues: TableSpan[], selectedTagKey: string, selectedTa
 
     return allColumnValues;
 }
+
+
 
