@@ -29,11 +29,15 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
  */
 export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace) {
 
-    if (selectedTagKey === "Service Name") {
-        return ServiceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace);
-    } else if(selectedTagKey ==="Operation Name"){
-        return  OperationNameServiceName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace);
-    }else {
+    if (selectedTagKey === "Service Name" && selectedTagKeySecond === "Operation Name") {
+        return ServiceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
+    } else if (selectedTagKey === "Operation Name" && selectedTagKeySecond === "Service Name") {
+        return ServiceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
+    } else if (selectedTagKey === "Service Name") {
+        return ServicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
+    } else if (selectedTagKey === "Operation Name") {
+        return ServicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
+    } else {
         return getColumnValuesSecondDropdown2Tags(actualTableValues, selectedTagKey, selectedTagKeySecond, trace);
     }
 
@@ -344,30 +348,36 @@ function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], sele
 }
 
 
-function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace) {
+function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceToOp: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
-
-
 
     for (var i = 0; i < actualTableValues.length; i++) {
         if (!actualTableValues[i].isDetail) {
 
             var allSpansWithTempOp = Array();
             for (var j = 0; j < allSpans.length; j++) {
-                if (actualTableValues[i].name === allSpans[j].process.serviceName) {
-                    allSpansWithTempOp.push(allSpans[j]);
+                if (serviceToOp) {
+                    if (actualTableValues[i].name === allSpans[j].process.serviceName) {
+                        allSpansWithTempOp.push(allSpans[j]);
+                    }
+                } else {
+                    if (actualTableValues[i].name === allSpans[j].operationName) {
+                        allSpansWithTempOp.push(allSpans[j]);
+                    }
                 }
 
             }
 
             var diffOpTempS = new Set();
-
             for (var j = 0; j < allSpansWithTempOp.length; j++) {
-                diffOpTempS.add(allSpansWithTempOp[j].operationName);
+                if (serviceToOp) {
+                    diffOpTempS.add(allSpansWithTempOp[j].operationName);
+                } else {
+                    diffOpTempS.add(allSpansWithTempOp[j].process.serviceName);
+                }
             }
-
             var diffOpTempA = new Array();
             var iterator = diffOpTempS.values();
             for (var j = 0; j < diffOpTempS.size; j++) {
@@ -375,7 +385,6 @@ function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
             }
 
             var newColumnValues = new Array()
-
             for (var j = 0; j < diffOpTempA.length; j++) {
 
                 var self = 0;
@@ -394,9 +403,14 @@ function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
                 var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
 
                 for (var l = 0; l < allSpansWithTempOp.length; l++) {
-                    if (diffOpTempA[j] === allSpansWithTempOp[l].operationName) {
-
-                        resultArray = calculateContent(allSpansWithTempOp, allSpans, l, resultArray, onePecent);
+                    if (serviceToOp) {
+                        if (diffOpTempA[j] === allSpansWithTempOp[l].operationName) {
+                            resultArray = calculateContent(allSpansWithTempOp, allSpans, l, resultArray, onePecent);
+                        }
+                    } else {
+                        if (diffOpTempA[j] === allSpansWithTempOp[l].process.serviceName) {
+                            resultArray = calculateContent(allSpansWithTempOp, allSpans, l, resultArray, onePecent);
+                        }
                     }
                 }
 
@@ -405,7 +419,6 @@ function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
 
                 newColumnValues.push(buildOneColumn(diffOpTempA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
                     resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "", actualTableValues[i].name));
-
             }
 
             allColumnValues.push(actualTableValues[i]);
@@ -414,47 +427,50 @@ function ServiceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
                     allColumnValues.push(newColumnValues[j]);
                 }
             }
-
-
         }
     }
     return allColumnValues;
-
 }
 
-function OperationNameServiceName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace){
 
+function ServicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
 
     for (var i = 0; i < actualTableValues.length; i++) {
         if (!actualTableValues[i].isDetail) {
-
-            var allSpansWithTempOp = Array();
+            var allSpansWithTempOp = new Array();
             for (var j = 0; j < allSpans.length; j++) {
-                if (actualTableValues[i].name === allSpans[j].operationName) {
-                    allSpansWithTempOp.push(allSpans[j]);
+                if (serviceName) {
+                    if (actualTableValues[i].name === allSpans[j].process.serviceName) {
+                        allSpansWithTempOp.push(allSpans[j]);
+                    }
+                } else {
+                    if (actualTableValues[i].name === allSpans[j].operationName) {
+                        allSpansWithTempOp.push(allSpans[j]);
+                    }
                 }
-
             }
-
-            var diffOpTempS = new Set();
-
+            var diffValuesS = new Set();
             for (var j = 0; j < allSpansWithTempOp.length; j++) {
-                diffOpTempS.add(allSpansWithTempOp[j].process.serviceName);
+
+                for (var l = 0; l < allSpansWithTempOp[j].tags.length; l++) {
+                    if (allSpansWithTempOp[j].tags[l].key === selectedTagKeySecond) {
+                        diffValuesS.add(allSpansWithTempOp[j].tags[l].value);
+                    }
+                }
             }
 
-            var diffOpTempA = new Array();
-            var iterator = diffOpTempS.values();
-            for (var j = 0; j < diffOpTempS.size; j++) {
-                diffOpTempA.push(iterator.next().value)
+            //to Array
+            var diffValuesA = new Array();
+            var iterator = diffValuesS.values();
+            for (var j = 0; j < diffValuesS.size; j++) {
+                diffValuesA.push(iterator.next().value)
             }
 
             var newColumnValues = new Array()
-
-            for (var j = 0; j < diffOpTempA.length; j++) {
-
+            for (var j = 0; j < diffValuesA.length; j++) {
                 var self = 0;
                 var selfAvg = 0;
                 var selfMin = allSpans[0].duration;
@@ -470,20 +486,23 @@ function OperationNameServiceName(actualTableValues: TableSpan[], selectedTagKey
                 var onePecent = allPercent / 100;
                 var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
 
+                var allSpansWithSameTag = new Array();
                 for (var l = 0; l < allSpansWithTempOp.length; l++) {
-                    if (diffOpTempA[j] === allSpansWithTempOp[l].process.serviceName) {
-
-                        resultArray = calculateContent(allSpansWithTempOp, allSpans, l, resultArray, onePecent);
+                    for (var a = 0; a < allSpansWithTempOp[l].tags.length; a++) {
+                        if (diffValuesA[j] === allSpansWithTempOp[l].tags[a].value) {
+                            resultArray = calculateContent(allSpansWithTempOp, allSpans, l, resultArray, onePecent);
+                        }
                     }
                 }
 
                 resultArray.selfAvg = resultArray.self / resultArray.count;
                 resultArray.avg = resultArray.total / resultArray.count;
 
-                newColumnValues.push(buildOneColumn(diffOpTempA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
+                newColumnValues.push(buildOneColumn(diffValuesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
                     resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "", actualTableValues[i].name));
-
             }
+
+
 
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
@@ -491,14 +510,11 @@ function OperationNameServiceName(actualTableValues: TableSpan[], selectedTagKey
                     allColumnValues.push(newColumnValues[j]);
                 }
             }
-
-
         }
+
     }
-    console.log(allColumnValues)
     return allColumnValues;
 
-    
-}
 
+}
 
