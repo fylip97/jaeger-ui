@@ -37,7 +37,12 @@ export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], se
         return ServicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
     } else if (selectedTagKey === "Operation Name") {
         return ServicOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
-    } else {
+    } else if (selectedTagKeySecond === "Service Name") {
+        return test(actualTableValues, selectedTagKey, selectedTagKeySecond, trace,true);
+    } else if (selectedTagKeySecond === "Operation Name"){
+        return test(actualTableValues, selectedTagKey, selectedTagKeySecond, trace,false);
+    }
+    else {
         return getColumnValuesSecondDropdown2Tags(actualTableValues, selectedTagKey, selectedTagKeySecond, trace);
     }
 
@@ -461,14 +466,12 @@ function ServicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
                     }
                 }
             }
-
             //to Array
             var diffValuesA = new Array();
             var iterator = diffValuesS.values();
             for (var j = 0; j < diffValuesS.size; j++) {
                 diffValuesA.push(iterator.next().value)
             }
-
             var newColumnValues = new Array()
             for (var j = 0; j < diffValuesA.length; j++) {
                 var self = 0;
@@ -486,7 +489,7 @@ function ServicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
                 var onePecent = allPercent / 100;
                 var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
 
-                var allSpansWithSameTag = new Array();
+
                 for (var l = 0; l < allSpansWithTempOp.length; l++) {
                     for (var a = 0; a < allSpansWithTempOp[l].tags.length; a++) {
                         if (diffValuesA[j] === allSpansWithTempOp[l].tags[a].value) {
@@ -494,16 +497,12 @@ function ServicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
                         }
                     }
                 }
-
                 resultArray.selfAvg = resultArray.self / resultArray.count;
                 resultArray.avg = resultArray.total / resultArray.count;
 
                 newColumnValues.push(buildOneColumn(diffValuesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
                     resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "", actualTableValues[i].name));
             }
-
-
-
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
                 for (var j = 0; j < newColumnValues.length; j++) {
@@ -514,7 +513,93 @@ function ServicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
 
     }
     return allColumnValues;
+}
 
 
+
+
+
+function test(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
+
+    var allSpans = trace.spans;
+    var allColumnValues = new Array();
+
+    for (var i = 0; i < actualTableValues.length; i++) {
+        if (!actualTableValues[i].isDetail) {
+            var tempArray = new Array();
+            for (var j = 0; allSpans.length; j++) {
+                for (var l = 0; l < allSpans[l].tags.length; l++) {
+                    if (actualTableValues[i] === allSpans[j].tags[l].value) {
+                        tempArray.push(allSpans[i]);
+                    }
+                }
+            }
+
+
+            var diffNamesS = new Set();
+            for (var j = 0; j < tempArray.length; j++) {
+                if (serviceName) {
+                    diffNamesS.add(tempArray[i].process.serviceName);
+                } else {
+                    diffNamesS.add(tempArray[i].operationName);
+                }
+            }
+
+            //to Array
+            var diffNamesA = new Array();
+            var iterator = diffNamesS.values();
+            for (var j = 0; j < diffNamesS.size; j++) {
+                diffNamesA.push(iterator.next().value)
+            }
+
+            var newColumnValues = new Array()
+            for (var j = 0; j < diffNamesA.length; j++) {
+
+                var self = 0;
+                var selfAvg = 0;
+                var selfMin = allSpans[0].duration;
+                var selfMax = 0;
+                //avg && min && max
+                var total = 0;
+                var avg = 0;
+                var min = allSpans[0].duration;
+                var max = 0;
+                var count = 0;
+                var percent = 0;
+                var allPercent = allSpans[0].duration;
+                var onePecent = allPercent / 100;
+                var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
+
+                for (var l = 0; l < tempArray.length; l++) {
+                    if (serviceName) {
+                        if (diffNamesA[j] === tempArray[l].process.serviceName) {
+                            resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
+                        }
+                    }else{
+                        if (diffNamesA[j] === tempArray[l].operationName) {
+                            resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
+                        }
+
+                    }
+
+                }
+
+                resultArray.selfAvg = resultArray.self / resultArray.count;
+                resultArray.avg = resultArray.total / resultArray.count;
+                newColumnValues.push(buildOneColumn(diffNamesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
+                    resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "", actualTableValues[i].name));
+
+            }
+
+            allColumnValues.push(actualTableValues[i]);
+            if (newColumnValues.length > 0) {
+                for (var j = 0; j < newColumnValues.length; j++) {
+                    allColumnValues.push(newColumnValues[j]);
+                }
+            }
+        }
+    }
+
+    return allColumnValues;
 }
 
