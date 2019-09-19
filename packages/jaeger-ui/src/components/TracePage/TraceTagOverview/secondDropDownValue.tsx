@@ -10,6 +10,16 @@ import { Trace } from '../../../types/trace';
  * @param tagDropdownTitle the title of the first dropdown. it is needed to find out what is being searched for
  */
 export function getValue(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
+    if (tagDropdownTitle !== "Service Name" && tagDropdownTitle != "Operation Name") {
+        return getValueTagIsPicked(tableValue, trace, tagDropdownTitle);
+    } else {
+        return getValueNoTagIsPicked(tableValue, trace, tagDropdownTitle);
+    }
+}
+
+
+
+function getValueTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
 
     var allSpans = trace.spans
     var list = new Set();
@@ -41,13 +51,37 @@ export function getValue(tableValue: TableSpan[], trace: Trace, tagDropdownTitle
             }
         }
     }
-
     var availableTags = new Array();
+    availableTags.push("Service Name");
+    availableTags.push("Operation Name");
     var iterator = list.values();
     for (var i = 0; i < list.size; i++) {
         availableTags.push(iterator.next().value)
     }
     return availableTags;
-
-
 }
+
+
+function getValueNoTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
+
+    var availableTagsS = new Set();
+    var allSpans = trace.spans;
+    for (var i = 0; i < allSpans.length; i++) {
+        for (var j = 0; j < allSpans[i].tags.length; j++) {
+            availableTagsS.add(allSpans[i].tags[j].key);
+        }
+    }
+    // set into array
+    var availableTagsA = new Array();
+    var iterator = availableTagsS.values();
+    if (tagDropdownTitle === "Service Name") {
+        availableTagsA.push("Operation Name");
+    } else {
+        availableTagsA.push("Service Name");
+    }
+    for (var i = 0; i < availableTagsS.size; i++) {
+        availableTagsA.push(iterator.next().value)
+    }
+    return availableTagsA;
+}
+

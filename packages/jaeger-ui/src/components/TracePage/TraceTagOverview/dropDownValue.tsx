@@ -16,6 +16,10 @@ export function getValue(trace: Trace) {
     }
     var allTagKeysA = new Array();
     var iterator = allTagKeys.values();
+
+    allTagKeysA.push("Service Name");
+    allTagKeysA.push("Operation Name");
+
     for (var i = 0; i < allTagKeys.size; i++) {
         allTagKeysA.push(iterator.next().value)
     }
