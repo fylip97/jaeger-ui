@@ -235,8 +235,8 @@ export default class TraceTagOverview extends Component<Props, State>{
 
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent, colorToPercent } = oneSpan
-      const values: any[] = [name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
+      const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent, color,colorToPercent  } = oneSpan
+      const values: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
       const values2: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
 
       if (!oneSpan.isDetail) {
@@ -244,11 +244,13 @@ export default class TraceTagOverview extends Component<Props, State>{
           <MainTableData
             key={name + index}
             oneSpan={oneSpan}
+            name={oneSpan.name}
             searchColor={"transparent"}
             values={values}
             columnsArray={columnsArray}
             togglePopup={this.togglePopup}
-            tagDropdownTitle={this.state.tagDropdownTitle} />
+            tagDropdownTitle={this.state.tagDropdownTitle}
+            color={color} />
         )
       } else {
         return (
@@ -258,7 +260,7 @@ export default class TraceTagOverview extends Component<Props, State>{
             searchColor={"#ECECEC"}
             values2={values2}
             columnsArray={columnsArray}
-            color={"#ECECEC"}
+            color={color}
             togglePopup={this.togglePopup}
             secondTagDropdownTitle={this.state.secondTagDropdownTitle}
             colorToPercent={colorToPercent} />

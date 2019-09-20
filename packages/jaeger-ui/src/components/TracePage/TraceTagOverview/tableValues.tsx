@@ -3,6 +3,7 @@ import { Trace } from '../../../types/trace';
 import { Span } from '../../../types/trace';
 import { calculateContent } from '../DetailTraceTable/tableContent';
 import { TableSpan } from './types';
+import colorGenerator from '../../../utils/color-generator';
 import { string } from 'prop-types';
 import { all } from 'q';
 
@@ -133,7 +134,7 @@ function getNoTagContent(allSpans: Span[], diffServiceName: string[], selectedTi
             if (selectedTitle === "Service Name") {
                 if (allSpans[j].process.serviceName === diffServiceName[i]) {
                     resultArray = calculateContent(allSpans, allSpans, j, resultArray, onePecent);
-                    //color = colorGenerator.getColorByKey(allSpans[j].process.serviceName)
+                    color = colorGenerator.getColorByKey(allSpans[j].process.serviceName)
                 }
             } else if (selectedTitle === "Operation Name") {
                 if (allSpans[j].operationName === diffServiceName[i]) {
@@ -494,6 +495,7 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
         var min = allSpans[0].duration;
         var max = 0;
         var count = 0;
+        var color ="";
         var percent = 0;
         var allPercent = allSpans[0].duration;
         var onePecent = allPercent / 100;
@@ -510,6 +512,8 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
                 if (serviceName) {
                     if (diffNamesA[j] === tempArray[l].process.serviceName) {
                         resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
+                        color = colorGenerator.getColorByKey(tempArray[l].process.serviceName);
+                        console.log(color);
 
                     }
                 } else {
@@ -522,7 +526,7 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
         resultArray.selfAvg = resultArray.self / resultArray.count;
         resultArray.avg = resultArray.total / resultArray.count;
         newColumnValues.push(buildOneColumn(diffNamesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
-            resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "", parentName));
+            resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, color, "", parentName));
     }
 
     return newColumnValues;

@@ -25,3 +25,8 @@
     color: black;
     cursor: pointer;
   }
+
+  .LabelBorder{
+    border-left: 4px solid transparent; 
+    padding-left: 0.6em; 
+  }
