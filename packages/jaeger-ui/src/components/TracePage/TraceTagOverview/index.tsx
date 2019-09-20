@@ -8,9 +8,12 @@ import { MainTableData } from './mainTableData';
 import { DetailTableData } from './detailTableData'
 import { TableSpan } from './types';
 import { sortTable } from '../DetailTraceTable/sortTable';
+import { generateColor} from './generateColor';
 
 import PopupSQL from './popupSQL';
 import * as _ from 'lodash';
+import { Button } from 'antd/lib/radio';
+import { color } from 'd3-color';
 
 type Props = {
   trace: Trace,
@@ -26,6 +29,8 @@ type State = {
 
   showPopup: boolean,
   popupContent: string,
+
+  colorButton: boolean,
 
 
 };
@@ -117,6 +122,8 @@ export default class TraceTagOverview extends Component<Props, State>{
       secondTagDropdownTitle: "No item selected",
       popupContent: "",
 
+      colorButton: false,
+
     }
 
     this.handler = this.handler.bind(this);
@@ -125,6 +132,7 @@ export default class TraceTagOverview extends Component<Props, State>{
     this.setTagDropdownTitle = this.setTagDropdownTitle.bind(this);
     this.setSecondDropdownTitle = this.setSecondDropdownTitle.bind(this);
     this.togglePopup = this.togglePopup.bind(this);
+    this.toggleColorButton = this.toggleColorButton.bind(this);
   }
 
   /**
@@ -215,9 +223,19 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
+  toggleColorButton(){
+
+  this.setState({
+    tableValue: generateColor(this.state.tableValue, !this.state.colorButton),
+    colorButton: !this.state.colorButton,
+
+  })
+
+  }
+
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent } = oneSpan
+      const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent, colorToPercent } = oneSpan
       const values: any[] = [name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
       const values2: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
 
@@ -242,7 +260,8 @@ export default class TraceTagOverview extends Component<Props, State>{
             columnsArray={columnsArray}
             color={"#ECECEC"}
             togglePopup={this.togglePopup}
-            secondTagDropdownTitle={this.state.secondTagDropdownTitle} />
+            secondTagDropdownTitle={this.state.secondTagDropdownTitle}
+            colorToPercent={colorToPercent} />
         )
       }
     })
@@ -284,6 +303,7 @@ export default class TraceTagOverview extends Component<Props, State>{
           setSecondTagDropdownTitle={this.setSecondDropdownTitle}
           secondTagDropdownTitle={this.state.secondTagDropdownTitle}
         />
+        <button style ={this.state.colorButton ?{color: "red"}: {color: "rgba(0, 0, 0, 0.65)"} } onClick={this.toggleColorButton} id="ButtonColor"> color</button>
 
         {this.state.showPopup ?
           <PopupSQL

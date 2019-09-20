@@ -13,4 +13,7 @@ export type TableSpan = {
   isDetail: boolean;
   parentElement: string;
 
+
+  colorToPercent: string;
+
 }

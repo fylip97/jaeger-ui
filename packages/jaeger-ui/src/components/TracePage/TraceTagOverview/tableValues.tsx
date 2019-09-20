@@ -80,7 +80,7 @@ function buildOneColumn(name: string, count: number, total: number, avg: number,
         self: (Math.round((self / 1000) * 100) / 100),
         selfAvg: (Math.round((selfAvg / 1000) * 100) / 100), selfMin: (Math.round((selfMin / 1000) * 100) / 100),
         selfMax: (Math.round((selfMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
-        color: color, seachColor: seachColor, parentElement: parentElement,
+        color: color, seachColor: seachColor, parentElement: parentElement, colorToPercent: "rgb(236,236,236)"
     }
     return oneColumn;
 }
@@ -312,39 +312,8 @@ function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], sele
                 diffNamesA.push(iterator.next().value)
             }
             var allValuesColumn = Array();
-            var allValuesColumn = test(diffNamesA,tempArray,allSpans,false,actualTableValues[i].name);
+            var allValuesColumn = buildExtra(diffNamesA, tempArray, allSpans, false, actualTableValues[i].name,true);
 
-            /*
-            for (var j = 0; j < diffNamesA.length; j++) {
-
-                var self = 0;
-                var selfAvg = 0;
-                var selfMin = allSpans[0].duration;
-                var selfMax = 0;
-                var name = String(diffNamesA[j]);
-                var count = 0;
-                var total = 0;
-                var avg = 0;
-                var min = allSpans[0].duration;
-                var max = 0;
-                var percent = 0;
-                var allPercent = allSpans[0].duration;
-                var onePecent = allPercent / 100;
-                var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
-
-                for (var l = 0; l < tempArray.length; l++) {
-
-                    for (var a = 0; a < tempArray[l].tags.length; a++) {
-                        if (diffNamesA[j] === tempArray[l].tags[a].value) {
-                            resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
-                        }
-                    }
-                }
-                resultArray.selfAvg = resultArray.self / resultArray.count;
-                resultArray.avg = resultArray.total / resultArray.count;
-                allValuesColumn.push(buildOneColumn(name, resultArray.count, resultArray.total, resultArray.avg, resultArray.min, resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "transparent", actualTableValues[i].name));
-            }
-            */
             newTableValues.push(actualTableValues[i]);
             if (allValuesColumn.length != 0) {
                 for (var j = 0; j < allValuesColumn.length; j++) {
@@ -394,7 +363,7 @@ function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
             }
 
             var newColumnValues = new Array()
-            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, !serviceName, actualTableValues[i].name);
+            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, !serviceName, actualTableValues[i].name,false);
 
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
@@ -415,7 +384,7 @@ function servicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
 
     for (var i = 0; i < actualTableValues.length; i++) {
         if (!actualTableValues[i].isDetail) {
-            var tempArray= new Array();
+            var tempArray = new Array();
             for (var j = 0; j < allSpans.length; j++) {
                 if (serviceName) {
                     if (actualTableValues[i].name === allSpans[j].process.serviceName) {
@@ -444,8 +413,8 @@ function servicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
             }
             var newColumnValues = new Array();
             //test
-            var newColumnValues = test(diffNamesA,tempArray,allSpans,false,actualTableValues[i].name)
-          
+            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, false, actualTableValues[i].name,true)
+
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
                 for (var j = 0; j < newColumnValues.length; j++) {
@@ -495,7 +464,7 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
             }
             // ab hier test 
 
-            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, serviceName, actualTableValues[i].name);
+            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, serviceName, actualTableValues[i].name, false);
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
                 for (var j = 0; j < newColumnValues.length; j++) {
@@ -510,7 +479,7 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
 
 
 
-function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], serviceName: boolean, parentName: string) {
+function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], serviceName: boolean, parentName: string, isDetail:boolean) {
 
     var newColumnValues = Array();
     for (var j = 0; j < diffNamesA.length; j++) {
@@ -530,16 +499,24 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
         var onePecent = allPercent / 100;
         var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
         for (var l = 0; l < tempArray.length; l++) {
-            if (serviceName) {
-                if (diffNamesA[j] === tempArray[l].process.serviceName) {
-                    resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
 
+            if (isDetail) {
+                for (var a = 0; a < tempArray[l].tags.length; a++) {
+                    if (diffNamesA[j] === tempArray[l].tags[a].value) {
+                        resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
+                    }
                 }
             } else {
-                if (diffNamesA[j] === tempArray[l].operationName) {
-                    resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
-                }
+                if (serviceName) {
+                    if (diffNamesA[j] === tempArray[l].process.serviceName) {
+                        resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
 
+                    }
+                } else {
+                    if (diffNamesA[j] === tempArray[l].operationName) {
+                        resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
+                    }
+                }
             }
         }
         resultArray.selfAvg = resultArray.self / resultArray.count;
@@ -550,43 +527,3 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
 
     return newColumnValues;
 }
-
-
-
-function test(diffNamesA: string[], tempArray: Span[], allSpans: Span[], serviceName: boolean, parentName: string){
-    var newColumnValues = Array();
-
-    for (var j = 0; j < diffNamesA.length; j++) {
-        var self = 0;
-        var selfAvg = 0;
-        var selfMin = allSpans[0].duration;
-        var selfMax = 0;
-        //avg && min && max
-        var total = 0;
-        var avg = 0;
-        var min = allSpans[0].duration;
-        var max = 0;
-        var count = 0;
-        var percent = 0;
-        var allPercent = allSpans[0].duration;
-        var onePecent = allPercent / 100;
-        var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
-
-
-        for (var l = 0; l < tempArray.length; l++) {
-            for (var a = 0; a < tempArray[l].tags.length; a++) {
-                if (diffNamesA[j] === tempArray[l].tags[a].value) {
-                    resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
-                }
-            }
-        }
-        resultArray.selfAvg = resultArray.self / resultArray.count;
-        resultArray.avg = resultArray.total / resultArray.count;
-
-        newColumnValues.push(buildOneColumn(diffNamesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
-            resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "", parentName));
-    }
-
-    return newColumnValues;
-}
-
