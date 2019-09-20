@@ -9,6 +9,8 @@ import { DetailTableData } from './detailTableData'
 import { TableSpan } from './types';
 import { sortTable } from '../DetailTraceTable/sortTable';
 import { generateColor} from './generateColor';
+import {searchInTable} from './searchInTable'
+import { TNil } from '../../../types';
 
 import PopupSQL from './popupSQL';
 import * as _ from 'lodash';
@@ -17,6 +19,8 @@ import { color } from 'd3-color';
 
 type Props = {
   trace: Trace,
+  uiFindVertexKeys:  Set<string> | TNil;
+  uiFind: string|null|undefined
 };
 
 type State = {
@@ -133,6 +137,9 @@ export default class TraceTagOverview extends Component<Props, State>{
     this.setSecondDropdownTitle = this.setSecondDropdownTitle.bind(this);
     this.togglePopup = this.togglePopup.bind(this);
     this.toggleColorButton = this.toggleColorButton.bind(this);
+
+
+    searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
   }
 
   /**
@@ -163,6 +170,8 @@ export default class TraceTagOverview extends Component<Props, State>{
    */
   handler(tableValue: TableSpan[]) {
 
+    
+
     const { sortIndex, sortAsc } = this.state;
     this.setState((previousState, currentProps) => {
       return {
@@ -174,8 +183,10 @@ export default class TraceTagOverview extends Component<Props, State>{
     });
 
     this.setState({
-      tableValue: this.splitRest(tableValue, 1, false)
+      tableValue:  searchInTable(this.props.uiFindVertexKeys!,(this.splitRest(tableValue, 1, false)),this.props.uiFind)
     })
+
+
   }
 
 
@@ -233,9 +244,23 @@ export default class TraceTagOverview extends Component<Props, State>{
 
   }
 
+   /**
+   * if the search props change the search function is called
+   * @param props all props 
+   */
+  componentDidUpdate(props: any, prevState: State) {
+    if ((this.props.uiFindVertexKeys !== props.uiFindVertexKeys)) {
+      searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue,this.props.uiFind);
+      // reload the componente
+      this.setState({
+        tableValue: this.state.tableValue
+      })
+    }
+  }
+
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
-      const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent, color,colorToPercent  } = oneSpan
+      const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent, color,searchColor, colorToPercent  } = oneSpan
       const values: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
       const values2: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
 
@@ -245,7 +270,7 @@ export default class TraceTagOverview extends Component<Props, State>{
             key={name + index}
             oneSpan={oneSpan}
             name={oneSpan.name}
-            searchColor={"transparent"}
+            searchColor={searchColor}
             values={values}
             columnsArray={columnsArray}
             togglePopup={this.togglePopup}
@@ -257,7 +282,7 @@ export default class TraceTagOverview extends Component<Props, State>{
           <DetailTableData
             key={oneSpan.name + index}
             name={oneSpan.name}
-            searchColor={"#ECECEC"}
+            searchColor={searchColor}
             values2={values2}
             columnsArray={columnsArray}
             color={color}

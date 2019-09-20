@@ -13,6 +13,7 @@ export type TableSpan = {
   isDetail: boolean;
   parentElement: string;
   color: string;
+  searchColor: string;
 
 
   colorToPercent: string;

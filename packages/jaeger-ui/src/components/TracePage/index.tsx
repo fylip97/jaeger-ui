@@ -442,18 +442,20 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                 uiFindVertexKeys={graphFindMatches}
               />
             </section>
-          ) : selectedTraceGraphView ==3 ?(
-                <section style={{ paddingTop: headerHeight }}>
-                  <DetailTraceTable traceProps={data}
-                    uiFindVertexKeys={graphFindMatches}
-                  />
-                </section>
-              ):(
-                <section style={{ paddingTop: headerHeight }}>
-                  <TraceTagOverview trace={data}/>
-                </section>
+          ) : selectedTraceGraphView == 3 ? (
+            <section style={{ paddingTop: headerHeight }}>
+              <DetailTraceTable traceProps={data}
+                uiFindVertexKeys={graphFindMatches}
+              />
+            </section>
+          ) : (
+                  <section style={{ paddingTop: headerHeight }}>
+                    <TraceTagOverview trace={data}
+                      uiFindVertexKeys={graphFindMatches}
+                      uiFind = {uiFind}  />
+                  </section>
 
-              ))}
+                ))}
       </div>
     );
   }
