@@ -9,7 +9,6 @@ export function generateColor(allSpans: TableSpan[], colorToPercent: boolean) {
                 
                 //linear
                 //var color = 236 - 166 * (allSpans[i].percent / 100);
-
                 // 2 lineare funktionen:
                  var color;
                  if(allSpans[i].percent <40){

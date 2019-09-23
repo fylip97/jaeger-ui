@@ -296,7 +296,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     if (index == 0) {
 
       ++selectedTraceGraphView;
-      if (selectedTraceGraphView > 4) {
+      if (selectedTraceGraphView > 3) {
         selectedTraceGraphView = 1;
       }
 
@@ -307,8 +307,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
         selectedTraceGraphView = 2;
       } else if (index == 3) {
         selectedTraceGraphView = 3;
-      } else if (index == 4) {
-        selectedTraceGraphView = 4;
       }
 
     }
@@ -439,12 +437,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                 headerHeight={headerHeight}
                 ev={this.traceDagEV}
                 uiFind={uiFind}
-                uiFindVertexKeys={graphFindMatches}
-              />
-            </section>
-          ) : selectedTraceGraphView == 3 ? (
-            <section style={{ paddingTop: headerHeight }}>
-              <DetailTraceTable traceProps={data}
                 uiFindVertexKeys={graphFindMatches}
               />
             </section>

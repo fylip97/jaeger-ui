@@ -14,8 +14,6 @@ import { TNil } from '../../../types';
 
 import PopupSQL from './popupSQL';
 import * as _ from 'lodash';
-import { Button } from 'antd/lib/radio';
-import { color } from 'd3-color';
 
 type Props = {
   trace: Trace,
@@ -33,9 +31,7 @@ type State = {
 
   showPopup: boolean,
   popupContent: string,
-
   colorButton: boolean,
-
   wholeTable: TableSpan[];
 
 
@@ -103,7 +99,7 @@ const columnsArray: any[] = [
     "isDecimal": true
   },
   {
-    "title": "Percent",
+    "title": "ST in Duration",
     "attribute": "percent",
     "suffix": "%",
     "isDecimal": true
@@ -115,7 +111,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   constructor(props: any) {
     super(props);
     var firstInputA = Array();
-    var firstInput = { name: "", count: 0, total: 0, avg: 0, min: 0, max: 0, self: 0, selfAvg: 0, selfMin: 0, selfMax: 0, percent: 0 }
+    var firstInput = { name: "default", count: 0, total: 0, avg: 0, min: 0, max: 0, self: 0, selfAvg: 0, selfMin: 0, selfMax: 0, percent: 0 }
     firstInputA.push(firstInput)
     this.state = {
       tableValue: firstInputA,
@@ -190,7 +186,12 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
-
+/**
+ * searches for the rest of the share and sorts afterwards 
+ * @param tableValue 
+ * @param sortIndex 
+ * @param sortAsc 
+ */
   splitRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
 
     var rememberIndex = -1;
@@ -221,12 +222,17 @@ export default class TraceTagOverview extends Component<Props, State>{
       tagDropdownTitle: title,
     })
   }
+  
   setSecondDropdownTitle(title: string) {
     this.setState({
       secondTagDropdownTitle: title,
     })
   }
 
+  /**
+   * opern the popup button
+   * @param popupContent 
+   */
   togglePopup(popupContent: string) {
 
     this.setState({
@@ -235,14 +241,15 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
+/**
+ * colors the last line by percent
+ */
   toggleColorButton() {
 
     this.setState({
       tableValue: generateColor(this.state.tableValue, !this.state.colorButton),
       colorButton: !this.state.colorButton,
-
     })
-
   }
 
   /**
@@ -259,12 +266,14 @@ export default class TraceTagOverview extends Component<Props, State>{
     }
   }
 
-
+/**
+ * hides the child at the first click
+ * @param selectedSpan 
+ */
   clickColumn(selectedSpan: string) {
 
     if (this.state.secondTagDropdownTitle !== "No item selected") {
       var add = true;
-      
       var actualTable = this.state.tableValue;
       var newTable = new Array();
       for (var i = 0; i < actualTable.length; i++) {
@@ -290,18 +299,13 @@ export default class TraceTagOverview extends Component<Props, State>{
             }
           }
         }
-        console.log(newTable);
+        newTable = this.splitRest(newTable,1,false);
       }
-
-
       this.setState({
         tableValue: newTable,
       });
-
     }
   }
-
-
 
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
@@ -359,7 +363,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   render() {
     return (
       <div>
-        <h3 id="title"> Trace Tag View</h3>
+        <h3 id="title"> Trace Overview</h3>
         <TagDropdown trace={this.props.trace}
           key={'parent'}
           handler={this.handler}
@@ -392,10 +396,8 @@ export default class TraceTagOverview extends Component<Props, State>{
             {this.renderTableData()}
           </tbody>
         </table>
-
       </div>
     )
   }
-
 
 }

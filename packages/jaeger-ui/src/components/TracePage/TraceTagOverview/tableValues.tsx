@@ -4,9 +4,6 @@ import { Span } from '../../../types/trace';
 import { calculateContent } from '../DetailTraceTable/tableContent';
 import { TableSpan } from './types';
 import colorGenerator from '../../../utils/color-generator';
-import { string } from 'prop-types';
-import { all } from 'q';
-
 
 /**
  * returns the values of the table shown after the selection of the first dropdown   
@@ -47,8 +44,6 @@ export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], se
     else {
         return getColumnValuesSecondDropdown2Tags(actualTableValues, selectedTagKey, selectedTagKeySecond, trace);
     }
-
-
 }
 
 /**
@@ -87,7 +82,11 @@ function buildOneColumn(name: string, count: number, total: number, avg: number,
 }
 
 
-
+/**
+ * grouped by serviceName or operationName
+ * @param selectedTagKey 
+ * @param trace 
+ */
 function group(selectedTagKey: string, trace: Trace) {
     var allSpans = trace.spans
     var diffNamesS = new Set();
@@ -109,7 +108,12 @@ function group(selectedTagKey: string, trace: Trace) {
     return getNoTagContent(allSpans, diffNamesA, selectedTagKey);
 }
 
-
+/**
+ * first: tag second: ServiceName or OperationName
+ * @param allSpans 
+ * @param diffServiceName 
+ * @param selectedTitle 
+ */
 function getNoTagContent(allSpans: Span[], diffServiceName: string[], selectedTitle: string) {
 
     var allSpansTrace = new Array();
@@ -147,13 +151,16 @@ function getNoTagContent(allSpans: Span[], diffServiceName: string[], selectedTi
 
         var tableSpan = buildOneColumn(diffServiceName[i], resultArray.count, resultArray.total, resultArray.avg,
             resultArray.min, resultArray.max, false, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, color, "", "none");
-
         allSpansTrace.push(tableSpan);
     }
     return allSpansTrace;
 }
 
-
+/**
+ * get first dropdown
+ * @param selectedTagKey 
+ * @param trace 
+ */
 function getTraceValuesFirstDropdown(selectedTagKey: string, trace: Trace) {
 
     var allSpansWithSelectedKey = new Array();
@@ -247,11 +254,13 @@ function getTraceValuesFirstDropdown(selectedTagKey: string, trace: Trace) {
     return allValuesColumn;
 }
 
-
-
-
-// second dropdown is selected
-
+/**
+ * first: Tag second: Tag
+ * @param actualTableValues 
+ * @param selectedTagKey 
+ * @param selectedTagKeySecond 
+ * @param trace 
+ */
 function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace) {
 
     var allSpans = trace.spans;
@@ -314,7 +323,6 @@ function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], sele
             }
             var allValuesColumn = Array();
             var allValuesColumn = buildExtra(diffNamesA, tempArray, allSpans, false, actualTableValues[i].name,true);
-
             newTableValues.push(actualTableValues[i]);
             if (allValuesColumn.length != 0) {
                 for (var j = 0; j < allValuesColumn.length; j++) {
@@ -326,15 +334,20 @@ function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], sele
     return newTableValues;
 }
 
-
+/**
+ * first: ServiceName or OperationName second: ServiceName or OperationName
+ * @param actualTableValues 
+ * @param selectedTagKey 
+ * @param selectedTagKeySecond 
+ * @param trace 
+ * @param serviceName 
+ */
 function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
-
     for (var i = 0; i < actualTableValues.length; i++) {
         if (!actualTableValues[i].isDetail) {
-
             var tempArray = Array();
             for (var j = 0; j < allSpans.length; j++) {
                 if (serviceName) {
@@ -346,7 +359,6 @@ function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
                         tempArray.push(allSpans[j]);
                     }
                 }
-
             }
 
             var diffNamesS = new Set();
@@ -362,10 +374,8 @@ function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
             for (var j = 0; j < diffNamesS.size; j++) {
                 diffNamesA.push(iterator.next().value)
             }
-
             var newColumnValues = new Array()
             var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, !serviceName, actualTableValues[i].name,false);
-
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
                 for (var j = 0; j < newColumnValues.length; j++) {
@@ -377,12 +387,18 @@ function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
     return allColumnValues;
 }
 
-
+/**
+ * first ServiceName or Operation Name to Tag
+ * @param actualTableValues 
+ * @param selectedTagKey 
+ * @param selectedTagKeySecond 
+ * @param trace 
+ * @param serviceName 
+ */
 function servicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
-
     for (var i = 0; i < actualTableValues.length; i++) {
         if (!actualTableValues[i].isDetail) {
             var tempArray = new Array();
@@ -423,20 +439,22 @@ function servicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
                 }
             }
         }
-
     }
     return allColumnValues;
 }
 
-
-
-
-
+/**
+ * first: Tag second: ServiceName or OperationName
+ * @param actualTableValues 
+ * @param selectedTagKey 
+ * @param selectedTagKeySecond 
+ * @param trace 
+ * @param serviceName 
+ */
 function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
 
     var allSpans = trace.spans;
     var allColumnValues = new Array();
-
     for (var i = 0; i < actualTableValues.length; i++) {
         if (!actualTableValues[i].isDetail) {
             var tempArray = new Array();
@@ -456,7 +474,6 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
                     diffNamesS.add(tempArray[j].operationName);
                 }
             }
-
             //to Array
             var diffNamesA = new Array();
             var iterator = diffNamesS.values();
@@ -464,7 +481,6 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
                 diffNamesA.push(iterator.next().value)
             }
             // ab hier test 
-
             var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, serviceName, actualTableValues[i].name, false);
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
@@ -477,14 +493,19 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
     return allColumnValues;
 }
 
-
-
-
+/**
+ * created array for the children
+ * @param diffNamesA 
+ * @param tempArray 
+ * @param allSpans 
+ * @param serviceName 
+ * @param parentName 
+ * @param isDetail 
+ */
 function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], serviceName: boolean, parentName: string, isDetail:boolean) {
 
     var newColumnValues = Array();
     for (var j = 0; j < diffNamesA.length; j++) {
-
         var self = 0;
         var selfAvg = 0;
         var selfMin = allSpans[0].duration;
@@ -501,7 +522,6 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
         var onePecent = allPercent / 100;
         var resultArray = { self, selfAvg, selfMin, selfMax, total, avg, min, max, count, percent };
         for (var l = 0; l < tempArray.length; l++) {
-
             if (isDetail) {
                 for (var a = 0; a < tempArray[l].tags.length; a++) {
                     if (diffNamesA[j] === tempArray[l].tags[a].value) {
@@ -513,8 +533,6 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
                     if (diffNamesA[j] === tempArray[l].process.serviceName) {
                         resultArray = calculateContent(tempArray, allSpans, l, resultArray, onePecent);
                         color = colorGenerator.getColorByKey(tempArray[l].process.serviceName);
-                        console.log(color);
-
                     }
                 } else {
                     if (diffNamesA[j] === tempArray[l].operationName) {
@@ -528,6 +546,5 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
         newColumnValues.push(buildOneColumn(diffNamesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
             resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, color, "", parentName));
     }
-
     return newColumnValues;
 }
