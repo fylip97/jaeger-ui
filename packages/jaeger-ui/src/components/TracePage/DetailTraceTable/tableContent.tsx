@@ -41,7 +41,13 @@ export function calculateContent(span: Span[], wholeTrace: Span[], j: number, re
         if (resultArray.selfMax < (span[j].duration - sumAllChildInSpan)) {
             resultArray.selfMax = span[j].duration - sumAllChildInSpan;
         }
-        resultArray.self = resultArray.self + span[j].duration - sumAllChildInSpan;
+        var tempSelf = span[j].duration - sumAllChildInSpan;
+        // resultArray.self = resultArray.self + span[j].duration - sumAllChildInSpan;
+       /* if (tempSelf < 0) {
+            tempSelf = span[j + 1].relativeStartTime - span[j].relativeStartTime;
+        }
+        */
+        resultArray.self = resultArray.self + tempSelf;
     } else {
         if (resultArray.selfMin > (span[j].duration)) {
             resultArray.selfMin = span[j].duration;
@@ -106,7 +112,6 @@ export function getMainContent(allSpans: Span[], diffServiceName: string[]) {
                 color = colorGenerator.getColorByKey(allSpans[j].process.serviceName)
             }
         }
-
         resultArray.selfAvg = resultArray.self / resultArray.count;
         resultArray.avg = resultArray.total / resultArray.count;
 

@@ -33,8 +33,6 @@ type State = {
   popupContent: string,
   colorButton: boolean,
   wholeTable: TableSpan[];
-
-
 };
 
 const columnsArray: any[] = [
@@ -123,7 +121,6 @@ export default class TraceTagOverview extends Component<Props, State>{
       showPopup: false,
       secondTagDropdownTitle: "No item selected",
       popupContent: "",
-
       colorButton: false,
       wholeTable: [],
 
@@ -137,7 +134,6 @@ export default class TraceTagOverview extends Component<Props, State>{
     this.togglePopup = this.togglePopup.bind(this);
     this.toggleColorButton = this.toggleColorButton.bind(this);
     this.clickColumn = this.clickColumn.bind(this);
-
 
     searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
   }
@@ -163,7 +159,6 @@ export default class TraceTagOverview extends Component<Props, State>{
     }
   }
 
-
   /**
    * is called from the child to change the state of the parent
    * @param tableValue the values of the column
@@ -186,12 +181,12 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
-/**
- * searches for the rest of the share and sorts afterwards 
- * @param tableValue 
- * @param sortIndex 
- * @param sortAsc 
- */
+  /**
+   * searches for the rest of the share and sorts afterwards 
+   * @param tableValue 
+   * @param sortIndex 
+   * @param sortAsc 
+   */
   splitRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
 
     var rememberIndex = -1;
@@ -222,10 +217,11 @@ export default class TraceTagOverview extends Component<Props, State>{
       tagDropdownTitle: title,
     })
   }
-  
+
   setSecondDropdownTitle(title: string) {
     this.setState({
       secondTagDropdownTitle: title,
+      colorButton: false,
     })
   }
 
@@ -241,15 +237,17 @@ export default class TraceTagOverview extends Component<Props, State>{
     })
   }
 
-/**
- * colors the last line by percent
- */
+  /**
+   * colors the last line by percent
+   */
   toggleColorButton() {
 
-    this.setState({
-      tableValue: generateColor(this.state.tableValue, !this.state.colorButton),
-      colorButton: !this.state.colorButton,
-    })
+    if (this.state.secondTagDropdownTitle !== "No item selected") {
+      this.setState({
+        tableValue: generateColor(this.state.tableValue, !this.state.colorButton),
+        colorButton: !this.state.colorButton,
+      })
+    }
   }
 
   /**
@@ -266,10 +264,10 @@ export default class TraceTagOverview extends Component<Props, State>{
     }
   }
 
-/**
- * hides the child at the first click
- * @param selectedSpan 
- */
+  /**
+   * hides the child at the first click
+   * @param selectedSpan 
+   */
   clickColumn(selectedSpan: string) {
 
     if (this.state.secondTagDropdownTitle !== "No item selected") {
@@ -277,29 +275,29 @@ export default class TraceTagOverview extends Component<Props, State>{
       var actualTable = this.state.tableValue;
       var newTable = new Array();
       for (var i = 0; i < actualTable.length; i++) {
-        if(actualTable[i].parentElement === selectedSpan){
-          add =false;
+        if (actualTable[i].parentElement === selectedSpan) {
+          add = false;
         }
         if (actualTable[i].parentElement !== selectedSpan) {
           newTable.push(actualTable[i]);
         }
       }
-      if(add){
-        newTable=[];
-        for(var i=0; i<actualTable.length;i++){
+      if (add) {
+        newTable = [];
+        for (var i = 0; i < actualTable.length; i++) {
 
-          if(actualTable[i].name!== selectedSpan){
+          if (actualTable[i].name !== selectedSpan) {
             newTable.push(actualTable[i]);
-          }else{
+          } else {
             newTable.push(actualTable[i])
-            for(var j=0; j<this.state.wholeTable.length;j++){
-              if(this.state.wholeTable[j].parentElement===selectedSpan){
+            for (var j = 0; j < this.state.wholeTable.length; j++) {
+              if (this.state.wholeTable[j].parentElement === selectedSpan) {
                 newTable.push(this.state.wholeTable[j]);
               }
             }
           }
         }
-        newTable = this.splitRest(newTable,1,false);
+        newTable = searchInTable(this.props.uiFindVertexKeys!, generateColor(this.splitRest(newTable, this.state.sortIndex, this.state.sortAsc), this.state.colorButton), this.props.uiFind);
       }
       this.setState({
         tableValue: newTable,
@@ -311,7 +309,6 @@ export default class TraceTagOverview extends Component<Props, State>{
     return this.state.tableValue.map((oneSpan, index) => {
       const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent, color, searchColor, colorToPercent } = oneSpan
       const values: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
-      const values2: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
 
       if (!oneSpan.isDetail) {
         return (
@@ -333,7 +330,7 @@ export default class TraceTagOverview extends Component<Props, State>{
             key={oneSpan.name + index}
             name={oneSpan.name}
             searchColor={searchColor}
-            values2={values2}
+            values={values}
             columnsArray={columnsArray}
             color={color}
             togglePopup={this.togglePopup}
@@ -379,7 +376,6 @@ export default class TraceTagOverview extends Component<Props, State>{
           tagDropdownTitle={this.state.tagDropdownTitle}
           setSecondTagDropdownTitle={this.setSecondDropdownTitle}
           secondTagDropdownTitle={this.state.secondTagDropdownTitle}
-        
         />
         <button style={this.state.colorButton ? { color: "red" } : { color: "rgba(0, 0, 0, 0.65)" }} onClick={this.toggleColorButton} id="ButtonColor"> color</button>
 

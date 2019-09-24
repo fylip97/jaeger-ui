@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import { Span } from '../../../types/trace';
-import { calculateContent } from '../DetailTraceTable/tableContent';
 import { TableSpan } from './types';
 import colorGenerator from '../../../utils/color-generator';
 
@@ -148,7 +147,6 @@ function getNoTagContent(allSpans: Span[], diffServiceName: string[], selectedTi
         }
         resultArray.selfAvg = resultArray.self / resultArray.count;
         resultArray.avg = resultArray.total / resultArray.count;
-
         var tableSpan = buildOneColumn(diffServiceName[i], resultArray.count, resultArray.total, resultArray.avg,
             resultArray.min, resultArray.max, false, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, color, "", "none");
         allSpansTrace.push(tableSpan);
@@ -322,7 +320,7 @@ function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], sele
                 diffNamesA.push(iterator.next().value)
             }
             var allValuesColumn = Array();
-            var allValuesColumn = buildExtra(diffNamesA, tempArray, allSpans, false, actualTableValues[i].name,true);
+            var allValuesColumn = buildExtra(diffNamesA, tempArray, allSpans, false, actualTableValues[i].name, true);
             newTableValues.push(actualTableValues[i]);
             if (allValuesColumn.length != 0) {
                 for (var j = 0; j < allValuesColumn.length; j++) {
@@ -360,7 +358,6 @@ function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
                     }
                 }
             }
-
             var diffNamesS = new Set();
             for (var j = 0; j < tempArray.length; j++) {
                 if (serviceName) {
@@ -375,7 +372,7 @@ function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
                 diffNamesA.push(iterator.next().value)
             }
             var newColumnValues = new Array()
-            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, !serviceName, actualTableValues[i].name,false);
+            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, !serviceName, actualTableValues[i].name, false);
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
                 for (var j = 0; j < newColumnValues.length; j++) {
@@ -430,7 +427,7 @@ function servicOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string,
             }
             var newColumnValues = new Array();
             //test
-            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, false, actualTableValues[i].name,true)
+            var newColumnValues = buildExtra(diffNamesA, tempArray, allSpans, false, actualTableValues[i].name, true)
 
             allColumnValues.push(actualTableValues[i]);
             if (newColumnValues.length > 0) {
@@ -465,7 +462,6 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
                     }
                 }
             }
-
             var diffNamesS = new Set();
             for (var j = 0; j < tempArray.length; j++) {
                 if (serviceName) {
@@ -502,7 +498,7 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
  * @param parentName 
  * @param isDetail 
  */
-function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], serviceName: boolean, parentName: string, isDetail:boolean) {
+function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], serviceName: boolean, parentName: string, isDetail: boolean) {
 
     var newColumnValues = Array();
     for (var j = 0; j < diffNamesA.length; j++) {
@@ -516,7 +512,7 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
         var min = allSpans[0].duration;
         var max = 0;
         var count = 0;
-        var color ="";
+        var color = "";
         var percent = 0;
         var allPercent = allSpans[0].duration;
         var onePecent = allPercent / 100;
@@ -547,4 +543,68 @@ function buildExtra(diffNamesA: string[], tempArray: Span[], allSpans: Span[], s
             resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, color, "", parentName));
     }
     return newColumnValues;
+}
+
+/**
+ * calculate the content of the row
+ * @param span 
+ * @param wholeTrace whole information of the trace
+ * @param j whitch row is calculated
+ * @param resultArray array with all variables who are calclated
+ * @param onePercent time which corresponds to 1%.
+ */
+export function calculateContent(span: Span[], wholeTrace: Span[], j: number, resultArray: any, onePercent: number) {
+
+    resultArray.count += 1;
+    resultArray.total += span[j].duration;
+    if (resultArray.min > span[j].duration) {
+        resultArray.min = span[j].duration;
+    }
+    if (resultArray.max < span[j].duration) {
+        resultArray.max = span[j].duration;
+    }
+    //For each span with the same operationName 
+    //Do I have children?
+    if (span[j].hasChildren) {
+        var sumAllChildInSpan = 0;
+        // if I have children then look for my children
+        for (var l = 0; l < wholeTrace.length; l++) {
+            //i am a child?
+            if (wholeTrace[l].references.length == 1) {
+                //i am a child of this span?
+                if (span[j].spanID == wholeTrace[l].references[0].spanID) {
+                    sumAllChildInSpan = sumAllChildInSpan + wholeTrace[l].duration
+                }
+            }
+        }
+        var tempSelf = span[j].duration - sumAllChildInSpan;
+        if (tempSelf < 0) {
+            var onlyOne = true
+            for (var l = 0; l < wholeTrace.length; l++) {
+                if (wholeTrace[l].references.length == 1) {
+                    if (span[j].spanID == wholeTrace[l].references[0].spanID && onlyOne) {
+                        onlyOne = false;
+                        tempSelf = wholeTrace[l].relativeStartTime - span[j].relativeStartTime;
+                    }
+                }
+            }
+        }
+        if (resultArray.selfMin > tempSelf) {
+            resultArray.selfMin = tempSelf;
+        }
+        if (resultArray.selfMax < tempSelf) {
+            resultArray.selfMax = tempSelf;
+        }
+        resultArray.self = resultArray.self + tempSelf;
+    } else {
+        if (resultArray.selfMin > (span[j].duration)) {
+            resultArray.selfMin = span[j].duration;
+        }
+        if (resultArray.selfMax < span[j].duration) {
+            resultArray.selfMax = span[j].duration;
+        }
+        resultArray.self = resultArray.self + span[j].duration;
+    }
+    resultArray.percent = resultArray.self / onePercent;
+    return resultArray;
 }

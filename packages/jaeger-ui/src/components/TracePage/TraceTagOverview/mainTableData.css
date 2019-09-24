@@ -8,7 +8,7 @@
   }
 
   td {
-    max-width: 30em;
+    max-width: 25em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
