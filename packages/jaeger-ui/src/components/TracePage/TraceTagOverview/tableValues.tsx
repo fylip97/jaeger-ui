@@ -643,7 +643,7 @@ function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: 
     return newTable;
 }
 
-function calculateContent(span: Span, wholeTrace: Span[], resultArray: any) {
+export function calculateContent(span: Span, wholeTrace: Span[], resultArray: any) {
 
     resultArray.count += 1;
     resultArray.total += span.duration;

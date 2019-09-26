@@ -7,7 +7,7 @@ import { TableOverviewHeaderTag } from './tableOverviewHeadTag';
 import { MainTableData } from './mainTableData';
 import { DetailTableData } from './detailTableData'
 import { TableSpan } from './types';
-import { sortTable } from '../DetailTraceTable/sortTable';
+import { sortTable } from './sortTable';
 import { generateColor } from './generateColor';
 import { searchInTable } from './searchInTable'
 import { TNil } from '../../../types';

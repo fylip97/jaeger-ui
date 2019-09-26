@@ -1,0 +1,34 @@
+#title{
+    width: 100%;
+    padding-top: 0.3%;
+    padding-bottom: 0.3%;
+    padding-left: 0.4%;
+    background: #ECECEC;
+    margin-bottom: 0.0%
+}
+
+#analyseButton{
+    line-height: 1.5;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 0 15px;
+    font-size: 14px;
+    border-radius: 4px;
+    height: 32px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    border-color: #d9d9d9;
+    margin-top: 0.6em;
+
+}
