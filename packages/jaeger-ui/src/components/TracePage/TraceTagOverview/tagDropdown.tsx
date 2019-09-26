@@ -70,14 +70,14 @@ export default class TagDropdown extends Component<Props, State>{
         const menu = (<Menu>
             {this.state.title.map((title: any, index: number) => (
                 <Menu.Item key={title}>
-                    <a onClick={() => this.tagIsClicked(title)} role="button">{title}</a>
+                    <a onClick={() => this.tagIsClicked(title)} role="button">{title!== "Service Name" && title !== "Operation Name" ? "Tag: "+title : title}</a>
                 </Menu.Item>
             ))}
         </Menu>)
         return (
             <div className="dropdown">
                 <Dropdown overlay={menu} >
-                    <Button> {this.state.titleTag} <Icon type={'down'} /></Button>
+                    <Button>{this.state.titleTag} <Icon type={'down'} /></Button>
                 </Dropdown>
             </div>
         );

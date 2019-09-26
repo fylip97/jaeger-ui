@@ -14,7 +14,7 @@ export function sortTable(array: any[], key: string, upDown: boolean) {
     var isDetailArray = new Array();
     var isNoDetail = new Array();
     for (var i = 0; i < array.length; i++) {
-        if (array[i].isDetail == true) {
+        if (array[i].isDetail) {
             isDetailArray.push(array[i]);
         } else {
             isNoDetail.push(array[i]);

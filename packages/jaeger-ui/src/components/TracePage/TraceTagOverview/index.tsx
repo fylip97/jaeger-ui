@@ -189,21 +189,64 @@ export default class TraceTagOverview extends Component<Props, State>{
    */
   splitRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
 
+    var rememberIndexNoDetail = -1;
     var rememberIndex = -1;
+    var restInDetail = false;
     var sortArray = new Array();
+    var sortArray2 = new Array();
+
     for (var i = 0; i < tableValue.length; i++) {
       if (tableValue[i].name !== 'rest') {
         sortArray.push(tableValue[i]);
       }
       else {
-        rememberIndex = i;
+        if (!tableValue[i].isDetail) {
+          rememberIndexNoDetail = i;
+        }
+        else {
+          restInDetail = true;
+        }
       }
     }
+
     sortArray = sortTable(sortArray, columnsArray[sortIndex].attribute, sortAsc);
-    if (rememberIndex != -1) {
-      sortArray.push(tableValue[rememberIndex]);
+    if (rememberIndexNoDetail != -1) {
+      sortArray.push(tableValue[rememberIndexNoDetail]);
     }
-    return sortArray
+
+    if (!restInDetail) {
+      return sortArray;
+    }
+    else {
+      var parentElements = new Array();
+      for (var i = 0; i < tableValue.length; i++) {
+        if (!tableValue[i].isDetail) {
+          parentElements.push(tableValue[i]);
+        }
+      }
+      parentElements = sortTable(parentElements, columnsArray[sortIndex].attribute, sortAsc);
+      for (var i = 0; i < parentElements.length; i++) {
+        sortArray2.push(parentElements[i]);
+        var tempArray = new Array();
+        for (var j = 0; j < tableValue.length; j++) {
+          if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name !== "rest") {
+            tempArray.push(tableValue[j]);
+          } else if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name === "rest") {
+            rememberIndex = j;
+          }
+        }
+        tempArray = sortTable(tempArray, columnsArray[sortIndex].attribute, sortAsc);
+        if (rememberIndex != -1) {
+          tempArray.push(tableValue[rememberIndex]);
+          rememberIndex = -1;
+        }
+        for (var j = 0; j < tempArray.length; j++) {
+          sortArray2.push(tempArray[j]);
+        }
+      }
+      return sortArray2
+    }
+
   }
 
   changeIsSelected() {

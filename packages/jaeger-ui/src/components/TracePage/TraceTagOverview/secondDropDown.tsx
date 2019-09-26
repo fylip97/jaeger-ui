@@ -91,7 +91,7 @@ export default class SecondDropDown extends Component<Props, State>{
         const menu = (<Menu>
             {this.state.title.map((title: any, index: number) => (
                 <Menu.Item key={index}>
-                    <a onClick={() => this.tagIsClicked(title)} role="button">{title}</a>
+                    <a onClick={() => this.tagIsClicked(title)} role="button">{title !== "Service Name" && title !== "Operation Name" ? "Tag: "+title : title}</a>
                 </Menu.Item>
             ))}
         </Menu>)
