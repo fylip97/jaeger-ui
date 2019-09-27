@@ -28,8 +28,14 @@ export default class TagDropdown extends Component<Props, State>{
         this.state = {
             displayMenu: false,
             title: content,
-            titleTag: "No item selected",
+            titleTag: "Service Name",
         };
+
+        this.props.handler(getColumnValues("Service Name", this.props.trace));
+        this.props.changeIsSelected();
+        this.props.setTagDropdownTitle("Service Name")
+        this.props.setSecondDropdownTitle("No item selected");
+
         this.showDropdownMenu = this.showDropdownMenu.bind(this);
         this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
