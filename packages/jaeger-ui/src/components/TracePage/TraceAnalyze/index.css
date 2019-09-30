@@ -81,7 +81,7 @@
 #textarea{
 
     width: 70%;
-    height: 20em;
+    height: 600px;
     display: block;
     
     margin-left: auto;
@@ -90,7 +90,6 @@
     outline-color:#008080;
     margin-top: 10px;
 }
-
 
 #labelSpanDuration{
     

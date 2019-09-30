@@ -46,8 +46,8 @@ export default class TraceAnalyse extends Component<Props, State>{
                     Trace Analyse
                 </h3>
                 <div id="search">
-                    <label id="labelSpanDuration" >Max. Span Duration in ms</label>
-                    <input id="inputDuration" onChange={this.onChange} type="number" placeholder="Max Duration of Span" />
+                    <label id="labelSpanDuration" >Min. Span Duration in ms</label>
+                    <input id="inputDuration" onChange={this.onChange} type="number" placeholder="Min Duration of Span" />
                     <button id="analyseButton" onClick={this.startAnalyse}>
                         Start Analyze
                 </button>
