@@ -56,7 +56,6 @@ import { EmbeddedState } from '../../types/embedded';
 import filterSpans from '../../utils/filter-spans';
 import updateUiFind from '../../utils/update-ui-find';
 import TraceTagOverview from './TraceTagOverview/index';
-import TraceAnalyse from './TraceAnalyze/index';
 
 import './index.css';
 
@@ -294,7 +293,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     if (index == 0) {
 
       ++selectedTraceGraphView;
-      if (selectedTraceGraphView > 4) {
+      if (selectedTraceGraphView > 3) {
         selectedTraceGraphView = 1;
       }
 
@@ -305,8 +304,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
         selectedTraceGraphView = 2;
       } else if (index == 3) {
         selectedTraceGraphView = 3;
-      } else if(index ==4){
-        selectedTraceGraphView =4;
       }
 
     }
@@ -440,18 +437,14 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                 uiFindVertexKeys={graphFindMatches}
               />
             </section>
-          ) : selectedTraceGraphView ==3 ?(
+          ) :(
                   <section style={{ paddingTop: headerHeight }}>
                     <TraceTagOverview trace={data}
                       uiFindVertexKeys={graphFindMatches}
                       uiFind = {uiFind}  />
                   </section>
 
-                ): 
-                <section style={{paddingTop: headerHeight}}>
-                  <TraceAnalyse trace={data}/>
-                 </section>
-                )}
+          ))}
       </div>
     );
   }
