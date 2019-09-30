@@ -1,164 +1,103 @@
 import { Trace } from '../../../types/trace';
-import { Span } from '../../../types/trace';
 import { calculateContent } from '../TraceTagOverview/tableValues';
 
 
-/**
- * returns the string to be displayed
- * @param trace
- * @param input Min Span Duration in ms 
- */
-export function generateAnalyseData(trace: Trace, input: number) {
-    if (input != 0) {
-        return (getSpansWithInput(trace, input) + "\n" + getWarnings(trace));
-    } else {
-        return (findProblem(trace) + "\n" + getWarnings(trace));
+export function generateAnalyseData(trace: Trace) {
+    var resultString = "";
+    var analyzeFunction = new Array();
+    analyzeFunction.push({ string: "n+1 Rule: ", function: nPlusOneRule });
+    analyzeFunction.push({ string: "\ntimeWastingOperationsRule: ", function: timeWastingOperationsRule });
+    analyzeFunction.push({ string: "\npercentage Deviation: ", function: percentageDeviation });
+    analyzeFunction.push({ string: "\nlong databasecall rule: ", function: longDatabaseCall })
+    for (var i = 0; i < analyzeFunction.length; i++) {
+        resultString = resultString + analyzeFunction[i].string + analyzeFunction[i].function(trace);
     }
+    return resultString;
 }
 
 /**
- * return span id if span duration is longer than input
- * @param trace 
- * @param input 
+ * returns true if n plus one Rule is true
+ * @param trace whole trace
  */
-function getSpansWithInput(trace: Trace, input: number) {
-
+function nPlusOneRule(trace: Trace) {
     var allSpans = trace.spans;
-    var selectedSpans = new Array();
-    for (var i = 0; i < allSpans.length; i++) {
-        if ((allSpans[i].duration / 1000) > input) {
-            selectedSpans.push(allSpans[i])
-        }
-    }
-    var string = "Span IDs: ";
-    for (var i = 0; i < selectedSpans.length; i++) {
-        string = string + selectedSpans[i].spanID + ",  ";
-    }
-    return string;
-}
-
-/**
- * return count of databasecalls, total duration and duration avg
- * @param trace 
- */
-function findProblem(trace: Trace) {
-
-    var string = "";
-    var databaseInformation = getDatabaseInformation(trace);
-    string = "Databasecalls: " + databaseInformation.databasecalls + ", total Duration: " + databaseInformation.totalDuration + "ms, Duration Avg: " + Math.round((databaseInformation.totalDurationAvg / 1) * 100) / 100 + "ms,";
-    var percentageDeviation1 = new Array();
-    percentageDeviation1 = percentageDeviation(getSpanInformation(trace));
-    if (percentageDeviation1.length > 0) {
-        string += "\n";
-        for (var i = 0; i < percentageDeviation1.length; i++) {
-            string += "\nPercentage Deviation over 45 %: " + percentageDeviation1[i].spanID;
-            string += ": " + (Math.round((percentageDeviation1[i].percentageDeviation / 1) * 100) / 100) + "%";
-        }
-    }
-    var spanWithLongestSelfTime = getSpanWithLongestSelfTime(getSpanInformation(trace));
-    string += "\nSpan with longest self time. Span ID: "+spanWithLongestSelfTime.selfMaxName+" self time: "+spanWithLongestSelfTime.selfMax;
-    return string;
-}
-
-function getDatabaseInformation(trace: Trace) {
-
-    var allSpans = trace.spans;
-    var allSpansDatabase = new Array();
-    var totalDuration = 0;
-    var totalDurationAvg = 0;
-    var databasecalls = 0;
+    var count = 1;
+    var sqlCheck = "";
     for (var i = 0; i < allSpans.length; i++) {
         for (var j = 0; j < allSpans[i].tags.length; j++) {
-            if (allSpans[i].tags[j].key === "database") {
-                allSpansDatabase.push(allSpans[i]);
+            if (allSpans[i].tags[j].key === "sql") {
+                if (sqlCheck !== allSpans[i].tags[j].value) {
+                    sqlCheck = allSpans[i].tags[j].value;
+                    count = 1;
+                } else {
+                    ++count;
+                }
             }
         }
     }
-    databasecalls = allSpansDatabase.length;
-    allSpansDatabase.forEach(function (oneSpan) {
-        totalDuration += oneSpan.duration;
-    })
-    totalDurationAvg = totalDuration / databasecalls;
-    var databaseInformation = { totalDuration: totalDuration / 1000, totalDurationAvg: totalDurationAvg / 1000, databasecalls: databasecalls };
-    return databaseInformation;
-}
-
-function getSpanInformation(trace: Trace) {
-
-    var allSpans = trace.spans;
-    var resultArray = { name: "", self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
-    var allInformations = new Array();
-    for (var i = 0; i < allSpans.length; i++) {
-        resultArray = { name: "", self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
-        resultArray.name = allSpans[i].spanID;
-        allInformations.push(calculateContent(allSpans[i], allSpans, resultArray));
-    }
-    return allInformations;
-}
-
-/**
- * if the percentage deviation is more than 45, the span id will be returned
- * @param allInformations 
- */
-function percentageDeviation(allInformations: any[]) {
-
-    var problemSpam = new Array();
-    var totalSelf = 0;
-    for (var i = 0; i < allInformations.length; i++) {
-        totalSelf += allInformations[i].self;
-    }
-    var avgSelf = totalSelf / allInformations.length;
-    for (var i = 0; i < allInformations.length; i++) {
-        var percentageDeviation = (((allInformations[i].self - avgSelf) / allInformations[i].self) * 100);
-        if (percentageDeviation > 45) {
-            problemSpam.push({ spanID: allInformations[i].name, percentageDeviation });
-        }
-    }
-    return problemSpam;
-}
-
-/**
- * returns warnings with span id 
- * @param trace 
- */
-function getWarnings(trace: Trace) {
-    var allSpans = trace.spans;
-    var string = "warnings: "
-    var warnings = false;
-    for (var i = 0; i < allSpans.length; i++) {
-        if (allSpans[i].warnings.length != 0) {
-            warnings = true;
-            string += "Spand ID: " + allSpans[i].spanID;
-            for (var j = 0; j < allSpans[i].warnings.length; j++) {
-                string += " " + allSpans[i].warnings[j] + ","
-            }
-        }
-    }
-    if (warnings) {
-        return string;
+    if (count > 9) {
+        return true;
     } else {
-        return "";
+        return false;
     }
 }
-
-
-function getSpanWithLongestSelfTime(allInformations: any[]) {
-    var selfMax =0;
-    var selfMaxName ="";
-    for (var i = 0; i < allInformations.length; i++) {
-       if(selfMax<allInformations[i].self){
-           selfMax= allInformations[i].self;
-           selfMaxName= allInformations[i].name;
-       }
+/**
+ * returns true if selfDuration is higher than 80%
+ * @param trace whole trace
+ */
+function timeWastingOperationsRule(trace: Trace) {
+    var duration = trace.duration;
+    var allSpans = trace.spans;
+    for (var i = 0; i < allSpans.length; i++) {
+        var resultArray = { name: allSpans[i].spanID, count: 0, total: 0, min: allSpans[i].duration, max: 0, self: 0, selfMin: allSpans[i].duration, selfMax: 0, selfAvg: 0, percent: 0 };
+        resultArray = calculateContent(allSpans[i], allSpans, resultArray);
+        var percent = resultArray.self / (duration / 100);
+        if (percent > 80) {
+            return true;
+        }
     }
-    var result = {selfMax, selfMaxName};
-    return result;
+    return false;
+}
+/**
+ * returns true if percentage Deviation is higher than 70%
+ * @param trace whole trace
+ */
+function percentageDeviation(trace: Trace) {
+    var allSpans = trace.spans;
+    var totalSelf = 0;
+    var allInfos = new Array();
+    for (var i = 0; i < allSpans.length; i++) {
+        var resultArray = { name: allSpans[i].spanID, count: 0, total: 0, min: allSpans[i].duration, max: 0, self: 0, selfMin: allSpans[i].duration, selfMax: 0, selfAvg: 0, percent: 0 }
+        resultArray = calculateContent(allSpans[i], allSpans, resultArray);
+        allInfos.push(resultArray);
+        totalSelf = totalSelf + resultArray.self;
+    }
+    for (var i = 0; i < allInfos.length; i++) {
+        var percentageDeviation = ((allInfos[i].self - (totalSelf / allSpans.length)) / allInfos[i].self) * 100;
+        if (percentageDeviation > 70) {
+            return true;
+        }
+    }
+    return false;
 }
 
-
-
-
-
-
-
+/**
+ * returns true if databasecall is longer than 120ms
+ * @param trace whole trace
+ */
+function longDatabaseCall(trace: Trace) {
+    var allSpans = trace.spans;
+    for (var i = 0; i < allSpans.length; i++) {
+        for (var j = 0; j < allSpans[i].tags.length; j++) {
+            if (allSpans[i].tags[j].key === "sql") {
+                var resultArray = { name: allSpans[i].spanID, count: 0, total: 0, min: allSpans[i].duration, max: 0, self: 0, selfMin: allSpans[i].duration, selfMax: 0, selfAvg: 0, percent: 0 }
+                resultArray = calculateContent(allSpans[i], allSpans, resultArray);
+                if ((Math.round((resultArray.self / 1000) * 100) / 100) > 120) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 

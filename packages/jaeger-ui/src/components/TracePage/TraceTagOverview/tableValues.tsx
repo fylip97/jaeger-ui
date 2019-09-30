@@ -104,8 +104,6 @@ function getNoTagContent(allSpans: Span[], diffServiceName: string[], selectedTi
 
     var allSpansTrace = new Array();
     for (var i = 0; i < diffServiceName.length; i++) {
-        var allPercent = trace.duration;
-        var onePecent = allPercent / 100;
         var color = "";
         var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
 
@@ -144,7 +142,6 @@ function getTraceValuesFirstDropdown(selectedTagKey: string, trace: Trace) {
 
     // all with the selected key and get all diff values
     for (var i = 0; i < allSpans.length; i++) {
-
         var isIn = false;
         for (var j = 0; j < allSpans[i].tags.length; j++) {
             if (allSpans[i].tags[j].key === selectedTagKey) {
@@ -168,11 +165,7 @@ function getTraceValuesFirstDropdown(selectedTagKey: string, trace: Trace) {
 
     var allValuesColumn = Array();
     for (var i = 0; i < diffrentKeyValuesA.length; i++) {
-
         var name = "" + diffrentKeyValuesA[i];
-        var allPercent = trace.duration;
-        var onePecent = allPercent / 100;
-
         var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
 
         for (var j = 0; j < allSpansWithSelectedKey.length; j++) {
@@ -182,20 +175,16 @@ function getTraceValuesFirstDropdown(selectedTagKey: string, trace: Trace) {
                 }
             }
         }
-
         resultArray.selfAvg = resultArray.self / resultArray.count;
         resultArray.avg = resultArray.total / resultArray.count;
         allValuesColumn.push(buildOneColumn(name, resultArray.count, resultArray.total, resultArray.avg, resultArray.min, resultArray.max, false, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "transparent", ""));
     }
 
     // last entry
-    var allPercent = trace.duration;
-    var onePecent = allPercent / 100;
     var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
     for (var i = 0; i < allSpansWithoutSelectedKey.length; i++) {
         resultArray = calculateContent(allSpansWithoutSelectedKey[i], allSpans,resultArray);
     }
-
     resultArray.selfAvg = resultArray.self / resultArray.count;
     resultArray.avg = resultArray.total / resultArray.count;
     if (resultArray.count == 0) {
@@ -457,8 +446,6 @@ function buildDetail(diffNamesA: string[], tempArray: Span[], allSpans: Span[], 
     var newColumnValues = Array();
     for (var j = 0; j < diffNamesA.length; j++) {
         var color = "";
-        var allPercent = allSpans[0].duration;
-        var onePecent = allPercent / 100;
         var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
         for (var l = 0; l < tempArray.length; l++) {
             if (isDetail) {
@@ -488,110 +475,6 @@ function buildDetail(diffNamesA: string[], tempArray: Span[], allSpans: Span[], 
     return newColumnValues;
 }
 
-/**
- * calculate the content of the row
- * @param span 
- * @param wholeTrace whole information of the trace
- * @param j whitch row is calculated
- * @param resultArray array with all variables who are calclated
- * @param onePercent time which corresponds to 1%.
- */
-export function calculateContent2(span: Span[], wholeTrace: Span[], j: number, resultArray: any, onePercent: number, trace: Trace) {
-
-
-    test(trace, span, j);
-
-
-    resultArray.count += 1;
-    resultArray.total += span[j].duration;
-    if (resultArray.min > span[j].duration) {
-        resultArray.min = span[j].duration;
-    }
-    if (resultArray.max < span[j].duration) {
-        resultArray.max = span[j].duration;
-    }
-    //For each span with the same operationName 
-    //Do I have children?
-    if (span[j].hasChildren) {
-        var sumAllChildInSpan = 0;
-        // if I have children then look for my children
-        for (var l = 0; l < wholeTrace.length; l++) {
-            //i am a child?
-            if (wholeTrace[l].references.length == 1) {
-                //i am a child of this span?
-                if (span[j].spanID == wholeTrace[l].references[0].spanID) {
-                    sumAllChildInSpan = sumAllChildInSpan + wholeTrace[l].duration
-                }
-            }
-        }
-        var tempSelf = span[j].duration - sumAllChildInSpan;
-        var isNotLonger = true;
-        for (var l = 0; l < wholeTrace.length; l++) {
-            if (wholeTrace[l].references.length == 1) {
-                if (span[j].spanID == wholeTrace[l].references[0].spanID && isNotLonger) {
-                    if (wholeTrace[l].duration > span[j].duration) {
-                        isNotLonger = false;
-                    }
-                }
-            }
-        }
-        if (tempSelf < 0 || !isNotLonger) {
-            var onlyOne = true
-            for (var l = 0; l < wholeTrace.length; l++) {
-                if (wholeTrace[l].references.length == 1) {
-                    if (span[j].spanID == wholeTrace[l].references[0].spanID && onlyOne) {
-                        onlyOne = false;
-                        tempSelf = wholeTrace[l].relativeStartTime - span[j].relativeStartTime;
-                    }
-                }
-            }
-        }
-
-        if (resultArray.selfMin > tempSelf) {
-            resultArray.selfMin = tempSelf;
-        }
-        if (resultArray.selfMax < tempSelf) {
-            resultArray.selfMax = tempSelf;
-        }
-        resultArray.self = resultArray.self + tempSelf;
-    } else {
-        if (resultArray.selfMin > (span[j].duration)) {
-            resultArray.selfMin = span[j].duration;
-        }
-        if (resultArray.selfMax < span[j].duration) {
-            resultArray.selfMax = span[j].duration;
-        }
-        resultArray.self = resultArray.self + span[j].duration;
-    }
-    resultArray.percent = resultArray.self / onePercent;
-    return resultArray;
-}
-
-
-
-function test(trace: Trace, span: Span[], j: number) {
-
-    /*
-    var iterator = calculateTraceDag(trace).nodesMap.entries();
-
-    var tempArray = new Array();
-    for (var i = 0; i < calculateTraceDag(trace).nodesMap.size; i++) {
-        tempArray.push(iterator.next().value);
-    }
-
-    //console.log(tempArray);
-    for (var i = 0; i < tempArray.length; i++) {
-        if (tempArray[i][1].operation === span[j].operationName && tempArray[i][1].service === span[j].process.serviceName) {
-            console.log(tempArray[i][1].service +" "+ tempArray[i][1].data.time);
-            var count = tempArray[i][1].data.count;
-            console.log(count);
-        }
-
-    }
-    console.log(tempArray)
-*/
-}
-
 
 function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: string, trace: Trace, serviceName: boolean) {
 
@@ -600,10 +483,7 @@ function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: 
     for (var i = 0; i < allColumnValues.length; i++) {
         newTable.push(allColumnValues[i]);
         if (!allColumnValues[i].isDetail) {
-            var allPercent = trace.duration;
-            var onePecent = allPercent / 100;
             var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
-
             for (var j = 0; j < allSpans.length; j++) {
                 if (serviceName) {
                     if (allColumnValues[i].name === allSpans[j].process.serviceName) {
