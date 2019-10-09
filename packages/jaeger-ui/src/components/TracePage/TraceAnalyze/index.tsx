@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import './index.css';
 import { generateAnalyseData } from './generateAnaylzeData';
+import { RuleBox } from './ruleBox';
 
 
 type Props = {
     trace: Trace,
 }
 type State = {
-    output: string
+    output: any[],
 }
 
 export default class TraceAnalyse extends Component<Props, State>{
@@ -17,15 +18,33 @@ export default class TraceAnalyse extends Component<Props, State>{
         super(props);
 
         this.state = {
-            output: "",
+            output: this.startAnalyse(),
         }
         this.startAnalyse = this.startAnalyse.bind(this);
+
     }
 
     startAnalyse() {
-        this.setState({
-            output: generateAnalyseData(this.props.trace),
-        });
+
+        var output = new Array();
+        var outputTemp = generateAnalyseData(this.props.trace);
+        for (var i = 0; i < outputTemp.length; i++) {
+            if (outputTemp[i].checkRule(this.props.trace)) {
+                output.push(outputTemp[i]);
+            }
+        }
+        console.log(output.length);
+        return output;
+    }
+
+    renderRuleBox() {
+        return (this.state.output.map((oneRule, index) => {
+            return (
+                <RuleBox key={"ruleBox" + index} name={oneRule.ruleInformation()}
+                    index={index} />
+            )
+        })
+        );
     }
 
     render() {
@@ -34,16 +53,10 @@ export default class TraceAnalyse extends Component<Props, State>{
                 <h3 id="title">
                     Trace Analyze
                 </h3>
-                <div id="search">
-                    <button id="analyseButton" onClick={this.startAnalyse}>
-                        Start Analyze
-                </button>
-                </div>
-                <div>
-                    <textarea readOnly id="textarea" value={this.state.output} >
-                    </textarea>
+                <div className = "frameRule">
+                  {this.renderRuleBox()}
                 </div>
             </div>
-        )
+        );
     }
 }

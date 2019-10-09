@@ -1,0 +1,19 @@
+.mainBox{
+    background: #f8f8f8;
+    width: 48%;
+    height: 150px;
+    border: 1px solid #aaa;
+    margin-left: 5px;
+}
+
+.nameRuleBox{
+    text-align: center;
+    margin-top: 5px;
+    background: #f8f8f8;
+}
+
+
+.informationRuleBox{
+    margin-left: 10px;
+    background: white;
+}
