@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import './index.css';
-import { generateAnalyseData } from './generateAnaylzeData';
+import { startAnalyse } from './generateAnaylzeData';
 import { RuleBox } from './ruleBox';
 
 
@@ -18,23 +18,8 @@ export default class TraceAnalyse extends Component<Props, State>{
         super(props);
 
         this.state = {
-            output: this.startAnalyse(),
+            output: startAnalyse(this.props.trace),
         }
-        this.startAnalyse = this.startAnalyse.bind(this);
-
-    }
-
-    startAnalyse() {
-
-        var output = new Array();
-        var outputTemp = generateAnalyseData(this.props.trace);
-        for (var i = 0; i < outputTemp.length; i++) {
-            if (outputTemp[i].checkRule(this.props.trace)) {
-                output.push(outputTemp[i]);
-            }
-        }
-        console.log(output.length);
-        return output;
     }
 
     renderRuleBox() {

@@ -26,6 +26,8 @@ import { formatRelativeDate } from '../../../utils/date';
 
 import { KeyValuePair, Trace } from '../../../types/trace';
 
+import {startAnalyse} from '../../TracePage/TraceAnalyze/generateAnaylzeData'
+
 import './ResultItem.css';
 
 type Props = {
@@ -55,9 +57,15 @@ export default class ResultItem extends React.PureComponent<Props> {
     const fromNow = mDate.fromNow();
     const numSpans = spans.length;
     const numErredSpans = spans.filter(sp => sp.tags.some(isErrorTag)).length;
+    const problemResults= startAnalyse(trace);
+    var isProblem =false;
+    if(problemResults.length>0){
+      isProblem= true;
+    }
     return (
       <div className="ResultItem">
         <ResultItemTitle
+          isProblem={isProblem}
           duration={duration}
           durationPercent={durationPercent}
           isInDiffCohort={isInDiffCohort}
