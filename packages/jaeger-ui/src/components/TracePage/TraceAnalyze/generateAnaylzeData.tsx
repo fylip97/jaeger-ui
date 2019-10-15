@@ -17,17 +17,19 @@ function generateAnalyseData(trace: Trace) {
     //analyzeFunction.push(percentageDeviation);
     //analyzeFunction.push(longDatabasecall);
 
-    
     return analyzeFunction;
 }
 
 export function startAnalyse(trace:Trace) {
 
+    var ruleObject = {name:"", information:""};
+
     var output = new Array();
     var outputTemp = generateAnalyseData(trace);
     for (var i = 0; i < outputTemp.length; i++) {
         if (outputTemp[i].checkRule(trace)) {
-            output.push(outputTemp[i]);
+            ruleObject.name= outputTemp[i].ruleInformation();
+            output.push(ruleObject);
         }
     }
     

@@ -4,7 +4,7 @@ import { calculateContent } from '../../TraceTagOverview/tableValues';
 export class LongDatabasecall {
 
     ruleInformation() {
-        var info = { name: "longDatabasecall" }
+        var info =  "longDatabasecall"
         return info;
     }
 
@@ -25,5 +25,7 @@ export class LongDatabasecall {
         return false;
     }
 
-
+    getInformation(){
+        return "";
+    }
 }

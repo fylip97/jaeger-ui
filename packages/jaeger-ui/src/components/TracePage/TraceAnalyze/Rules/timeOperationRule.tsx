@@ -5,7 +5,7 @@ import { calculateContent } from '../../TraceTagOverview/tableValues';
 export class TimeOperationRule {
 
     ruleInformation() {
-        var info = { name: "timeOperationRule" }
+        var info = "timeOperationRule" 
         return info;
     }
 
@@ -21,5 +21,9 @@ export class TimeOperationRule {
             }
         }
         return false;
+    }
+
+    getInformation(){
+        return "";
     }
 }

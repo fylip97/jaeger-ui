@@ -26,7 +26,6 @@ import { ApiError } from '../../../types/api-error';
 import './ResultItemTitle.css';
 
 type Props = {
-  isProblem: boolean
   duration?: number;
   durationPercent?: number;
   error?: ApiError;
@@ -101,7 +100,6 @@ export default class ResultItemTitle extends React.PureComponent<Props> {
           <h3 className="ResultItemTitle--title">
             <TraceName error={error} state={state} traceName={traceName} />
             <small className="ResultItemTitle--idExcerpt">{traceID.slice(0, 7)}</small>
-            <p style={{color: "red" }}>{this.props.isProblem ? " warnung": null}</p>
           </h3>
         </WrapperComponent>
       </div>

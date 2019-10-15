@@ -6,7 +6,7 @@ import { calculateContent } from '../../TraceTagOverview/tableValues';
 export class PercentageDeviation {
     
     ruleInformation() {
-        var info = { name: "percentageDeviation" }
+        var info = "percentageDeviation" 
         return info;
     }
 
@@ -28,6 +28,10 @@ export class PercentageDeviation {
             }
         }
         return false;
+    }
+
+    getInformation(){
+        return "";
     }
 
 }
