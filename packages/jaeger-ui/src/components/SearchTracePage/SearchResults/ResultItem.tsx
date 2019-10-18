@@ -81,7 +81,7 @@ export default class ResultItem extends React.PureComponent<Props> {
                 {numSpans} Span{numSpans > 1 && 's'}
               </Tag>
               {isProblem ? <Tag style={{ color: "red" }}>
-                warnung
+                !
               </Tag> : null}
               {Boolean(numErredSpans) && (
                 <Tag className="ub-m1" color="red">

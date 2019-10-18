@@ -1,9 +1,12 @@
 .mainBox{
     background: #f8f8f8;
     width: 48%;
-    height: 150px;
+    height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden;
     border: 1px solid #aaa;
     margin-left: 5px;
+    margin-bottom: 15px;
 }
 
 .nameRuleBox{
@@ -13,21 +16,3 @@
     font-weight: bold;
 }
 
-
-.informationRuleBox{
-    margin-left: 10px;
-    background: white;
-}
-
-.noProblemRuleBox{
-
-    width: 20%;
-    margin-top: 270px;
-    font-size: 40px;
-    color: #aaa;
-    height: auto;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    
-}

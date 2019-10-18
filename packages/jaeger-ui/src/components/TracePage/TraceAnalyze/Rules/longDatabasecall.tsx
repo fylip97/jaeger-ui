@@ -1,6 +1,17 @@
 import { Trace } from '../../../../types/trace';
 import { calculateContent } from '../../TraceTagOverview/tableValues';
 
+/*
+export const xy = {
+
+    ruleInformation: function() : string {
+        var info =  "longDatabasecall"
+        return info;
+    }
+
+};*/
+
+
 export class LongDatabasecall {
 
     ruleInformation() {
@@ -25,7 +36,7 @@ export class LongDatabasecall {
         return false;
     }
 
-    getInformation(){
+    getInformation(trace:Trace){
         return "";
     }
 }

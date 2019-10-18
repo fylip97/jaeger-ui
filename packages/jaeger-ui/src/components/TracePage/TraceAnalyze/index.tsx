@@ -9,6 +9,7 @@ import prefixUrl from '../../../utils/prefix-url';
 
 type Props = {
     trace: Trace,
+    backend: number,
 }
 type State = {
     output: any[],
@@ -20,34 +21,44 @@ export default class TraceAnalyse extends Component<Props, State>{
     constructor(props: any) {
         super(props);
 
-        this.state = {
-            output: startAnalyse(this.props.trace),
-           // output: [],
-            traceJSON: "",
+        if (this.props.backend==0) {
+            this.state = {
+                output: startAnalyse(this.props.trace),
+
+                traceJSON: "",
+            }
+        } else {
+            this.state = {
+                output: [],
+                traceJSON: "",
+            }
         }
-        console.log(startAnalyse(this.props.trace));
-        console.log("Hello world");
+                                                                                                          
+        JSON.stringify(this.props.trace)
     }
-/*
+
     componentDidMount() {
 
-        fetch(prefixUrl(`/api/traces/${this.props.trace.traceID}?raw=true&prettyPrint=true`))
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.sendRequest(result);
-                    this.setState({
-                        traceJSON: JSON.stringify(result),
-                    });
+        if (this.props.backend==1) {
+            fetch(prefixUrl(`/api/traces/${this.props.trace.traceID}?raw=true&prettyPrint=true`))
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.sendRequest(result);
+                        this.setState({
+                            traceJSON: JSON.stringify(result),
+                        });
 
-                },
-                (error) => {
-                    this.setState({
-                        traceJSON: "error"
-                    });
-                }
-            )
-
+                    },
+                    (error) => {
+                        this.setState({
+                            traceJSON: "error"
+                        });
+                    }
+                )
+        }else if(this.props.backend==2){
+            this.sendTrace();
+        }
     }
 
 
@@ -64,10 +75,8 @@ export default class TraceAnalyse extends Component<Props, State>{
                 this.getTraceAnalyse();
             },
             (error) => {
-                console.log("Error")
+                console.log(error)
             });
-
-        //JSON.stringify({tracJSON})
     }
 
     getTraceAnalyse() {
@@ -77,7 +86,7 @@ export default class TraceAnalyse extends Component<Props, State>{
             .then(
                 (result) => {
                     var allRules = new Array();
-                    for(var i =0; i<result.length; i++){
+                    for (var i = 0; i < result.length; i++) {
                         allRules.push(result[i]);
                     }
                     this.setState({
@@ -91,13 +100,32 @@ export default class TraceAnalyse extends Component<Props, State>{
             )
     }
 
-*/
+    sendTrace(){
+        var test = (JSON.stringify(this.props.trace))
+        fetch('http://localhost:8084/analyseTraceDiffJS0N', {
+            method: 'post',
+            mode: "no-cors",
+            headers: { 'Content-Type': 'application/json' },
+            body: test
+
+        }).then(
+            (result) => {
+                this.getTraceAnalyse();
+            },
+            (error) => {
+                console.log(error)
+            });
+
+    }
+
+
     renderRuleBox() {
-        return (this.state.output.map((oneRule, index) => {
+        return (this.state.output.map((oneRule, index) => {  
             return (
                 <RuleBox key={"ruleBox" + index} name={oneRule.name}
                     information={oneRule.information}
-                    index={index} />
+                    index={index}
+                    calls={oneRule.calls} />
             )
         })
         );

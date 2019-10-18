@@ -1,0 +1,27 @@
+.TORTable{
+    width: 100%;
+}
+
+.informationTOR{
+    
+    font-size: 14px;
+    font-weight: bold;
+    font-feature-settings: "tnum";
+    font-variant: tabular-nums;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.65);
+}
+.TORInformation{
+
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    height: 60%;
+    color: #008080;
+    font-family: monospace;
+    font-size: 13px;
+    outline-color:#008080;
+    padding: 5px;
+    resize: none;
+}

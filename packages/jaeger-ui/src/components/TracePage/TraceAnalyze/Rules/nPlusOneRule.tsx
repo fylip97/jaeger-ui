@@ -1,9 +1,10 @@
 import { Trace } from '../../../../types/trace';
 
 export class NPlusOneRule {
- 
+
+
     ruleInformation() {
-        var info =  "N+1 Rule"
+        var info = "N+1Rule"
         return info;
     }
 
@@ -30,16 +31,28 @@ export class NPlusOneRule {
         return false;
     }
 
-    getInformation(trace:Trace){
+
+    getInformation(trace: Trace) {
+        var information = "";
+        var calls = "";
+
+        var resultInformation = new Array();
+        var callInformation = new Array();
+
         var NUMBER_OF_CALLS_THRESHOLD = 9;
         var allSpans = trace.spans;
         var count = 1;
         var sqlCheck = "";
+
         for (var i = 0; i < allSpans.length; i++) {
             for (var j = 0; j < allSpans[i].tags.length; j++) {
                 if (allSpans[i].tags[j].key === "sql") {
                     if (sqlCheck !== allSpans[i].tags[j].value) {
-                        sqlCheck = allSpans[i].tags[j].value;
+                        if (count > NUMBER_OF_CALLS_THRESHOLD) {
+                            resultInformation.push(sqlCheck);
+                            callInformation.push(count);
+                        }
+                        sqlCheck = allSpans[i].tags[j].value
                         count = 1;
                     } else {
                         ++count;
@@ -47,7 +60,27 @@ export class NPlusOneRule {
                 }
             }
         }
-        return ""+count;
+        if (count > NUMBER_OF_CALLS_THRESHOLD) {
+            resultInformation.push(sqlCheck);
+            callInformation.push(count);
+        }
+        if (resultInformation.length > 0) {
+            for (var i = 0; i < resultInformation.length; i++) {
+                if (information === "") {
+                    information = resultInformation[i];
+                } else {
+                    information = information + "#" + resultInformation[i];
+                }
+                if (calls === "") {
+                    calls = callInformation[i];
+                } else {
+                    calls = calls + "#" + callInformation[i]
+                }
+            }
+        }
+        var result = information+"§"+calls;
+        return result;
     }
 
-}
+
+}   

@@ -30,7 +30,7 @@ export class PercentageDeviation {
         return false;
     }
 
-    getInformation(){
+    getInformation(trace:Trace){
         return "";
     }
 
