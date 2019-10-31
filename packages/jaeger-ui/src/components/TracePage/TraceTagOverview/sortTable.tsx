@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import { TableSpan } from './types'
-
-
+import * as _ from 'lodash';
 
 /**
- * sorts the table according to the key that is passed.
- * @param array input which is sorted
- * @param key which attribute is used for sorting
+ * Sorts the table according to the key that is passed.
+ * @param array Input which is sorted
+ * @param key Which attribute is used for sorting
  * @param upDown How should the data be sorted? Up or down
  */
-export function sortTable(array: any[], key: string, upDown: boolean) {
+export function sortTable(array: any[], key: string, sortAsc: boolean) {
 
-    var isDetailArray = new Array();
-    var isNoDetail = new Array();
+    var isDetailArray = [];
+    var isNoDetail = [];
     for (var i = 0; i < array.length; i++) {
         if (array[i].isDetail) {
             isDetailArray.push(array[i]);
@@ -20,36 +19,23 @@ export function sortTable(array: any[], key: string, upDown: boolean) {
             isNoDetail.push(array[i]);
         }
     }
-    if (upDown) {
-        isNoDetail = sortByKeyUp(isNoDetail, key);
-    } else {
-        isNoDetail = sortByKeyDown(isNoDetail, key);
-    }
-    var diffParentNames = new Array();
+    sortByKey(isNoDetail,key,sortAsc)
+    var diffParentNames = [];
     for (var i = 0; i < isDetailArray.length; i++) {
         if (diffParentNames.length == 0) {
             diffParentNames.push(isDetailArray[i]);
         } else {
-            var sameName = false;
-            for (var j = 0; j < diffParentNames.length; j++) {
-                if (diffParentNames[j].parentElement === isDetailArray[i].parentElement) {
-                    sameName = true;
-                }
-            }
-            if (!sameName) {
+            var lookup = { "parentElement": isDetailArray[i].parentElement };
+            var hasSameName = _.some(diffParentNames, lookup);
+            if (!hasSameName) {
                 diffParentNames.push(isDetailArray[i]);
             }
         }
     }
-    var tempArray = new Array();
-    for (var j = 0; j < diffParentNames.length; j++) {
-        tempArray = groupBy(isDetailArray, diffParentNames[j].parentElement)
 
-        if (upDown) {
-            tempArray = sortByKeyUp(tempArray, key);
-        } else {
-            tempArray = sortByKeyDown(tempArray, key);
-        }
+    for (var j = 0; j < diffParentNames.length; j++) {
+        var tempArray = groupBy(isDetailArray, diffParentNames[j].parentElement)
+        sortByKey(tempArray,key,sortAsc);
         if (tempArray.length > 0) {
 
             // build whole array
@@ -69,7 +55,7 @@ export function sortTable(array: any[], key: string, upDown: boolean) {
 }
 
 /**
- * array is grouped by key
+ * Array is grouped by key.
  * @param tempArray input whitch is grouped
  * @param key 
  */
@@ -84,25 +70,18 @@ function groupBy(tempArray: TableSpan[], key: string) {
 }
 
 /**
- * sort up
+ * Sort 
  * @param array input whitch is sorted 
  * @param key attribut which is used for sorting
+ * @param sortAsc Specifies the direction in which the sort is to take place. 
  */
-function sortByKeyUp(array: TableSpan[], key: string) {
+function sortByKey(array: TableSpan[], key: string, sortAsc: boolean) {
     return array.sort(function (a, b) {
         var x = (a as any)[key]; var y = (b as any)[key];
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
-}
-
-/**
- * sort down 
- * @param array input whitch is sorted 
- * @param key attribut whitch is used for sorting
- */
-function sortByKeyDown(array: TableSpan[], key: string) {
-    return array.sort(function (a, b) {
-        var x = (a as any)[key]; var y = (b as any)[key];
-        return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+        if (sortAsc) {
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        } else {
+            return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+        }
     });
 }

@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
 import './index.css';
-import TagDropdown from './tagDropdown'
-import SecondDropDown from './secondDropDown'
+import TagDropdown from './TagDropdown'
+import SecondDropDown from './SecondDropDown'
 import { Trace } from '../../../types/trace';
-import { TableOverviewHeaderTag } from './tableOverviewHeadTag';
-import { MainTableData } from './mainTableData';
-import { DetailTableData } from './detailTableData'
+import { TableOverviewHeaderTag } from './TableOverviewHeadTag';
+import { MainTableData } from './MainTableData';
+import { DetailTableData } from './DetailTableData'
 import { TableSpan } from './types';
 import { sortTable } from './sortTable';
 import { generateColor } from './generateColor';
-import { searchInTable } from './searchInTable'
 import { TNil } from '../../../types';
-
-import PopupSQL from './popupSQL';
+import PopupSQL from './PopupSQL';
 import * as _ from 'lodash';
 
 type Props = {
@@ -34,6 +32,8 @@ type State = {
   colorButton: boolean,
   wholeTable: TableSpan[];
 };
+
+const others = "Others";
 
 const columnsArray: any[] = [
   {
@@ -104,26 +104,25 @@ const columnsArray: any[] = [
   }
 ];
 
+/**
+ * Trace Tag Overview Component
+ */
 export default class TraceTagOverview extends Component<Props, State>{
 
   constructor(props: any) {
     super(props);
-    var firstInputA = Array();
-    var firstInput = { name: "default", count: 0, total: 0, avg: 0, min: 0, max: 0, self: 0, selfAvg: 0, selfMin: 0, selfMax: 0, percent: 0 }
-    firstInputA.push(firstInput)
+    
     this.state = {
-      tableValue: firstInputA,
+      tableValue: [],
       sortIndex: 1,
       sortAsc: false,
       isSelected: false,
       tagDropdownTitle: "",
-
       showPopup: false,
       secondTagDropdownTitle: "No item selected",
       popupContent: "",
       colorButton: false,
       wholeTable: [],
-
     }
 
     this.handler = this.handler.bind(this);
@@ -135,11 +134,11 @@ export default class TraceTagOverview extends Component<Props, State>{
     this.toggleColorButton = this.toggleColorButton.bind(this);
     this.clickColumn = this.clickColumn.bind(this);
 
-    searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
+    this.searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
   }
 
   /**
-   * change the sortButton an calls the sort function
+   * Change the sortButton an calls the sort function.
    * @param index the index of the clicked column
    */
   sortClick(index: number) {
@@ -149,18 +148,18 @@ export default class TraceTagOverview extends Component<Props, State>{
       this.setState({
         sortIndex: index,
         sortAsc: false,
-        tableValue: this.splitRest(tableValue, index, false),
+        tableValue: this.sortTableWithRest(tableValue, index, false),
       });
     } else {
       this.setState({
         sortAsc: !sortAsc,
-        tableValue: this.splitRest(tableValue, index, !sortAsc),
+        tableValue: this.sortTableWithRest(tableValue, index, !sortAsc),
       });
     }
   }
 
   /**
-   * is called from the child to change the state of the parent
+   * Is called from the child to change the state of the parent.
    * @param tableValue the values of the column
    */
   handler(tableValue: TableSpan[]) {
@@ -176,18 +175,18 @@ export default class TraceTagOverview extends Component<Props, State>{
     });
 
     this.setState({
-      tableValue: searchInTable(this.props.uiFindVertexKeys!, (this.splitRest(tableValue, 1, false)), this.props.uiFind),
+      tableValue: this.searchInTable(this.props.uiFindVertexKeys!, (this.sortTableWithRest(tableValue, 1, false)), this.props.uiFind),
       wholeTable: tableValue
     })
   }
 
   /**
-   * searches for the rest of the share and sorts afterwards 
+   * Searches for the rest of the share and sorts afterwards. 
    * @param tableValue 
    * @param sortIndex 
    * @param sortAsc 
    */
-  splitRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
+  sortTableWithRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
 
     var rememberIndexNoDetail = -1;
     var rememberIndex = -1;
@@ -196,7 +195,7 @@ export default class TraceTagOverview extends Component<Props, State>{
     var sortArray2 = new Array();
 
     for (var i = 0; i < tableValue.length; i++) {
-      if (tableValue[i].name !== 'rest') {
+      if (tableValue[i].name !== others) {
         sortArray.push(tableValue[i]);
       }
       else {
@@ -229,9 +228,9 @@ export default class TraceTagOverview extends Component<Props, State>{
         sortArray2.push(parentElements[i]);
         var tempArray = new Array();
         for (var j = 0; j < tableValue.length; j++) {
-          if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name !== "rest") {
+          if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name !== others) {
             tempArray.push(tableValue[j]);
-          } else if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name === "rest") {
+          } else if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name === others) {
             rememberIndex = j;
           }
         }
@@ -269,7 +268,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
   /**
-   * opern the popup button
+   * Opern the popup button.
    * @param popupContent 
    */
   togglePopup(popupContent: string) {
@@ -281,7 +280,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
   /**
-   * colors the last line by percent
+   * Colors the last line by percent.
    */
   toggleColorButton() {
 
@@ -294,12 +293,12 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
   /**
-  * if the search props change the search function is called
+  * If the search props change the search function is called.
   * @param props all props 
   */
   componentDidUpdate(props: any, prevState: State) {
     if ((this.props.uiFindVertexKeys !== props.uiFindVertexKeys)) {
-      searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
+      this.searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
       // reload the componente
       this.setState({
         tableValue: this.state.tableValue
@@ -308,7 +307,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
   /**
-   * hides the child at the first click
+   * Hides the child at the first click.
    * @param selectedSpan 
    */
   clickColumn(selectedSpan: string) {
@@ -340,12 +339,72 @@ export default class TraceTagOverview extends Component<Props, State>{
             }
           }
         }
-        newTable = searchInTable(this.props.uiFindVertexKeys!, generateColor(this.splitRest(newTable, this.state.sortIndex, this.state.sortAsc), this.state.colorButton), this.props.uiFind);
+        newTable = this.searchInTable(this.props.uiFindVertexKeys!, generateColor(this.sortTableWithRest(newTable, this.state.sortIndex, this.state.sortAsc), this.state.colorButton), this.props.uiFind);
       }
       this.setState({
         tableValue: newTable,
       });
     }
+  }
+
+  /**
+   * Colors found entries in the table.
+   * @param uiFindVertexKeys Set of found spans
+   * @param allTableSpans entries that are shown
+   */
+  searchInTable(uiFindVertexKeys: Set<string>, allTableSpans: TableSpan[], uiFind: string | null | undefined) {
+    const yellowSearchCollor = "rgb(255,243,215)";
+    const defaultGrayCollor ="rgb(248,248,248)";
+    for (var i = 0; i < allTableSpans.length; i++) {
+      if ((!allTableSpans[i].isDetail) && allTableSpans[i].name !== "Others") {
+        allTableSpans[i].searchColor = "transparent";
+      } else if (allTableSpans[i].name !== "Others") {
+        allTableSpans[i].searchColor = defaultGrayCollor;
+      } else {
+        allTableSpans[i].searchColor = defaultGrayCollor
+      }
+    }
+    if (typeof uiFindVertexKeys !== 'undefined') {
+      uiFindVertexKeys!.forEach(function (value) {
+        var uiFindVertexKeysSplit = value.split('');
+
+        for (var i = 0; i < allTableSpans.length; i++) {
+          if ((uiFindVertexKeysSplit[uiFindVertexKeysSplit.length - 1].indexOf(allTableSpans[i].name)) != -1) {
+            if (allTableSpans[i].parentElement === "none") {
+              allTableSpans[i].searchColor = yellowSearchCollor;
+            }
+            else if (uiFindVertexKeysSplit[uiFindVertexKeysSplit.length - 1].indexOf(allTableSpans[i].parentElement) != -1) {
+              allTableSpans[i].searchColor = yellowSearchCollor;
+
+            }
+          }
+        }
+      });
+    }
+    if (uiFind) {
+      for (var i = 0; i < allTableSpans.length; i++) {
+        if (allTableSpans[i].name.indexOf(uiFind!) != -1) {
+          allTableSpans[i].searchColor = yellowSearchCollor;
+
+          for (var j = 0; j < allTableSpans.length; j++) {
+            if (allTableSpans[j].parentElement === allTableSpans[i].name) {
+              allTableSpans[j].searchColor = yellowSearchCollor;
+            }
+          }
+          if (allTableSpans[i].isDetail) {
+            for (var j = 0; j < allTableSpans.length; j++) {
+              if (allTableSpans[i].parentElement === allTableSpans[j].name) {
+                allTableSpans[j].searchColor = yellowSearchCollor;
+              }
+            }
+          }
+
+
+        }
+      }
+    }
+    return allTableSpans;
+
   }
 
   renderTableData() {
@@ -364,6 +423,7 @@ export default class TraceTagOverview extends Component<Props, State>{
             columnsArray={columnsArray}
             togglePopup={this.togglePopup}
             tagDropdownTitle={this.state.tagDropdownTitle}
+            secondTagDropdownTitle={this.state.secondTagDropdownTitle}
             color={color}
             clickColumn={this.clickColumn} />
         )
@@ -420,7 +480,7 @@ export default class TraceTagOverview extends Component<Props, State>{
           setSecondTagDropdownTitle={this.setSecondDropdownTitle}
           secondTagDropdownTitle={this.state.secondTagDropdownTitle}
         />
-        <button style={this.state.colorButton ? { color: "red" } : { color: "rgba(0, 0, 0, 0.65)" }} onClick={this.toggleColorButton} id="ButtonColor"> color</button>
+        <button style={this.state.colorButton ? { color: "red" } : { color: "rgba(0, 0, 0, 0.65)" }} onClick={this.toggleColorButton} className="ButtonColor"> color</button>
 
         {this.state.showPopup ?
           <PopupSQL

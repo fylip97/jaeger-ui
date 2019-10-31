@@ -4,10 +4,10 @@ import { Trace } from '../../../types/trace';
 
 
 /**
- * return the value of the second dropdown
- * @param tableValue actual table values
- * @param trace whole information about the trace
- * @param tagDropdownTitle the title of the first dropdown. it is needed to find out what is being searched for
+ * Return the value of the second dropdown
+ * @param tableValue Actual table values
+ * @param trace Whole information about the trace
+ * @param tagDropdownTitle The title of the first dropdown. It is needed to find out what is being searched for
  */
 export function getValue(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
     if (tagDropdownTitle !== "Service Name" && tagDropdownTitle != "Operation Name") {
@@ -18,7 +18,12 @@ export function getValue(tableValue: TableSpan[], trace: Trace, tagDropdownTitle
 }
 
 
-
+/**
+ * Used to get the values if no tag is picked from the first dropdown.
+ * @param tableValue 
+ * @param trace 
+ * @param tagDropdownTitle 
+ */
 function getValueTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
 
     var allSpans = trace.spans
@@ -61,7 +66,12 @@ function getValueTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownT
     return availableTags;
 }
 
-
+/**
+ * Used to get the values if no tag is picked from the first dropdown.
+ * @param tableValue 
+ * @param trace 
+ * @param tagDropdownTitle 
+ */
 function getValueNoTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
 
     var availableTagsS = new Set();

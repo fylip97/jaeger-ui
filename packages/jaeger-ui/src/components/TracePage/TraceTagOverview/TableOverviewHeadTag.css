@@ -1,10 +1,10 @@
-.sortButton{
+.tableOverviewHeaderTag--sortButton{
     border: none;
     background: transparent;
   }
 
 
-.DetailTraceTableTH{
+.tableOverviewHeadTag--th{
     background: #ECECEC;
     border: 1px solid #CCCCCC;
     font-size: 100%;
@@ -15,7 +15,7 @@
     padding-left: 1em;
   }
 
-  .buttonPosition{
+  .tableOverviewHeaderTag--buttonPosition{
     float: right;
   }
 

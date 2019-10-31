@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Button, Dropdown, Icon, Menu } from 'antd';
-import './tagDropdown.css';
+import './TagDropdown.css';
 import { Trace } from '../../../types/trace';
-import { getValue } from './dropDownValue';
 import { getColumnValues } from './tableValues';
 import { TableSpan } from './types'
+import _ from 'lodash';
 
 type Props = {
     trace: Trace,
@@ -20,11 +20,14 @@ type State = {
     titleTag: string,
 }
 
+/**
+ * Used to render the first Dropdown.
+ */
 export default class TagDropdown extends Component<Props, State>{
     constructor(props: any) {
         super(props);
 
-        var content = getValue(this.props.trace);
+        var content = this.getValue(this.props.trace);
         this.state = {
             displayMenu: false,
             title: content,
@@ -35,31 +38,11 @@ export default class TagDropdown extends Component<Props, State>{
         this.props.changeIsSelected();
         this.props.setTagDropdownTitle("Service Name")
         this.props.setSecondDropdownTitle("No item selected");
-
-        this.showDropdownMenu = this.showDropdownMenu.bind(this);
-        this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
     };
+
     /**
-     * show the dropdown menu 
-     * @param event 
-     */
-    showDropdownMenu(event: any) {
-        event.preventDefault();
-        this.setState({ displayMenu: true }, () => {
-            document.addEventListener('click', this.hideDropdownMenu);
-        });
-    }
-    /**
-     * hide the dropdown
-     */
-    hideDropdownMenu() {
-        this.setState({ displayMenu: false }, () => {
-            document.removeEventListener('click', this.hideDropdownMenu);
-        });
-    }
-    /**
-     * called when item was clicked from dropdown
+     * Called when item was clicked from dropdown.
      * @param title this item was clicked 
      */
     tagIsClicked(title: string) {
@@ -72,18 +55,33 @@ export default class TagDropdown extends Component<Props, State>{
         this.props.setSecondDropdownTitle("No item selected");
     }
 
+    /**
+    * Returns the value of the dropdown.
+    * @param trace all informations about the trace.
+    */
+    getValue(trace: Trace) {
+
+        const allSpans = trace.spans;
+        const tags = _(allSpans).map("tags").flatten().value();
+        const tagKeys = _(tags).map("key").uniq().value(); 
+        const values = _.concat("Service Name", "Operation Name", tagKeys); 
+        return values;
+    }
+
     render() {
         const menu = (<Menu>
-            {this.state.title.map((title: any, index: number) => (
+            {this.state.title.map((title: any, index: number, menuTitle: any) => (
+                menuTitle = title !== "Service Name" && title !== "Operation Name" ? "Tag: " + title : title,
                 <Menu.Item key={title}>
-                    <a onClick={() => this.tagIsClicked(title)} role="button">{title!== "Service Name" && title !== "Operation Name" ? "Tag: "+title : title}</a>
+                    <a onClick={() => this.tagIsClicked(title)} role="button">{menuTitle}</a>
                 </Menu.Item>
             ))}
         </Menu>)
+        const buttonTitleTag =this.state.titleTag !== "Service Name" && this.state.titleTag !== "Operation Name" ? "Tag: " + this.state.titleTag : this.state.titleTag;
         return (
-            <div className="dropdown">
+            <div className="tagDropdown1">
                 <Dropdown overlay={menu} >
-                    <Button>{this.state.titleTag} <Icon type={'down'} /></Button>
+                    <Button>{buttonTitleTag} <Icon type={'down'} /></Button>
                 </Dropdown>
             </div>
         );

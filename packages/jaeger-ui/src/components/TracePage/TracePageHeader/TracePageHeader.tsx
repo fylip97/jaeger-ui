@@ -59,7 +59,7 @@ type TracePageHeaderEmbedProps = {
   toSearch: string | null;
   trace: Trace;
   traceGraphView: boolean;
-  selectedTraceGraphView: number;
+  selectedTraceView: number;
   updateNextViewRangeTime: (update: ViewRangeTimeUpdate) => void;
   updateViewRangeTime: TUpdateViewRangeTimeFunction;
   viewRange: IViewRange;
@@ -128,7 +128,7 @@ export function TracePageHeaderFn(props: TracePageHeaderEmbedProps & { forwarded
     toSearch,
     trace,
     traceGraphView,
-    selectedTraceGraphView,
+    selectedTraceView,
     updateNextViewRangeTime,
     updateViewRangeTime,
     viewRange,
@@ -192,7 +192,7 @@ export function TracePageHeaderFn(props: TracePageHeaderEmbedProps & { forwarded
             onTraceGraphViewClicked={onTraceGraphViewClicked}
             traceGraphView={traceGraphView}
             traceID={trace.traceID}
-            selectedTraceGraphView={selectedTraceGraphView}
+            selectedTraceView={selectedTraceView}
           />
         )}
         {showArchiveButton && (

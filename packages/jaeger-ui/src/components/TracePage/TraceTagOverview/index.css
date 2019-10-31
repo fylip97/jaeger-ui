@@ -12,7 +12,7 @@
     border-bottom: 1px solid #CCCCCC;
   }
 
-  #ButtonColor{
+  .ButtonColor{
     line-height: 1.5;
     display: inline-block;
     font-weight: 400;
@@ -26,9 +26,6 @@
     font-size: 14px;
     border-radius: 4px;
     height: 32px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
     position: relative;
@@ -42,7 +39,7 @@
 
   }
 
-  #ButtonColor:focus {
+  .ButtonColor:focus {
     outline:none;
     box-shadow: none;
   }

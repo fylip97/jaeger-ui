@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Dropdown, Icon, Menu } from 'antd';
-import './tagDropdown.css';
+import './TagDropdown.css';
 import { Trace } from '../../../types/trace';
 import { getValue } from './secondDropDownValue';
 import { getColumnValues, getColumnValuesSecondDropdown } from './tableValues';
@@ -24,9 +24,12 @@ type State = {
     displayMenu: boolean,
     title: string[],
     titleTag: string,
-    
+
 }
 
+/**
+ * Used to render the second Dropdown.
+ */
 export default class SecondDropDown extends Component<Props, State>{
     constructor(props: any) {
         super(props);
@@ -37,18 +40,15 @@ export default class SecondDropDown extends Component<Props, State>{
             title: list,
             titleTag: "No Item is clicked",
         };
-
         this.showDropdownMenu = this.showDropdownMenu.bind(this);
         this.hideDropdownMenu = this.hideDropdownMenu.bind(this);
         this.tagIsClicked = this.tagIsClicked.bind(this);
-
-
     };
 
     componentDidUpdate = (prevProps: Props) => {
 
-    
-        
+
+
         if (prevProps.tagDropdownTitle !== this.props.tagDropdownTitle) {
             this.setState({
                 titleTag: "No Item is selected",
@@ -61,7 +61,10 @@ export default class SecondDropDown extends Component<Props, State>{
             })
         }
     }
-
+    /**
+     * used to show the dropdown
+     * @param event 
+     */
     showDropdownMenu(event: any) {
         event.preventDefault();
         this.setState({ displayMenu: true }, () => {
@@ -69,6 +72,9 @@ export default class SecondDropDown extends Component<Props, State>{
         });
     }
 
+    /**
+     * used to remove the dropdown
+     */
     hideDropdownMenu() {
         this.setState({ displayMenu: false }, () => {
             document.removeEventListener('click', this.hideDropdownMenu);
@@ -76,6 +82,10 @@ export default class SecondDropDown extends Component<Props, State>{
 
     }
 
+    /**
+     * is called if a item is clicked
+     * @param title 
+     */
     tagIsClicked(title: string) {
         this.setState({
             titleTag: title,
@@ -91,14 +101,14 @@ export default class SecondDropDown extends Component<Props, State>{
         const menu = (<Menu>
             {this.state.title.map((title: any, index: number) => (
                 <Menu.Item key={index}>
-                    <a onClick={() => this.tagIsClicked(title)} role="button">{title !== "Service Name" && title !== "Operation Name" ? "Tag: "+title : title}</a>
+                    <a onClick={() => this.tagIsClicked(title)} role="button">{title !== "Service Name" && title !== "Operation Name" ? "Tag: " + title : title}</a>
                 </Menu.Item>
             ))}
         </Menu>)
         return (
-            <div className="dropdown" style={!this.props.isSelected ? { visibility: 'hidden' } : { visibility: 'visible' }}>
+            <div className="tagDropdown1" style={!this.props.isSelected ? { visibility: 'hidden' } : { visibility: 'visible' }}>
                 <Dropdown overlay={menu} >
-                    <Button> {this.props.secondTagDropdownTitle} <Icon type={'down'} /></Button>
+                    <Button> {this.props.secondTagDropdownTitle !== "Service Name" && this.props.secondTagDropdownTitle !== "Operation Name" ? "Tag: " + this.props.secondTagDropdownTitle : this.props.secondTagDropdownTitle} <Icon type={'down'} /></Button>
                 </Dropdown>
 
             </div>
