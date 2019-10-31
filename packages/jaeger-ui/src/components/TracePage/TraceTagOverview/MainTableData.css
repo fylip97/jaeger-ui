@@ -1,29 +1,20 @@
-.MainTableDataTD{
+.MainTableData--td{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
     padding-left: 1em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  td {
     max-width: 25em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-
-  .MainTableDataTR{
+  .MainTableData--tr{
     border-top: 1px solid #FFFFFF;
-
   }
   
-  .MainTableDataTR:hover {
+  .MainTableData--tr:hover {
     background: #FAFAFA;
     color: black;
-    cursor: pointer;
   }
 
   .LabelBorder{

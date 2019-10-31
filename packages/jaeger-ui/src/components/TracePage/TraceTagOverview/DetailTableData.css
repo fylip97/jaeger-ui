@@ -1,11 +1,18 @@
-.DetailTraceTableTR1{
+.detailTable--tr{
     border-top: 1px solid #ECECEC;
   }
 
-  .DetailTraceTableChildTD{
+.detailTable--tr:hover {
+    background: #FAFAFA;
+    color: black;
+  }
+
+  .detailTableChild--td{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
-    width: 9.09%;
+    border-top: 1px solid #E6E6E6;
+    border-bottom: 1px solid #E6E6E6;
+    width: 10%;
     padding-left: 2em;
   }
 
@@ -21,12 +28,25 @@
     padding-left: 0.6em; 
   }
 
-  .DetailTraceTableTD{
+  .detailTable--td{
     border-left: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
+    border-top: 1px solid #E6E6E6;
+    border-bottom: 1px solid #E6E6E6;
     width: 9.09%;
     padding-left: 1em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .detailTable--tr--one{
+    background: '#F8F8F8';
+    color: '#999';
+    font-style: 'italic'; 
+  }
+
+  .detailTable--tr--two{
+    background: "";
+    border-color: "";
   }

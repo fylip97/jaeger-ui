@@ -12,10 +12,8 @@ export type TableSpan = {
   percent: number;
   isDetail: boolean;
   parentElement: string;
-  color: string;
+  color: string; // If it is a service name, the color will be set.
   searchColor: string;
-
-
-  colorToPercent: string;
+  colorToPercent: string; // Color created by percent
 
 }

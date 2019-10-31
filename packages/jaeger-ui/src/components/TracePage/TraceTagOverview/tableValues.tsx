@@ -4,14 +4,15 @@ import { Span } from '../../../types/trace';
 import { TableSpan } from './types';
 import colorGenerator from '../../../utils/color-generator';
 
+const serviceName = "Service Name";
+const operationName = "Operation Name";
 /**
- * returns the values of the table shown after the selection of the first dropdown   
+ * Returns the values of the table shown after the selection of the first dropdown.   
  * @param selectedTagKey the key which was selected
- * @param trace 
  */
 export function getColumnValues(selectedTagKey: string, trace: Trace) {
 
-    if (selectedTagKey === "Service Name" || selectedTagKey === "Operation Name") {
+    if (selectedTagKey === serviceName || selectedTagKey === operationName) {
         return group(selectedTagKey, trace)
     } else {
         return getTraceValuesFirstDropdown(selectedTagKey, trace)
@@ -19,7 +20,7 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
 }
 
 /**
- * returns the values of the table shown after the selection of the second dropdown 
+ * Returns the values of the table shown after the selection of the second dropdown. 
  * @param actualTableValues actual values of the table
  * @param selectedTagKey first key which is selected
  * @param selectedTagKeySecond second key which is selected
@@ -27,17 +28,17 @@ export function getColumnValues(selectedTagKey: string, trace: Trace) {
  */
 export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace) {
 
-    if (selectedTagKey === "Service Name" && selectedTagKeySecond === "Operation Name") {
+    if (selectedTagKey === serviceName && selectedTagKeySecond === operationName) {
         return serviceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
-    } else if (selectedTagKey === "Operation Name" && selectedTagKeySecond === "Service Name") {
+    } else if (selectedTagKey === operationName && selectedTagKeySecond === serviceName) {
         return serviceNameOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
-    } else if (selectedTagKey === "Service Name") {
+    } else if (selectedTagKey === serviceName) {
         return serviceOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
-    } else if (selectedTagKey === "Operation Name") {
+    } else if (selectedTagKey === operationName) {
         return serviceOrOpToTag(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
-    } else if (selectedTagKeySecond === "Service Name") {
+    } else if (selectedTagKeySecond === serviceName) {
         return tagToServiceNameOrOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, true);
-    } else if (selectedTagKeySecond === "Operation Name") {
+    } else if (selectedTagKeySecond === operationName) {
         return tagToServiceNameOrOperationName(actualTableValues, selectedTagKey, selectedTagKeySecond, trace, false);
     }
     else {
@@ -46,39 +47,37 @@ export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], se
 }
 
 /**
- * builds an obeject which represents a column
+ * Builds an obeject which represents a column.
  */
-function buildOneColumn(name: string, count: number, total: number, avg: number,
-    min: number, max: number, isDetail: boolean, self: number, selfAvg: number,
-    selfMin: number, selfMax: number, percent: number, color: string, seachColor: string,
-    parentElement: string) {
+function buildOneColumn(oneColumn: TableSpan) {
+    oneColumn.total = Math.round((oneColumn.total / 1000) * 100) / 100;
+    oneColumn.avg = Math.round((oneColumn.avg / 1000) * 100) / 100;
+    oneColumn.min = Math.round((oneColumn.min / 1000) * 100) / 100;
+    oneColumn.max = Math.round((oneColumn.max / 1000) * 100) / 100;
+    oneColumn.self = Math.round((oneColumn.self / 1000) * 100) / 100;
+    oneColumn.selfAvg = Math.round((oneColumn.selfAvg / 1000) * 100) / 100;
+    oneColumn.selfMin = Math.round((oneColumn.selfMin / 1000) * 100) / 100;
+    oneColumn.selfMax = Math.round((oneColumn.selfMax / 1000) * 100) / 100;
+    oneColumn.percent = Math.round((oneColumn.percent / 1) * 100) / 100;
+    oneColumn.colorToPercent = "rgb(248,248,248)";
 
-    var oneColumn = {
-        name: name, count: count, total: (Math.round((total / 1000) * 100) / 100),
-        avg: (Math.round((avg / 1000) * 100) / 100), min: Math.round((min / 1000) * 100) / 100,
-        max: (Math.round((max / 1000) * 100) / 100), isDetail: isDetail,
-        self: (Math.round((self / 1000) * 100) / 100),
-        selfAvg: (Math.round((selfAvg / 1000) * 100) / 100), selfMin: (Math.round((selfMin / 1000) * 100) / 100),
-        selfMax: (Math.round((selfMax / 1000) * 100) / 100), percent: (Math.round((percent / 1) * 100) / 100),
-        color: color, seachColor: seachColor, parentElement: parentElement, colorToPercent: "rgb(236,236,236)"
-    }
     return oneColumn;
 }
 
 
 /**
- * grouped by serviceName or operationName
+ * Grouped by serviceName or operationName.
  * @param selectedTagKey 
  * @param trace 
  */
 function group(selectedTagKey: string, trace: Trace) {
     var allSpans = trace.spans
     var diffNamesS = new Set();
-    if (selectedTagKey === "Service Name") {
+    if (selectedTagKey === serviceName) {
         for (var i = 0; i < allSpans.length; i++) {
             diffNamesS.add(allSpans[i].process.serviceName);
         }
-    } else if (selectedTagKey === "Operation Name") {
+    } else if (selectedTagKey === operationName) {
         for (var i = 0; i < allSpans.length; i++) {
             diffNamesS.add(allSpans[i].operationName);
         }
@@ -102,34 +101,49 @@ function getNoTagContent(allSpans: Span[], diffServiceName: string[], selectedTi
 
     var allSpansTrace = new Array();
     for (var i = 0; i < diffServiceName.length; i++) {
-        var allPercent = trace.duration;
-        var onePecent = allPercent / 100;
         var color = "";
-        var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
+        var resultValue = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
 
         for (var j = 0; j < allSpans.length; j++) {
-            if (selectedTitle === "Service Name") {
+            if (selectedTitle === serviceName) {
                 if (allSpans[j].process.serviceName === diffServiceName[i]) {
-                    resultArray = calculateContent(allSpans[j], allSpans,resultArray);
+                    resultValue = calculateContent(allSpans[j], allSpans, resultValue);
                     color = colorGenerator.getColorByKey(allSpans[j].process.serviceName)
                 }
-            } else if (selectedTitle === "Operation Name") {
+            } else if (selectedTitle === operationName) {
                 if (allSpans[j].operationName === diffServiceName[i]) {
-                    resultArray = calculateContent(allSpans[j], allSpans, resultArray);
+                    resultValue = calculateContent(allSpans[j], allSpans, resultValue);
                 }
             }
         }
-        resultArray.selfAvg = resultArray.self / resultArray.count;
-        resultArray.avg = resultArray.total / resultArray.count;
-        var tableSpan = buildOneColumn(diffServiceName[i], resultArray.count, resultArray.total, resultArray.avg,
-            resultArray.min, resultArray.max, false, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, color, "", "none");
+        resultValue.selfAvg = resultValue.self / resultValue.count;
+        resultValue.avg = resultValue.total / resultValue.count;
+        var tableSpan = {
+            name: diffServiceName[i],
+            count: resultValue.count,
+            total: resultValue.total,
+            avg: resultValue.avg,
+            min: resultValue.min,
+            max: resultValue.max,
+            isDetail: false,
+            self: resultValue.self,
+            selfAvg: resultValue.selfAvg,
+            selfMin: resultValue.selfMin,
+            selfMax: resultValue.selfMax,
+            percent: resultValue.percent,
+            color: color,
+            searchColor: "",
+            parentElement: "none",
+            colorToPercent: ""
+        }
+        tableSpan = buildOneColumn(tableSpan);
         allSpansTrace.push(tableSpan);
     }
     return allSpansTrace;
 }
 
 /**
- * get first dropdown
+ * Get first dropdown.
  * @param selectedTagKey 
  * @param trace 
  */
@@ -168,41 +182,80 @@ function getTraceValuesFirstDropdown(selectedTagKey: string, trace: Trace) {
     for (var i = 0; i < diffrentKeyValuesA.length; i++) {
 
         var name = "" + diffrentKeyValuesA[i];
-        var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
+        var resultValue = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
 
         for (var j = 0; j < allSpansWithSelectedKey.length; j++) {
             for (var l = 0; l < allSpansWithSelectedKey[j].tags.length; l++) {
                 if (diffrentKeyValuesA[i] === allSpansWithSelectedKey[j].tags[l].value) {
-                    resultArray = calculateContent(allSpansWithSelectedKey[j], allSpans,resultArray);
+                    resultValue = calculateContent(allSpansWithSelectedKey[j], allSpans, resultValue);
                 }
             }
         }
 
-        resultArray.selfAvg = resultArray.self / resultArray.count;
-        resultArray.avg = resultArray.total / resultArray.count;
-        allValuesColumn.push(buildOneColumn(name, resultArray.count, resultArray.total, resultArray.avg, resultArray.min, resultArray.max, false, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "transparent", ""));
+        resultValue.selfAvg = resultValue.self / resultValue.count;
+        resultValue.avg = resultValue.total / resultValue.count;
+        var buildOneColumnValue = {
+            name: name,
+            count: resultValue.count,
+            total: resultValue.total,
+            avg: resultValue.avg,
+            min: resultValue.min,
+            max: resultValue.max,
+            isDetail: false,
+            self: resultValue.self,
+            selfAvg: resultValue.selfAvg,
+            selfMin: resultValue.selfMin,
+            selfMax: resultValue.selfMax,
+            percent: resultValue.percent,
+            color: "",
+            searchColor: "transparent",
+            parentElement: "",
+            colorToPercent: ""
+        }
+        buildOneColumnValue = buildOneColumn(buildOneColumnValue);
+        allValuesColumn.push(buildOneColumnValue);
     }
 
     // last entry    
-    var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
+    var resultValue = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
     for (var i = 0; i < allSpansWithoutSelectedKey.length; i++) {
-        resultArray = calculateContent(allSpansWithoutSelectedKey[i], allSpans,resultArray);
+        resultValue = calculateContent(allSpansWithoutSelectedKey[i], allSpans, resultValue);
     }
 
-    resultArray.selfAvg = resultArray.self / resultArray.count;
-    resultArray.avg = resultArray.total / resultArray.count;
-    if (resultArray.count == 0) {
-        resultArray.avg = 0;
-        resultArray.selfAvg = 0;
-        resultArray.min = 0;
-        resultArray.selfMin = 0;
+    resultValue.selfAvg = resultValue.self / resultValue.count;
+    resultValue.avg = resultValue.total / resultValue.count;
+    if (resultValue.count == 0) {
+        resultValue.avg = 0;
+        resultValue.selfAvg = 0;
+        resultValue.min = 0;
+        resultValue.selfMin = 0;
     }
-    allValuesColumn.push(buildOneColumn("rest", resultArray.count, resultArray.total, resultArray.avg, resultArray.min, resultArray.max, false, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, "", "transparent", ""));
+    var buildOneColumnValue = {
+        name: "Others",
+        count: resultValue.count,
+        total: resultValue.total,
+        avg: resultValue.avg,
+        min: resultValue.min,
+        max: resultValue.max,
+        isDetail: false,
+        self: resultValue.self,
+        selfAvg: resultValue.selfAvg,
+        selfMin: resultValue.selfMin,
+        selfMax: resultValue.selfMax,
+        percent: resultValue.percent,
+        color: "",
+        searchColor: "transparent",
+        parentElement: "",
+        colorToPercent: ""
+    };
+
+    buildOneColumnValue = buildOneColumn(buildOneColumnValue);
+    allValuesColumn.push(buildOneColumnValue);
     return allValuesColumn;
 }
 
 /**
- * first: Tag second: Tag
+ * First: Tag second: Tag
  * @param actualTableValues 
  * @param selectedTagKey 
  * @param selectedTagKeySecond 
@@ -282,7 +335,7 @@ function getColumnValuesSecondDropdown2Tags(actualTableValues: TableSpan[], sele
 }
 
 /**
- * first: ServiceName or OperationName second: ServiceName or OperationName
+ * First: ServiceName or OperationName second: ServiceName or OperationName
  * @param actualTableValues 
  * @param selectedTagKey 
  * @param selectedTagKeySecond 
@@ -334,7 +387,7 @@ function serviceNameOperationName(actualTableValues: TableSpan[], selectedTagKey
 }
 
 /**
- * first ServiceName or Operation Name to Tag
+ * First ServiceName or Operation Name to Tag.
  * @param actualTableValues 
  * @param selectedTagKey 
  * @param selectedTagKeySecond 
@@ -388,7 +441,7 @@ function serviceOrOpToTag(actualTableValues: TableSpan[], selectedTagKey: string
 }
 
 /**
- * first: Tag second: ServiceName or OperationName
+ * First: Tag second: ServiceName or OperationName
  * @param actualTableValues 
  * @param selectedTagKey 
  * @param selectedTagKeySecond 
@@ -437,44 +490,57 @@ function tagToServiceNameOrOperationName(actualTableValues: TableSpan[], selecte
 }
 
 /**
- * created array for the children
- * @param diffNamesA 
- * @param tempArray 
- * @param allSpans 
- * @param serviceName 
- * @param parentName 
- * @param isDetail 
+ * Creates columns for the children.
  */
 function buildDetail(diffNamesA: string[], tempArray: Span[], allSpans: Span[], serviceName: boolean, parentName: string, isDetail: boolean, trace: Trace) {
 
     var newColumnValues = Array();
     for (var j = 0; j < diffNamesA.length; j++) {
         var color = "";
-        var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
+        var resultValue = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
         for (var l = 0; l < tempArray.length; l++) {
             if (isDetail) {
                 for (var a = 0; a < tempArray[l].tags.length; a++) {
                     if (diffNamesA[j] === tempArray[l].tags[a].value) {
-                        resultArray = calculateContent(tempArray[l], allSpans, resultArray);
+                        resultValue = calculateContent(tempArray[l], allSpans, resultValue);
                     }
                 }
             } else {
                 if (serviceName) {
                     if (diffNamesA[j] === tempArray[l].process.serviceName) {
-                        resultArray = calculateContent(tempArray[l], allSpans, resultArray);
+                        resultValue = calculateContent(tempArray[l], allSpans, resultValue);
                         color = colorGenerator.getColorByKey(tempArray[l].process.serviceName);
                     }
                 } else {
                     if (diffNamesA[j] === tempArray[l].operationName) {
-                        resultArray = calculateContent(tempArray[l], allSpans,resultArray);
+                        resultValue = calculateContent(tempArray[l], allSpans, resultValue);
                     }
                 }
             }
         }
-        resultArray.selfAvg = resultArray.self / resultArray.count;
-        resultArray.avg = resultArray.total / resultArray.count;
-        newColumnValues.push(buildOneColumn(diffNamesA[j], resultArray.count, resultArray.total, resultArray.avg, resultArray.min,
-            resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin, resultArray.selfMax, resultArray.percent, color, "", parentName));
+        resultValue.selfAvg = resultValue.self / resultValue.count;
+        resultValue.avg = resultValue.total / resultValue.count;
+        var buildOneColumnValue = {
+            name: diffNamesA[j],
+            count: resultValue.count,
+            total: resultValue.total,
+            avg: resultValue.avg,
+            min: resultValue.min,
+            max: resultValue.max,
+            isDetail: true,
+            self: resultValue.self,
+            selfAvg: resultValue.selfAvg,
+            selfMin: resultValue.selfMin,
+            selfMax: resultValue.selfMax,
+            percent: resultValue.percent,
+            color: color,
+            searchColor: "",
+            parentElement: parentName,
+            colorToPercent: "",
+
+        }
+        buildOneColumnValue = buildOneColumn(buildOneColumnValue);
+        newColumnValues.push(buildOneColumnValue);
     }
     return newColumnValues;
 }
@@ -487,56 +553,65 @@ function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: 
     for (var i = 0; i < allColumnValues.length; i++) {
         newTable.push(allColumnValues[i]);
         if (!allColumnValues[i].isDetail) {
-            var resultArray = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
+            var resultValue = { self: 0, selfAvg: 0, selfMin: trace.duration, selfMax: 0, total: 0, avg: 0, min: trace.duration, max: 0, count: 0, percent: 0 };
 
             for (var j = 0; j < allSpans.length; j++) {
-                if (serviceName) {
-                    if (allColumnValues[i].name === allSpans[j].process.serviceName) {
-                        var rest = true;
-                        for (var l = 0; l < allSpans[j].tags.length; l++) {
-                            if (allSpans[j].tags[l].key === selectedTagKeySecond) {
-                                rest = false;
-                            }
-                        }
-                        if (rest) {
-                            resultArray = calculateContent(allSpans[j], allSpans, resultArray);
+                if (allColumnValues[i].name === allSpans[j].process.serviceName || allColumnValues[i].name === allSpans[j].operationName) {
+                    var rest = true;
+                    for (var l = 0; l < allSpans[j].tags.length; l++) {
+                        if (allSpans[j].tags[l].key === selectedTagKeySecond) {
+                            rest = false;
                         }
                     }
-                } else {
-                    if (allColumnValues[i].name === allSpans[j].operationName) {
-                        var rest = true;
-                        for (var l = 0; l < allSpans[j].tags.length; l++) {
-                            if (allSpans[j].tags[l].key === selectedTagKeySecond) {
-                                rest = false;
-                            }
-                        }
-                        if (rest) {
-                            resultArray = calculateContent(allSpans[j], allSpans, resultArray);
-                        }
+                    if (rest) {
+                        resultValue = calculateContent(allSpans[j], allSpans, resultValue);
                     }
                 }
+
             }
-            resultArray.avg = resultArray.total / resultArray.count;
-            resultArray.selfAvg = resultArray.self / resultArray.count;
-            if (resultArray.count != 0) {
-                newTable.push(buildOneColumn("rest", resultArray.count, resultArray.total, resultArray.avg,
-                    resultArray.min, resultArray.max, true, resultArray.self, resultArray.selfAvg, resultArray.selfMin,
-                    resultArray.selfMax, resultArray.percent, "", "", allColumnValues[i].name));
+            resultValue.avg = resultValue.total / resultValue.count;
+            resultValue.selfAvg = resultValue.self / resultValue.count;
+            if (resultValue.count != 0) {
+                var buildOneColumnValue = {
+                    name: "Others",
+                    count: resultValue.count,
+                    total: resultValue.total,
+                    avg: resultValue.avg,
+                    min: resultValue.min,
+                    max: resultValue.max,
+                    isDetail: true,
+                    self: resultValue.self,
+                    selfAvg: resultValue.selfAvg,
+                    selfMin: resultValue.selfMin,
+                    selfMax: resultValue.selfMax,
+                    percent: resultValue.percent,
+                    color: "",
+                    searchColor: "",
+                    parentElement: allColumnValues[i].name,
+                    colorToPercent: ""
+                };
+                buildOneColumnValue = buildOneColumn(buildOneColumnValue)
+                newTable.push(buildOneColumnValue);
             }
         }
     }
     return newTable;
 }
+/**
+ * Used to get the calculation.
+ * @param span 
+ * @param wholeTrace 
+ * @param resultValue 
+ */
+function calculateContent(span: Span, wholeTrace: Span[], resultValue: any) {
 
-export function calculateContent(span: Span, wholeTrace: Span[], resultArray: any) {
-
-    resultArray.count += 1;
-    resultArray.total += span.duration;
-    if (resultArray.min > span.duration) {
-        resultArray.min = span.duration;
+    resultValue.count += 1;
+    resultValue.total += span.duration;
+    if (resultValue.min > span.duration) {
+        resultValue.min = span.duration;
     }
-    if (resultArray.max < span.duration) {
-        resultArray.max = span.duration;
+    if (resultValue.max < span.duration) {
+        resultValue.max = span.duration;
     }
     //For each span with the same operationName 
     //Do I have children?
@@ -574,22 +649,22 @@ export function calculateContent(span: Span, wholeTrace: Span[], resultArray: an
                 }
             }
         }
-        if (resultArray.selfMin > tempSelf) {
-            resultArray.selfMin = tempSelf;
+        if (resultValue.selfMin > tempSelf) {
+            resultValue.selfMin = tempSelf;
         }
-        if (resultArray.selfMax < tempSelf) {
-            resultArray.selfMax = tempSelf;
+        if (resultValue.selfMax < tempSelf) {
+            resultValue.selfMax = tempSelf;
         }
-        resultArray.self = resultArray.self + tempSelf;
+        resultValue.self = resultValue.self + tempSelf;
     } else {
-        if (resultArray.selfMin > (span.duration)) {
-            resultArray.selfMin = span.duration;
+        if (resultValue.selfMin > (span.duration)) {
+            resultValue.selfMin = span.duration;
         }
-        if (resultArray.selfMax < span.duration) {
-            resultArray.selfMax = span.duration;
+        if (resultValue.selfMax < span.duration) {
+            resultValue.selfMax = span.duration;
         }
-        resultArray.self = resultArray.self + span.duration;
+        resultValue.self = resultValue.self + span.duration;
     }
-    resultArray.percent = resultArray.self / (resultArray.total / 100)
-    return resultArray;
+    resultValue.percent = resultValue.self / (resultValue.total / 100)
+    return resultValue;
 }
