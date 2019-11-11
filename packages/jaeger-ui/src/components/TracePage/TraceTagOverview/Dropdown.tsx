@@ -23,7 +23,7 @@ type State = {
 
 const serviceName = "Service Name";
 const operationName = "Operation Name";
-const noItemSelected = "No item selected";
+const noItemSelected = "No Item selected";
 
 /**
  * Used to build the Dropdown.
