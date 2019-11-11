@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { TableSpan } from './types'
 import * as _ from 'lodash';
 
@@ -19,8 +18,8 @@ export function sortTable(array: any[], key: string, sortAsc: boolean) {
             isNoDetail.push(array[i]);
         }
     }
-    sortByKey(isNoDetail,key,sortAsc)
-    var diffParentNames = [];
+    sortByKey(isNoDetail, key, sortAsc)
+    var diffParentNames = new Array();
     for (var i = 0; i < isDetailArray.length; i++) {
         if (diffParentNames.length == 0) {
             diffParentNames.push(isDetailArray[i]);
@@ -32,10 +31,11 @@ export function sortTable(array: any[], key: string, sortAsc: boolean) {
             }
         }
     }
-
     for (var j = 0; j < diffParentNames.length; j++) {
-        var tempArray = groupBy(isDetailArray, diffParentNames[j].parentElement)
-        sortByKey(tempArray,key,sortAsc);
+        var tempArray = _.chain(isDetailArray).filter(filter_by => filter_by.parentElement == diffParentNames[j].parentElement).
+            groupBy(x => x.parentElement).map((value, key) => ({ parentElement: key, groupedArry: value })).value()[0].groupedArry
+
+        sortByKey(tempArray, key, sortAsc);
         if (tempArray.length > 0) {
 
             // build whole array
@@ -52,21 +52,6 @@ export function sortTable(array: any[], key: string, sortAsc: boolean) {
         }
     }
     return isNoDetail;
-}
-
-/**
- * Array is grouped by key.
- * @param tempArray input whitch is grouped
- * @param key 
- */
-function groupBy(tempArray: TableSpan[], key: string) {
-    var groupedArray = new Array();
-    for (var i = 0; i < tempArray.length; i++) {
-        if (tempArray[i].parentElement === key) {
-            groupedArray.push(tempArray[i]);
-        }
-    }
-    return groupedArray;
 }
 
 /**

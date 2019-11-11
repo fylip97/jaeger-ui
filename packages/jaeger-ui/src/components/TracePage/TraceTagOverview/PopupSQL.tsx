@@ -5,7 +5,6 @@ import './PopupSQL.css'
 type Props = {
   closePopup: (popupContent: string, ) => void;
   popupContent: string,
-
 }
 
 /**
@@ -16,11 +15,11 @@ export default class PopupSQL extends Component<Props>{
   render() {
     const value = "\"" + this.props.popupContent + "\"";
     return (
-      <div className='popupSQL'>
-        <div className='popupSQL_inner'>
-          <h3 className="headerPopupSQL">Tag: "SQL" </h3>
-          <textarea readOnly className="sqlContent" value={value} />
-          <Button className="closeButton" onClick={() => this.props.closePopup("")}>close </Button>
+      <div className='PopupSQL'>
+        <div className='PopupSQL--inner'>
+          <h3 className="PopupSQL--header">Tag: "SQL" </h3>
+          <textarea readOnly className="PopupSQL--sqlContent" value={value} />
+          <Button className="PopupSQL--closeButton" onClick={() => this.props.closePopup("")}>close </Button>
         </div>
       </div>
     );

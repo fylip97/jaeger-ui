@@ -15,5 +15,4 @@ export type TableSpan = {
   color: string; // If it is a service name, the color will be set.
   searchColor: string;
   colorToPercent: string; // Color created by percent
-
 }

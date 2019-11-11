@@ -1,19 +1,24 @@
-.detailTable--tr{
+.DetailTableData--tr{
     border-top: 1px solid #ECECEC;
   }
 
-.detailTable--tr:hover {
+.DetailTableData--tr:hover {
     background: #FAFAFA;
     color: black;
   }
 
-  .detailTableChild--td{
-    border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #CCCCCC;
-    border-top: 1px solid #E6E6E6;
-    border-bottom: 1px solid #E6E6E6;
+  .DetailTableData--child--td{
+    border-left: 1px solid rgb(204,204,204);
+    border-right: 1px solid rgb(204,204,204);
+    border-top: 1px solid rgb(230,230,230);
+    border-bottom: 1px solid rgb(230,230,230);
     width: 10%;
     padding-left: 2em;
+
+    max-width: 25em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   td {
@@ -23,30 +28,19 @@
     white-space: nowrap;
   }
 
-  .serviceBorder{
+  .DetailTableData--serviceBorder{
     border-left: 4px solid transparent; 
     padding-left: 0.6em; 
   }
 
-  .detailTable--td{
-    border-left: 1px solid #CCCCCC;
-    border-right: 1px solid #CCCCCC;
-    border-top: 1px solid #E6E6E6;
-    border-bottom: 1px solid #E6E6E6;
+  .DetailTableData--td{
+    border-left: 1px solid rgb(204,204,204);
+    border-right: 1px solid rgb(204,204,204);
+    border-top: 1px solid rgb(230,230,230);
+    border-bottom: 1px solid rgb(230,230,230);
     width: 9.09%;
     padding-left: 1em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .detailTable--tr--one{
-    background: '#F8F8F8';
-    color: '#999';
-    font-style: 'italic'; 
-  }
-
-  .detailTable--tr--two{
-    background: "";
-    border-color: "";
   }
