@@ -1,22 +1,27 @@
-import React, { Component } from 'react';
-import { TableSpan } from './types'
 import { Trace } from '../../../types/trace';
+import { TableSpan } from './types'
+import _ from 'lodash';
 
+const serviceName = "Service Name";
+const operationName = "Operation Name";
 
-/**
- * Return the value of the second dropdown
- * @param tableValue Actual table values
- * @param trace Whole information about the trace
- * @param tagDropdownTitle The title of the first dropdown. It is needed to find out what is being searched for
- */
-export function getValue(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
-    if (tagDropdownTitle !== "Service Name" && tagDropdownTitle != "Operation Name") {
-        return getValueTagIsPicked(tableValue, trace, tagDropdownTitle);
-    } else {
-        return getValueNoTagIsPicked(tableValue, trace, tagDropdownTitle);
-    }
+export function generateDropdownValue(trace: Trace) {
+
+    const allSpans = trace.spans;
+    const tags = _(allSpans).map("tags").flatten().value();
+    const tagKeys = _(tags).map("key").uniq().value();
+    const values = _.concat(serviceName, operationName, tagKeys);
+    return values;
 }
 
+export function generateSecondDropdownValue(tableValue: TableSpan[], trace: Trace, dropdownTestTitle1: string, ) {
+
+    if (dropdownTestTitle1 !== serviceName && dropdownTestTitle1 != operationName) {
+        return getValueTagIsPicked(tableValue, trace, dropdownTestTitle1);
+    } else {
+        return getValueNoTagIsPicked(tableValue, trace, dropdownTestTitle1);
+    }
+}
 
 /**
  * Used to get the values if no tag is picked from the first dropdown.
@@ -32,11 +37,10 @@ function getValueTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownT
 
     //add all Spans with this tag key
     for (var i = 0; i < tableValue.length; i++) {
-        if (tableValue[i].name !== 'rest') {
+        if (tableValue[i].name !== 'Others') {
             for (var j = 0; j < allSpans.length; j++) {
                 for (var l = 0; l < allSpans[j].tags.length; l++) {
                     if (tagDropdownTitle === allSpans[j].tags[l].key) {
-
                         list.add(allSpans[j]);
                     }
                 }
@@ -57,8 +61,8 @@ function getValueTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownT
         }
     }
     var availableTags = new Array();
-    availableTags.push("Service Name");
-    availableTags.push("Operation Name");
+    availableTags.push(serviceName);
+    availableTags.push(operationName);
     var iterator = list.values();
     for (var i = 0; i < list.size; i++) {
         availableTags.push(iterator.next().value)
@@ -84,14 +88,13 @@ function getValueNoTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdow
     // set into array
     var availableTagsA = new Array();
     var iterator = availableTagsS.values();
-    if (tagDropdownTitle === "Service Name") {
-        availableTagsA.push("Operation Name");
+    if (tagDropdownTitle === serviceName) {
+        availableTagsA.push(operationName);
     } else {
-        availableTagsA.push("Service Name");
+        availableTagsA.push(serviceName);
     }
     for (var i = 0; i < availableTagsS.size; i++) {
         availableTagsA.push(iterator.next().value)
     }
     return availableTagsA;
 }
-

@@ -21,13 +21,12 @@ import prefixUrl from '../../../utils/prefix-url';
 
 type Props = {
   onTraceGraphViewClicked: (index: number) => void;
-  traceGraphView: boolean;
   traceID: string;
   selectedTraceView: number;
 };
 
 export default function AltViewOptions(props: Props) {
-  const { onTraceGraphViewClicked, traceGraphView, traceID, selectedTraceView, } = props;
+  const { onTraceGraphViewClicked, traceID, selectedTraceView, } = props;
 
   const menuItems = ["Trace Timeline", "Trace Graph", "Trace Overview"]
   

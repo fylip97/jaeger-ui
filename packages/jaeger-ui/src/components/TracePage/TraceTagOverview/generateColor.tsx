@@ -1,4 +1,3 @@
-import React from 'react';
 import { TableSpan } from './types';
 
 /**
@@ -7,7 +6,6 @@ import { TableSpan } from './types';
  * @param colorToPercent 
  */
 export function generateColor(allSpans: TableSpan[], colorToPercent: boolean) {
-
     for (var i = 0; i < allSpans.length; i++) {
         if (colorToPercent) {
             if (allSpans[i].isDetail) {
@@ -24,6 +22,5 @@ export function generateColor(allSpans: TableSpan[], colorToPercent: boolean) {
             allSpans[i].colorToPercent = "rgb(248,248,248)"
         }
     }
-    return allSpans;
-
+    //return allSpans;
 }
