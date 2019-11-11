@@ -28,7 +28,7 @@ export function getColumnValuesSecondDropdown(actualTableValues: TableSpan[], se
 }
 
 /**
- * Is used if only one dropdown is selected
+ * Is used if only one dropdown is selected.
  */
 function valueFirstDropdown(selectedTagKey: string, trace: Trace) {
     let allDiffColumnValues = new Array();
@@ -113,7 +113,7 @@ function valueFirstDropdown(selectedTagKey: string, trace: Trace) {
         tableSpan = buildOneColumn(tableSpan);
         allTableValues.push(tableSpan);
     }
-    // checks if there is  OTHERS
+    // checks if there is OTHERS
     if (selectedTagKey !== serviceName && selectedTagKey !== operationName) {
         for (var i = 0; i < allSpans.length; i++) {
             var isIn = false;
@@ -174,7 +174,7 @@ function valueFirstDropdown(selectedTagKey: string, trace: Trace) {
 }
 
 /**
- * Used to get values if the second dropdown is selected
+ * Used to get values if the second dropdown is selected.
  */
 function valueSecondDropdown(actualTableValues: TableSpan[], selectedTagKey: string, selectedTagKeySecond: string, trace: Trace) {
 
@@ -193,7 +193,6 @@ function valueSecondDropdown(actualTableValues: TableSpan[], selectedTagKey: str
                         tempArray.push(allSpans[j]);
                         diffNamesA.push(allSpans[j].operationName)
                     }
-
                 } else if (selectedTagKey === operationName) {
                     if (actualTableValues[i].name === allSpans[j].operationName) {
                         tempArray.push(allSpans[j]);
@@ -205,7 +204,6 @@ function valueSecondDropdown(actualTableValues: TableSpan[], selectedTagKey: str
                         for (var l = 0; l < allSpans[j].tags.length; l++) {
                             if (actualTableValues[i].name === allSpans[j].tags[l].value) {
                                 tempArray.push(allSpans[j]);
-
                                 if (selectedTagKeySecond === operationName) {
                                     diffNamesA.push(allSpans[j].operationName);
                                 } else if (selectedTagKeySecond === serviceName) {
@@ -328,7 +326,7 @@ function buildDetail(diffNamesA: string[], tempArray: Span[], allSpans: Span[], 
 }
 
 /**
- * Used to generateDetailRest 
+ * Used to generate detail rest.
  */
 function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: string, trace: Trace) {
 
@@ -393,7 +391,7 @@ function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: 
 }
 
 /**
- * used to calculated the content
+ * used to calculated the content.
  */
 function calculateContent(span: Span, allSpans: Span[], resultValue: any) {
 
@@ -524,13 +522,13 @@ function calculateContent(span: Span, allSpans: Span[], resultValue: any) {
         resultValue.selfMax = tempSelf;
     }
     resultValue.self = resultValue.self + tempSelf;
-    resultValue.percent = resultValue.self / (resultValue.total / 100)
+    resultValue.percent = resultValue.self / (resultValue.total / 100);
 
     return resultValue;
 }
 
 /**
- * determines whether the cut spans belong together and then calculates the duration
+ * determines whether the cut spans belong together and then calculates the duration.
  */
 function getDuration(lowestStartTime: number, duration: number, allOverlay: Span[]) {
 
@@ -551,7 +549,7 @@ function getDuration(lowestStartTime: number, duration: number, allOverlay: Span
 }
 
 /**
- * return the lowest startTime
+ * return the lowest startTime.
  */
 function getLowestStartTime(allOverlay: Span[]) {
 
@@ -563,7 +561,7 @@ function getLowestStartTime(allOverlay: Span[]) {
 }
 
 /**
- * return the selfTime of overlay spans
+ * return the selfTime of overlay spans.
  */
 function onlyOverlay(allOverlay: Span[], allChildren: Span[], tempSelf: number, span: Span) {
 
