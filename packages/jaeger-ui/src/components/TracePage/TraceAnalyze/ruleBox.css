@@ -1,4 +1,4 @@
-.mainBox{
+.RuleBox--mainBox{
     background: #f8f8f8;
     width: 48%;
     height: 200px;
@@ -9,7 +9,7 @@
     margin-bottom: 15px;
 }
 
-.nameRuleBox{
+.RuleBox--nameRuleBox{
     text-align: center;
     margin-top: 5px;
     background: #f8f8f8;

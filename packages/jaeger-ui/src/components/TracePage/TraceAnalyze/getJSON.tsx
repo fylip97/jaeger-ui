@@ -4,7 +4,7 @@ import prefixUrl from '../../../utils/prefix-url';
 
 export function getJSON(trace:Trace){
     var traceID = trace.traceID;
-    var traceJSON = "aaaa";
+    var traceJSON = "";
 
 fetch(prefixUrl(`/api/traces/${traceID}?raw=true&prettyPrint=true`))
       .then(res => res.json())

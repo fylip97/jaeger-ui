@@ -11,7 +11,7 @@ export class PercentageDeviation {
     }
 
     checkRule(trace: Trace) {
-        var PERCENTAGE_DEVIATION_THRESHOLD = 70;
+        const PERCENTAGE_DEVIATION_THRESHOLD = 70;
         var allSpans = trace.spans;
         var totalSelf = 0;
         var calculatedSpan = new Array();

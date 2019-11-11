@@ -32,8 +32,7 @@ export default class TraceAnalyse extends Component<Props, State>{
                 output: [],
                 traceJSON: "",
             }
-        }
-                                                                                                          
+        }                                                                                                   
         JSON.stringify(this.props.trace)
     }
 
@@ -78,9 +77,7 @@ export default class TraceAnalyse extends Component<Props, State>{
                 console.log(error)
             });
     }
-
     getTraceAnalyse() {
-
         fetch(prefixUrl(`http://localhost:8084/getAnalyseInformation`))
             .then(res => res.json())
             .then(
@@ -117,8 +114,6 @@ export default class TraceAnalyse extends Component<Props, State>{
             });
 
     }
-
-
     renderRuleBox() {
         return (this.state.output.map((oneRule, index) => {  
             return (
@@ -134,7 +129,7 @@ export default class TraceAnalyse extends Component<Props, State>{
     render() {
         return (
             <div>
-                <h3 id="title">
+                <h3 className="title">
                     Trace Analyze
                 </h3>
                 {this.state.output.length > 0 ? <div className="frameRule">

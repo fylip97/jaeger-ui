@@ -1,13 +1,22 @@
 import { Trace } from '../../../../types/trace';
 
+/**
+ * 
+ */
 export class NPlusOneRule {
 
-
+    /**
+     * Used to return the rule information. 
+     */
     ruleInformation() {
         var info = "N+1Rule"
         return info;
     }
 
+    /**
+     * Used to check the rule
+     * @param trace 
+     */
     checkRule(trace: Trace) {
         var NUMBER_OF_CALLS_THRESHOLD = 9;
         var allSpans = trace.spans;
@@ -31,7 +40,10 @@ export class NPlusOneRule {
         return false;
     }
 
-
+    /**
+     * 
+     * @param trace 
+     */
     getInformation(trace: Trace) {
         var information = "";
         var calls = "";
@@ -39,7 +51,7 @@ export class NPlusOneRule {
         var resultInformation = new Array();
         var callInformation = new Array();
 
-        var NUMBER_OF_CALLS_THRESHOLD = 9;
+        const NUMBER_OF_CALLS_THRESHOLD = 9;
         var allSpans = trace.spans;
         var count = 1;
         var sqlCheck = "";
