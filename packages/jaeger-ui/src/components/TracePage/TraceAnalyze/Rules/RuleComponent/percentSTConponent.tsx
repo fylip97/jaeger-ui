@@ -1,28 +1,31 @@
-import React, { Component } from 'react';
-import { Trace } from '../../../../../types/trace';
-
+import React from 'react';
 import './percentSTComponent.css';
 
+/**
+ * Used to render the PercentSTComponent
+
+ */
 export const PercentSTComponent = (props: any) => {
 
-    var information = new Array();
-    information = props.information.split("#");
+    var oneColumn = props.information.split(',');
+    oneColumn.splice(oneColumn.length - 1, 1);
 
-    
     return (
-        <table className="percentSTTable"> 
+        <table className="PercentSTComponent--Table">
             <tbody>
-            {information.map((oneInfo: String, index: number) => {
-                        return (<tr key={index + "percentST"}>
-                            <th className="percentSTidTH">Span Id:</th>
-                            <th className="percentSTTH">
-                                <textarea key={index + "percentSTinfo"} className="percentSTInformation" readOnly value={information[index]}></textarea>
-                            </th>
-                        </tr>)
-                    })}
+                {oneColumn.map((oneInfo: String, index: number, value: String[]) => {
+                    value = oneInfo.split("#")
+                    return (<tr key={index + "PercentSTSpanID"}>
+                        <th key={index + "PercentST"} className="PercentSTComponent--spandIDTH">
+                            <label className="PercentSTComponent--label">SpanID: {value[0]}</label>
+                        </th>
+                        <th className="PercentSTComponent--durationTH">
+                            <textarea key={index + "PercentSTDuration"} className="PercentSTComponent--durationInformation" readOnly value={value[1] + "ms"}></textarea>
+                        </th>
+                    </tr>)
+                })}
             </tbody>
         </table>
-    
     );
 }
 

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
-import readJsonFile from '../../../utils/readJsonFile'
 import './index.css';
-import { startAnalyse } from './generateAnaylzeData';
+import { startAnalyse } from './generateAnaylseData';
 import { RuleBox } from './ruleBox';
 import prefixUrl from '../../../utils/prefix-url';
 
@@ -21,10 +20,9 @@ export default class TraceAnalyse extends Component<Props, State>{
     constructor(props: any) {
         super(props);
 
-        if (this.props.backend==0) {
+        if (this.props.backend == 0) {
             this.state = {
                 output: startAnalyse(this.props.trace),
-
                 traceJSON: "",
             }
         } else {
@@ -32,13 +30,13 @@ export default class TraceAnalyse extends Component<Props, State>{
                 output: [],
                 traceJSON: "",
             }
-        }                                                                                                   
+        }
         JSON.stringify(this.props.trace)
     }
 
     componentDidMount() {
 
-        if (this.props.backend==1) {
+        if (this.props.backend == 1) {
             fetch(prefixUrl(`/api/traces/${this.props.trace.traceID}?raw=true&prettyPrint=true`))
                 .then(res => res.json())
                 .then(
@@ -47,7 +45,6 @@ export default class TraceAnalyse extends Component<Props, State>{
                         this.setState({
                             traceJSON: JSON.stringify(result),
                         });
-
                     },
                     (error) => {
                         this.setState({
@@ -55,11 +52,10 @@ export default class TraceAnalyse extends Component<Props, State>{
                         });
                     }
                 )
-        }else if(this.props.backend==2){
+        } else if (this.props.backend == 2) {
             this.sendTrace();
         }
     }
-
 
     sendRequest(traceJSON: any) {
         var test = (JSON.stringify(traceJSON))
@@ -77,6 +73,7 @@ export default class TraceAnalyse extends Component<Props, State>{
                 console.log(error)
             });
     }
+
     getTraceAnalyse() {
         fetch(prefixUrl(`http://localhost:8084/getAnalyseInformation`))
             .then(res => res.json())
@@ -89,7 +86,6 @@ export default class TraceAnalyse extends Component<Props, State>{
                     this.setState({
                         output: allRules,
                     });
-
                 },
                 (error) => {
                     console.log(error);
@@ -97,7 +93,7 @@ export default class TraceAnalyse extends Component<Props, State>{
             )
     }
 
-    sendTrace(){
+    sendTrace() {
         var test = (JSON.stringify(this.props.trace))
         fetch('http://localhost:8084/analyseTraceDiffJS0N', {
             method: 'post',
@@ -115,9 +111,11 @@ export default class TraceAnalyse extends Component<Props, State>{
 
     }
     renderRuleBox() {
-        return (this.state.output.map((oneRule, index) => {  
+        return (this.state.output.map((oneRule, index) => {
             return (
-                <RuleBox key={"ruleBox" + index} name={oneRule.name}
+                <RuleBox key={"ruleBox" + index}
+                    name={oneRule.name}
+                    id={oneRule.id}
                     information={oneRule.information}
                     index={index}
                     calls={oneRule.calls} />

@@ -26,7 +26,7 @@ import { formatRelativeDate } from '../../../utils/date';
 
 import { KeyValuePair, Trace } from '../../../types/trace';
 
-import { startAnalyse } from '../../TracePage/TraceAnalyze/generateAnaylzeData'
+import { startAnalyse } from '../../TracePage/TraceAnalyze/generateAnaylseData'
 
 import './ResultItem.css';
 

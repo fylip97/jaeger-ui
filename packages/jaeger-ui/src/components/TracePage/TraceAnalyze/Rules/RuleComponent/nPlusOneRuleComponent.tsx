@@ -1,28 +1,29 @@
-import React, { Component } from 'react';
-import { Trace } from '../../../../../types/trace';
-
+import React from 'react';
 import './nPlusOneRuleComponent.css';
 
+/**
+ * Used to render the NPlusOneRuleComponent. 
+ */
 export const NPlusOneRuleComponent = (props: any) => {
-    var information = new Array();
-    information = props.information.split("#");
-    var calls = new Array();
-    calls = props.calls.split('#');   
+    var oneColumn = props.information.split("§");
+    oneColumn.splice(oneColumn.length-1,1);
+
     return (
-            <table className="informationTable">
-                <tbody>
-                    {information.map((oneInfo: String, index: number) => {
-                        return (<tr key={index + "nPlusOneRule"}>
-                            <th key={index + "calls"} className="requestTH">
-                                <label>Request: {calls[index]}</label>
-                            </th>
-                            <th className="sqlTH">
-                                <textarea key={index + "info"} className="sqlInformation" readOnly value={information[index]}></textarea>
-                            </th>
-                        </tr>)
-                    })}
-                </tbody>
-            </table>
+        <table className="nPlusOneRuleComponent--informationTable">
+            <tbody>
+                {oneColumn.map((oneInfo: String, index: number, value: string[]) => {
+                    value = oneInfo.split("#");
+                    return (<tr key={index + "nPlusOneRule"}>
+                        <th key={index + "calls"} className="requestTH">
+                            <label>Request: {value[0]}</label>
+                        </th>
+                        <th className="nPlusOneRuleComponent--sqlTH">
+                            <textarea key={index + "info"} className="nPlusOneRuleComponent--sqlInformation" readOnly value={value[1]}></textarea>
+                        </th>
+                    </tr>)
+                })}
+            </tbody>
+        </table>
     );
 }
 

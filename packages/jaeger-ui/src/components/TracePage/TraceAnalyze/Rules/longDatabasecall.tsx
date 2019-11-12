@@ -1,26 +1,25 @@
 import { Trace } from '../../../../types/trace';
 import { calculateContent } from '../../TraceTagOverview/tableValues';
 
-/*
-export const xy = {
-
-    ruleInformation: function() : string {
-        var info =  "longDatabasecall"
-        return info;
-    }
-
-};*/
-
-
+/**
+ * Used to check the long databasecall.
+ */
 export class LongDatabasecall {
 
-    ruleInformation() {
-        var info = "longDatabasecall"
-        return info;
-    }
+    name = "Long databasecall";
+    id= "longDatabasecall"
+    checkRule = false;
+    information = "";
 
-    checkRule(trace: Trace) {
-        var DATABASE_DURATION_THRESHOLD = 120;
+    constructor(trace: Trace) {
+        this.getInformation(trace);
+    }
+    /**
+     * Checks the rule and returns information.
+     */
+    getInformation(trace: Trace) {
+
+        var DATABASE_DURATION_THRESHOLD = 50;
         var allSpans = trace.spans;
         for (var i = 0; i < allSpans.length; i++) {
             for (var j = 0; j < allSpans[i].tags.length; j++) {
@@ -38,16 +37,12 @@ export class LongDatabasecall {
                         percent: 0
                     }
                     resultArray = calculateContent(allSpans[i], allSpans, resultArray);
-                    if ((Math.round((resultArray.self / 1000) * 100) / 100) > DATABASE_DURATION_THRESHOLD) {
-                        return true;
+                    if ((Math.round((resultArray.total / 1000) * 100) / 100) > DATABASE_DURATION_THRESHOLD) {
+                        this.checkRule = true;
+                        this.information = this.information+allSpans[i].spanID +"#"+Math.round((resultArray.total / 1000) * 100) / 100+",";
                     }
                 }
             }
         }
-        return false;
-    }
-
-    getInformation(trace: Trace) {
-        return "";
     }
 }

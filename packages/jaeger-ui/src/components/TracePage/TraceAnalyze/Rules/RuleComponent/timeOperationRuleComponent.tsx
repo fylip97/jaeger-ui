@@ -1,23 +1,30 @@
-import React, { Component } from 'react';
-import { Trace } from '../../../../../types/trace';
-
+import React from 'react';
 import './timeOperationRuleComponent.css';
 
+/**
+ * Used to render TimeOperationRuleComponent
+ */
 export const TimeOperationRuleComponent = (props: any) => {
-    var information = new Array();
-    information = props.information.split("#");
+
+    var oneColumn = props.information.split(',');
+    oneColumn.splice(oneColumn.length - 1, 1);
 
     return (
-            <table className="TORTable">
-                <tbody>
-                    <tr>
-                        <th>
-                            <textarea className="TORInformation" value={"the span " +information[0]+ " has a self time of: " +information[1]}></textarea>
+        <table className="TimeOperationRuleComponent--Table">
+            <tbody>
+                {oneColumn.map((oneInfo: String, index: number, value: String[]) => {
+                    value = oneInfo.split("#")
+                    return (<tr key={index + "TimeOperationRuleSpanID"}>
+                        <th key={index + "TimeOperationRule"} className="TimeOperationRuleComponent--spandIDTH">
+                            <label className="TimeOperationRuleComponent--label">SpanID: {value[0]}</label>
                         </th>
-                    </tr>
-                </tbody>
-            </table>
-            
+                        <th className="TimeOperationRuleComponent--durationTH">
+                            <textarea key={index + "TimeOperationRuleSTDuration"} className="TimeOperationRuleComponent--durationInformation" readOnly value={value[1] + "ms"}></textarea>
+                        </th>
+                    </tr>)
+                })}
+            </tbody>
+        </table>
     );
 }
 
