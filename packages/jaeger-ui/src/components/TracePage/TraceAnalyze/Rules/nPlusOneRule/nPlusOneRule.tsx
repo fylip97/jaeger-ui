@@ -6,7 +6,7 @@ import { Trace } from '../../../../../types/trace';
 export class NPlusOneRule {
 
     name = "n+1 Rule"
-    id = "n+1Rule"
+    id = "nPlus1Rule"
     checkRule = false;
     information = "";
 

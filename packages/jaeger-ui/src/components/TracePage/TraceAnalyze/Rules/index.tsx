@@ -1,5 +1,6 @@
-export {default as longDatabasecallComponent} from "./LongDatabasecall/longDatabasecallComponent";
-export {default as nPlusOneRuleComponent} from "./nPlusOneRule/nPlusOneRuleComponent";
-export {default as percentDeviationComponent} from "./PercentageDeviation/percentageDeviationComponent";
-export {default as percentSTComponent} from "./PercentST/percentSTConponent";
-export {default as timeOperationRuleComponent} from "./TimeOperationRule/timeOperationRuleComponent";
+export {default as nPlus1Rule} from "./nPlusOneRule/index";
+export {default as longDatabasecall} from "./LongDatabasecall/index";
+export {default as percentageDeviation} from "./PercentageDeviation/index";
+export {default as percentST} from "./PercentST/index";
+export {default as timeOperationRule} from "./TimeOperationRule/index";
+

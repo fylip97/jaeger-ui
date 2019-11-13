@@ -5,6 +5,7 @@ import './nPlusOneRuleComponent.css';
  * Used to render the NPlusOneRuleComponent. 
  */
 export const NPlusOneRuleComponent = (props: any) => {
+
     var oneColumn = props.information.split("§");
     oneColumn.splice(oneColumn.length-1,1);
 
