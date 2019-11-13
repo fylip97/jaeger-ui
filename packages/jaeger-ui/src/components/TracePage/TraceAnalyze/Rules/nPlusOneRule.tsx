@@ -39,5 +39,9 @@ export class NPlusOneRule {
                 }
             }
         }
+        if (count > NUMBER_OF_CALLS_THRESHOLD) {
+            this.checkRule= true;
+            this.information = this.information + count + '#' + sqlCheck + '§';
+        }
     }
 }  
