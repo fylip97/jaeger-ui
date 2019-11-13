@@ -15,7 +15,7 @@
 import queryString from 'query-string';
 import * as reactRouterDom from 'react-router-dom';
 
-import { ROUTE_PATH, matches, getUrl, getUrlState } from './url';
+import { ROUTE_PATH, matches, getUrl, getUrlState, sanitizeUrlState } from './url';
 
 describe('DeepDependencyGraph/url', () => {
   describe('matches', () => {
@@ -52,6 +52,11 @@ describe('DeepDependencyGraph/url', () => {
       expect(getUrl({})).toBe('/deep-dependencies');
     });
 
+    it('uses given baseUrl', () => {
+      const baseUrl = 'test base url';
+      expect(getUrl({}, baseUrl)).toBe(baseUrl);
+    });
+
     it('includes provided args', () => {
       const paramA = 'aParam';
       const paramB = 'bParam';
@@ -65,9 +70,9 @@ describe('DeepDependencyGraph/url', () => {
   });
 
   describe('getUrlState', () => {
-    const search = 'test search';
     const density = 'test density';
     const end = '900';
+    const hash = 'test hash';
     const operation = 'operationName';
     const service = 'serviceName';
     const showOp = '0';
@@ -76,6 +81,7 @@ describe('DeepDependencyGraph/url', () => {
     const acceptableParams = {
       density,
       end,
+      hash,
       operation,
       service,
       showOp,
@@ -85,12 +91,15 @@ describe('DeepDependencyGraph/url', () => {
     const expectedParams = {
       density,
       end: Number.parseInt(end, 10),
+      hash,
       operation,
       service,
       showOp: Boolean(+showOp),
       start: Number.parseInt(start, 10),
       visEncoding,
     };
+    let count = 0;
+    const getSearch = () => `test search ${count++}`;
     let warnSpy;
     let parseSpy;
 
@@ -109,18 +118,18 @@ describe('DeepDependencyGraph/url', () => {
     });
 
     it('gets all values from queryString', () => {
+      const search = getSearch();
       parseSpy.mockReturnValue(acceptableParams);
       expect(getUrlState(search)).toEqual(expectedParams);
       expect(parseSpy).toHaveBeenCalledWith(search);
     });
 
     it('handles absent values', () => {
-      ['end', 'operation', 'service', 'start', 'visEncoding'].forEach(param => {
+      ['end', 'hash', 'operation', 'service', 'start', 'visEncoding'].forEach(param => {
         const { [param]: unused, ...rest } = expectedParams;
         const { [param]: alsoUnused, ...rv } = acceptableParams;
         parseSpy.mockReturnValue(rv);
-        expect(getUrlState(search)).toEqual(rest);
-        expect(parseSpy).toHaveBeenLastCalledWith(search);
+        expect(getUrlState(getSearch())).toEqual(rest);
       });
     });
 
@@ -128,16 +137,14 @@ describe('DeepDependencyGraph/url', () => {
       const { showOp: unused, ...rest } = expectedParams;
       const { showOp: alsoUnused, ...rv } = acceptableParams;
       parseSpy.mockReturnValue(rv);
-      expect(getUrlState(search)).toEqual({ ...rest, showOp: true });
-      expect(parseSpy).toHaveBeenLastCalledWith(search);
+      expect(getUrlState(getSearch())).toEqual({ ...rest, showOp: true });
     });
 
-    it("defaults `density` to 'PPE'", () => {
+    it("defaults `density` to 'ppe'", () => {
       const { density: unused, ...rest } = expectedParams;
       const { density: alsoUnused, ...rv } = acceptableParams;
       parseSpy.mockReturnValue(rv);
-      expect(getUrlState(search)).toEqual({ ...rest, density: 'PPE' });
-      expect(parseSpy).toHaveBeenLastCalledWith(search);
+      expect(getUrlState(getSearch())).toEqual({ ...rest, density: 'ppe' });
     });
 
     it('ignores extraneous query parameters', () => {
@@ -148,31 +155,59 @@ describe('DeepDependencyGraph/url', () => {
         ...extraneous,
         ...acceptableParams,
       });
-      expect(getUrlState(search)).toEqual(expect.not.objectContaining(extraneous));
-      expect(parseSpy).toHaveBeenCalledWith(search);
+      expect(getUrlState(getSearch())).toEqual(expect.not.objectContaining(extraneous));
     });
 
     it('omits falsy values', () => {
-      ['end', 'operation', 'service', 'start', 'visEncoding'].forEach(param => {
+      ['end', 'hash', 'operation', 'service', 'start', 'visEncoding'].forEach(param => {
         [null, undefined, ''].forEach(falsyPossibility => {
           parseSpy.mockReturnValue({ ...expectedParams, [param]: falsyPossibility });
-          expect(Reflect.has(getUrlState(search), param)).toBe(false);
-          expect(parseSpy).toHaveBeenLastCalledWith(search);
+          expect(Reflect.has(getUrlState(getSearch()), param)).toBe(false);
         });
       });
     });
 
     it('handles and warns on duplicate values', () => {
-      ['end', 'operation', 'service', 'showOp', 'start', 'visEncoding'].forEach(param => {
+      ['end', 'hash', 'operation', 'service', 'showOp', 'start', 'visEncoding'].forEach(param => {
         const secondParam = `second ${acceptableParams[param]}`;
         parseSpy.mockReturnValue({
           ...acceptableParams,
           [param]: [acceptableParams[param], secondParam],
         });
-        expect(getUrlState(search)[param]).toBe(expectedParams[param]);
-        expect(warnSpy).toHaveBeenLastCalledWith(expect.stringContaining(secondParam));
-        expect(parseSpy).toHaveBeenLastCalledWith(search);
+        expect(getUrlState(getSearch())[param]).toBe(expectedParams[param]);
       });
+    });
+
+    it('memoizes correctly', () => {
+      const search = getSearch();
+      parseSpy.mockReturnValue(acceptableParams);
+      expect(getUrlState(search)).toBe(getUrlState(search));
+      expect(getUrlState(getSearch())).not.toBe(getUrlState(search));
+    });
+  });
+
+  describe('sanitizeUrlState', () => {
+    const hash = 'test hash';
+    const urlStateWithoutVisEncoding = {
+      hash,
+      operation: 'test operation',
+      service: 'test service',
+    };
+    const urlState = {
+      ...urlStateWithoutVisEncoding,
+      visEncoding: 'test visEncoding',
+    };
+
+    it('returns provided state without visEncoding if hash was not provided', () => {
+      expect(sanitizeUrlState(urlState)).toEqual(urlStateWithoutVisEncoding);
+    });
+
+    it('returns provided state without visEncoding if provided hash does not match urlState hash', () => {
+      expect(sanitizeUrlState(urlState, `not ${hash}`)).toEqual(urlStateWithoutVisEncoding);
+    });
+
+    it('returns provided state visEncoding if provided hash does matches urlState hash', () => {
+      expect(sanitizeUrlState(urlState, hash)).toBe(urlState);
     });
   });
 });

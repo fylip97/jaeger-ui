@@ -23,5 +23,11 @@ limitations under the License.
 }
 
 .Page--content {
-  padding-top: 47px;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  min-height: calc(100% - 46px);
+  position: absolute;
+  right: 0;
+  top: 46px;
 }

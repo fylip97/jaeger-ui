@@ -1,5 +1,51 @@
 # Releases
 
+## v1.5.0 (November 4, 2019)
+
+### Enhancements
+
+- **Deep Dependency Graph:** Implement Service-Oriented Deep Dependency Graph (DDG) ([@tiffon](https://github.com/tiffon) and [@everett980](https://github.com/everett980) in [#481](https://github.com/jaegertracing/jaeger-ui/issues/481))
+
+- **Deep Dependency Graph:** Derive DDG from search results ([@rubenvp8510](https://github.com/rubenvp8510) in [#445](https://github.com/jaegertracing/jaeger-ui/pull/445))
+
+- **Configuration:** Allow ui-config.json to specify script tags which are added to UI body ([@everett980](https://github.com/everett980) in [#455](https://github.com/jaegertracing/jaeger-ui/pull/455))
+
+- **Plexus:** Sequester zoom concerns to ZoomManager ([@tiffon](https://github.com/tiffon) in [#409](https://github.com/jaegertracing/jaeger-ui/pull/409))
+
+- **Plexus:** Support multiple layers of nodes and edges ([@tiffon](https://github.com/tiffon) in [#482](https://github.com/jaegertracing/jaeger-ui/issues/482))
+
+- **Google Analytics:** Track filter interactions on trace detail page ([@everett980](https://github.com/everett980) in [#470](https://github.com/jaegertracing/jaeger-ui/pull/470))
+
+### Fixes
+
+- **Google Analytics:** Fix tracking of clear filter & view keyboard shortcut modal ([@everett980](https://github.com/everett980) in [#470](https://github.com/jaegertracing/jaeger-ui/pull/470))
+
+- **Codebase:** Fix codecov reporting ([@tiffon](https://github.com/tiffon) in [#418](https://github.com/jaegertracing/jaeger-ui/pull/418), [#417](https://github.com/jaegertracing/jaeger-ui/pull/417), and[#415](https://github.com/jaegertracing/jaeger-ui/pull/415))
+
+## v1.4.0 (August 31, 2019)
+
+### Enhancements
+
+- **Dependency graph:** Use directed edges ([@Etienne-Carriere](https://github.com/Etienne-Carriere) in [#373](https://github.com/jaegertracing/jaeger-ui/pull/373))
+
+- **Trace detail:** Show seconds in trace start time on the trace page ([@tiffon](https://github.com/tiffon) in [#430](https://github.com/jaegertracing/jaeger-ui/pull/430), with thanks to [@leogomes](https://github.com/leogomes) for [#403](https://github.com/jaegertracing/jaeger-ui/pull/403))
+
+### Fixes
+
+- **Trace detail:** Fix handling of numeric strings in span tag values ([@yntelectual](https://github.com/yntelectual) in [#436](https://github.com/jaegertracing/jaeger-ui/pull/436))
+
+- **Google Analytics:** Fix GA filter category ([@everett980](https://github.com/everett980) in [#404](https://github.com/jaegertracing/jaeger-ui/pull/404))
+
+### Documentation
+
+- **Plexus:** Add a real README for plexus ([@tiffon](https://github.com/tiffon) in [#425](https://github.com/jaegertracing/jaeger-ui/pull/425))
+
+### Chores & Maintenance
+
+- **Codebase:** Add an ESLint rule requiring the names of interfaces to be prefixed with "I" ([@tiffon](https://github.com/tiffon) in [#411](https://github.com/jaegertracing/jaeger-ui/pull/411))
+
+- **General:** Fix typo on README file ([@leogomes](https://github.com/leogomes) in [#402](https://github.com/jaegertracing/jaeger-ui/pull/402))
+
 ## v1.3.0 (June 21, 2019)
 
 ### Enhancements

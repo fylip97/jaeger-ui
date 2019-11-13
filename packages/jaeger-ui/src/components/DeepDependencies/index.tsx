@@ -12,61 +12,77 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { Component } from 'react';
+import * as React from 'react';
 import { History as RouterHistory, Location } from 'history';
 import _get from 'lodash/get';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import { getUrl, getUrlState } from './url';
 import Header from './Header';
 import Graph from './Graph';
+import { getUrl, getUrlState, sanitizeUrlState, ROUTE_PATH } from './url';
 import ErrorMessage from '../common/ErrorMessage';
 import LoadingIndicator from '../common/LoadingIndicator';
 import { extractUiFindFromState, TExtractUiFindFromStateReturn } from '../common/UiFindInput';
+import ddgActions from '../../actions/ddg';
 import * as jaegerApiActions from '../../actions/jaeger-api';
 import { fetchedState } from '../../constants';
+import getStateEntryKey from '../../model/ddg/getStateEntryKey';
+import GraphModel, { makeGraph } from '../../model/ddg/GraphModel';
 import {
-  stateKey,
   EDirection,
   TDdgModelParams,
   TDdgSparseUrlState,
-  TDdgStateEntry,
+  TDdgVertex,
+  EDdgDensity,
+  EViewModifier,
 } from '../../model/ddg/types';
-import TGraph, { makeGraph } from '../../model/ddg/Graph';
 import { encodeDistance } from '../../model/ddg/visibility-codec';
 import { ReduxState } from '../../types';
+import { TDdgStateEntry } from '../../types/TDdgState';
 
 import './index.css';
 
-type TDispatchProps = {
-  fetchDeepDependencyGraph: (query: TDdgModelParams) => void;
-  fetchServices: () => void;
-  fetchServiceOperations: (service: string) => void;
+export type TDispatchProps = {
+  addViewModifier?: (kwarg: TDdgModelParams & { viewModifier: number; visibilityIndices: number[] }) => void;
+  fetchDeepDependencyGraph?: (query: TDdgModelParams) => void;
+  fetchServices?: () => void;
+  fetchServiceOperations?: (service: string) => void;
+  removeViewModifierFromIndices?: (
+    kwarg: TDdgModelParams & { viewModifier: number; visibilityIndices: number[] }
+  ) => void;
 };
 
-type TReduxProps = TExtractUiFindFromStateReturn & {
-  graph: TGraph | undefined;
+export type TReduxProps = TExtractUiFindFromStateReturn & {
+  graph: GraphModel | undefined;
   graphState?: TDdgStateEntry;
-  operationsForService: Record<string, string[]>;
+  operationsForService?: Record<string, string[]>;
   services?: string[] | null;
   urlState: TDdgSparseUrlState;
 };
 
-type TOwnProps = {
+export type TOwnProps = {
+  baseUrl: string;
+  extraUrlArgs?: { [key: string]: unknown };
   history: RouterHistory;
   location: Location;
+  showSvcOpsHeader: boolean;
 };
 
-type TProps = TDispatchProps & TReduxProps & TOwnProps;
+export type TProps = TDispatchProps & TReduxProps & TOwnProps;
 
 // export for tests
-export class DeepDependencyGraphPageImpl extends Component<TProps> {
+export class DeepDependencyGraphPageImpl extends React.PureComponent<TProps> {
+  static defaultProps = {
+    showSvcOpsHeader: true,
+    baseUrl: ROUTE_PATH,
+  };
+
   static fetchModelIfStale(props: TProps) {
     const { fetchDeepDependencyGraph, graphState = null, urlState } = props;
     const { service, operation } = urlState;
     // backend temporarily requires service and operation
-    if (!graphState && service && operation) {
+    if (!graphState && service && operation && fetchDeepDependencyGraph) {
       fetchDeepDependencyGraph({ service, operation, start: 0, end: 0 });
     }
   }
@@ -78,34 +94,30 @@ export class DeepDependencyGraphPageImpl extends Component<TProps> {
     const { fetchServices, fetchServiceOperations, operationsForService, services, urlState } = props;
     const { service } = urlState;
 
-    if (!services) {
+    if (!services && fetchServices) {
       fetchServices();
     }
-    if (service && !Reflect.has(operationsForService, service)) {
+    if (
+      service &&
+      operationsForService &&
+      !Reflect.has(operationsForService, service) &&
+      fetchServiceOperations
+    ) {
       fetchServiceOperations(service);
     }
   }
 
   componentWillReceiveProps(nextProps: TProps) {
-    /* istanbul ignore next */
     DeepDependencyGraphPageImpl.fetchModelIfStale(nextProps);
   }
 
-  // shouldComponentUpdate is necessary as we don't want the plexus graph to re-render due to a uxStatus change
-  shouldComponentUpdate(nextProps: TProps) {
-    const updateCauses = [
-      'uiFind',
-      'operationsForService',
-      'services',
-      'urlState.service',
-      'urlState.operation',
-      'urlState.start',
-      'urlState.end',
-      'urlState.visEncoding',
-      'graphState.state',
-    ];
-    return updateCauses.some(cause => _get(nextProps, cause) !== _get(this.props, cause));
-  }
+  getVisiblePathElems = (key: string) => {
+    const { graph, urlState } = this.props;
+    if (graph) {
+      return graph.getVertexVisiblePathElems(key, urlState.visEncoding);
+    }
+    return undefined;
+  };
 
   setDistance = (distance: number, direction: EDirection) => {
     const { graphState } = this.props;
@@ -125,71 +137,141 @@ export class DeepDependencyGraphPageImpl extends Component<TProps> {
     }
   };
 
+  setDensity = (density: EDdgDensity) => this.updateUrlState({ density });
+
   setOperation = (operation: string) => {
     this.updateUrlState({ operation, visEncoding: undefined });
   };
 
   setService = (service: string) => {
     const { fetchServiceOperations, operationsForService } = this.props;
-    if (!Reflect.has(operationsForService, service)) {
+    if (operationsForService && !Reflect.has(operationsForService, service) && fetchServiceOperations) {
       fetchServiceOperations(service);
     }
     this.updateUrlState({ operation: undefined, service, visEncoding: undefined });
   };
 
+  setViewModifier = (vertexKey: string, viewModifier: EViewModifier, enable: boolean) => {
+    const { addViewModifier, graph, removeViewModifierFromIndices, urlState } = this.props;
+    const fn = enable ? addViewModifier : removeViewModifierFromIndices;
+    const { service, operation, visEncoding } = urlState;
+    if (!fn || !graph || !operation || !service) {
+      return;
+    }
+    const pathElems = graph.getVertexVisiblePathElems(vertexKey, visEncoding);
+    if (!pathElems) {
+      throw new Error(`Invalid vertex key to set view modifier for: ${vertexKey}`);
+    }
+    const visibilityIndices = pathElems.map(pe => pe.visibilityIdx);
+    fn({
+      operation,
+      service,
+      viewModifier,
+      visibilityIndices,
+      end: 0,
+      start: 0,
+    });
+  };
+
+  showVertices = (vertices: TDdgVertex[]) => {
+    const { graph, urlState } = this.props;
+    const { visEncoding } = urlState;
+    if (!graph) return;
+    this.updateUrlState({ visEncoding: graph.getVisWithVertices(vertices, visEncoding) });
+  };
+
+  toggleShowOperations = (enable: boolean) => this.updateUrlState({ showOp: enable });
+
   updateUrlState = (newValues: Partial<TDdgSparseUrlState>) => {
-    const { uiFind, urlState, history } = this.props;
-    history.push(getUrl({ uiFind, ...urlState, ...newValues }));
+    const { baseUrl, extraUrlArgs, graphState, history, uiFind, urlState } = this.props;
+    const getUrlArg = { uiFind, ...urlState, ...newValues, ...extraUrlArgs };
+    const hash = _get(graphState, 'model.hash');
+    if (hash) getUrlArg.hash = hash;
+    history.push(getUrl(getUrlArg, baseUrl));
   };
 
   render() {
-    const { graph, graphState, operationsForService, services, uiFind, urlState } = this.props;
-    const { operation, service, visEncoding } = urlState;
+    const {
+      baseUrl,
+      extraUrlArgs,
+      graph,
+      graphState,
+      operationsForService,
+      services,
+      uiFind,
+      urlState,
+      showSvcOpsHeader,
+    } = this.props;
+    const { density, operation, service, showOp, visEncoding } = urlState;
     const distanceToPathElems =
       graphState && graphState.state === fetchedState.DONE ? graphState.model.distanceToPathElems : undefined;
     const uiFindMatches = graph && graph.getVisibleUiFindMatches(uiFind, visEncoding);
+    const hiddenUiFindMatches = graph && graph.getHiddenUiFindMatches(uiFind, visEncoding);
 
-    let content = (
-      <div>
-        <h1>Unknown graphState:</h1>
-        <p>${JSON.stringify(graphState)}</p>
-      </div>
-    );
+    let content: React.ReactElement | null = null;
     if (!graphState) {
       content = <h1>Enter query above</h1>;
     } else if (graphState.state === fetchedState.DONE && graph) {
       const { edges, vertices } = graph.getVisible(visEncoding);
+      const { viewModifiers } = graphState;
+      const { edges: edgesViewModifiers, vertices: verticesViewModifiers } = graph.getDerivedViewModifiers(
+        visEncoding,
+        viewModifiers
+      );
+      // TODO: using `key` here is a hack, debug digraph to fix the underlying issue
       content = (
-        <div className="Ddg--graphWrapper">
-          <Graph
-            edges={edges}
-            getVisiblePathElems={(key: string) => graph.getVisiblePathElems(key, visEncoding)}
-            uiFindMatches={uiFindMatches}
-            vertices={vertices}
-          />
-        </div>
+        <Graph
+          key={JSON.stringify(urlState)}
+          baseUrl={baseUrl}
+          density={density}
+          edges={edges}
+          edgesViewModifiers={edgesViewModifiers}
+          extraUrlArgs={extraUrlArgs}
+          getVisiblePathElems={this.getVisiblePathElems}
+          setViewModifier={this.setViewModifier}
+          showOp={showOp}
+          uiFindMatches={uiFindMatches}
+          vertices={vertices}
+          verticesViewModifiers={verticesViewModifiers}
+        />
       );
     } else if (graphState.state === fetchedState.LOADING) {
-      content = <LoadingIndicator centered />;
+      content = <LoadingIndicator centered className="u-mt-vast" />;
     } else if (graphState.state === fetchedState.ERROR) {
-      content = <ErrorMessage error={graphState.error} />;
+      content = <ErrorMessage error={graphState.error} className="ub-m4" />;
+    } else {
+      content = (
+        <div>
+          <h1>Unknown graphState:</h1>
+          <p>${JSON.stringify(graphState)}</p>
+        </div>
+      );
     }
 
     return (
-      <div>
-        <Header
-          distanceToPathElems={distanceToPathElems}
-          operation={operation}
-          operations={operationsForService[service || '']}
-          service={service}
-          services={services}
-          setDistance={this.setDistance}
-          setOperation={this.setOperation}
-          setService={this.setService}
-          uiFindCount={uiFind ? uiFindMatches && uiFindMatches.size : undefined}
-          visEncoding={visEncoding}
-        />
-        {content}
+      <div className="Ddg">
+        <div>
+          <Header
+            density={density}
+            distanceToPathElems={distanceToPathElems}
+            hiddenUiFindMatches={hiddenUiFindMatches}
+            operation={operation}
+            operations={operationsForService && operationsForService[service || '']}
+            service={service}
+            services={services}
+            setDensity={this.setDensity}
+            setDistance={this.setDistance}
+            setOperation={this.setOperation}
+            setService={this.setService}
+            showOperations={showOp}
+            showParameters={showSvcOpsHeader}
+            showVertices={this.showVertices}
+            toggleShowOperations={this.toggleShowOperations}
+            uiFindCount={uiFind ? uiFindMatches && uiFindMatches.size : undefined}
+            visEncoding={visEncoding}
+          />
+        </div>
+        <div className="Ddg--graphWrapper">{content}</div>
       </div>
     );
   }
@@ -205,9 +287,9 @@ export function mapStateToProps(state: ReduxState, ownProps: TOwnProps): TReduxP
   // backend temporarily requires service and operation
   // if (service) {
   if (service && operation) {
-    graphState = _get(state, ['deepDependencyGraph', stateKey({ service, operation, start: 0, end: 0 })]);
+    graphState = _get(state.ddg, getStateEntryKey({ service, operation, start: 0, end: 0 }));
   }
-  let graph: TGraph | undefined;
+  let graph: GraphModel | undefined;
   if (graphState && graphState.state === fetchedState.DONE) {
     graph = makeGraph(graphState.model, showOp, density);
   }
@@ -216,7 +298,7 @@ export function mapStateToProps(state: ReduxState, ownProps: TOwnProps): TReduxP
     graphState,
     services,
     operationsForService,
-    urlState,
+    urlState: sanitizeUrlState(urlState, _get(graphState, 'model.hash')),
     ...extractUiFindFromState(state),
   };
 }
@@ -227,8 +309,15 @@ export function mapDispatchToProps(dispatch: Dispatch<ReduxState>): TDispatchPro
     jaegerApiActions,
     dispatch
   );
+  const { addViewModifier, removeViewModifierFromIndices } = bindActionCreators(ddgActions, dispatch);
 
-  return { fetchDeepDependencyGraph, fetchServiceOperations, fetchServices };
+  return {
+    addViewModifier,
+    fetchDeepDependencyGraph,
+    fetchServiceOperations,
+    fetchServices,
+    removeViewModifierFromIndices,
+  };
 }
 
 export default connect(

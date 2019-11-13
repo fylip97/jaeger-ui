@@ -14,7 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+.Ddg {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  right: 0;
+}
+
 .Ddg--graphWrapper {
-  background: #f0f0f0;
-  height: 500px;
+  flex: 1;
+  overflow: hidden;
 }

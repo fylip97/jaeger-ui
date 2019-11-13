@@ -15,20 +15,53 @@
 import { TVertex } from '@jaegertracing/plexus/lib/types';
 
 import PathElem from './PathElem';
-import { fetchedState } from '../../constants';
-import { ApiError } from '../../types/api-error';
 
 export { default as PathElem } from './PathElem';
+
+export enum EViewModifier {
+  None,
+  Hovered,
+  Selected,
+  Emphasized = 1 << 2, // eslint-disable-line no-bitwise
+  PathHovered = 1 << 3, // eslint-disable-line no-bitwise
+}
+
+export enum EDdgDensity {
+  ExternalVsInternal = 'ext-vs-int',
+  MostConcise = 'mc',
+  OnePerLevel = 'per-level',
+  PreventPathEntanglement = 'ppe',
+  UpstreamVsDownstream = 'up-vs-down',
+}
+
+export enum ECheckedStatus {
+  Empty = 'Empty',
+  Full = 'Full',
+  Partial = 'Partial',
+}
+
+export enum EDirection {
+  Upstream = -1,
+  Downstream = 1,
+}
 
 export type TDdgPayloadEntry = {
   operation: string;
   service: string;
 };
 
-export type TDdgPayload = {
+export type TDdgPayloadPath = {
   path: TDdgPayloadEntry[];
-  trace_id: string; // eslint-disable-line camelcase
-}[];
+  // TODO: Everett Tech Debt: Fix KeyValuePair types
+  attributes: {
+    key: 'exemplar_trace_id'; // eslint-disable-line camelcase
+    value: string;
+  }[];
+};
+
+export type TDdgPayload = {
+  dependencies: TDdgPayloadPath[];
+};
 
 export type TDdgService = {
   name: string;
@@ -46,13 +79,14 @@ export type TDdgServiceMap = Map<string, TDdgService>;
 export type TDdgPath = {
   focalIdx: number;
   members: PathElem[];
-  traceID: string;
+  traceIDs: string[];
 };
 
 export type TDdgDistanceToPathElems = Map<number, PathElem[]>;
 
 export type TDdgModel = {
   distanceToPathElems: TDdgDistanceToPathElems;
+  hash: string;
   paths: TDdgPath[];
   services: TDdgServiceMap;
   visIdxToPathElem: PathElem[];
@@ -65,42 +99,10 @@ export type TDdgVertex = TVertex<{
   service: string;
 }>;
 
-export type TDdgStateEntry =
-  | {
-      state: typeof fetchedState.LOADING;
-    }
-  | {
-      error: ApiError;
-      state: typeof fetchedState.ERROR;
-    }
-  | {
-      model: TDdgModel;
-      state: typeof fetchedState.DONE;
-      viewModifiers: Map<number, number>;
-    };
-
-export const stateKey = ({ service, operation = '*', start, end }: TDdgModelParams): string =>
-  [service, operation, start, end].join('\t');
-
-export type TDdgState = Record<string, TDdgStateEntry>;
-
-export enum EViewModifier {
-  None,
-  Hovered,
-  Selected,
-  Emphasized = 1 << 2, // eslint-disable-line no-bitwise
-}
-
-export enum EDdgDensity {
-  MostConcise = 'MC',
-  UpstreamVsDownstream = 'UvD',
-  PreventPathEntanglement = 'PPE',
-  ExternalVsInternal = 'EvI',
-}
-
 export type TDdgSparseUrlState = {
   density: EDdgDensity;
   end?: number;
+  hash?: string;
   operation?: string;
   service?: string;
   showOp: boolean;
@@ -135,16 +137,5 @@ export type TDdgViewModifierRemovalPayload =
   | TDdgClearViewModifiersFromIndicesPayload
   | TDdgRemoveViewModifierFromIndicesPayload
   | TDdgRemoveViewModifierPayload;
-
-export enum ECheckedStatus {
-  Empty = 'Empty',
-  Full = 'Full',
-  Partial = 'Partial',
-}
-
-export enum EDirection {
-  Upstream = -1,
-  Downstream = 1,
-}
 
 export type THop = { distance: number; fullness: ECheckedStatus };

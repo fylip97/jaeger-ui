@@ -15,9 +15,10 @@
 import React, { PureComponent } from 'react';
 import { Popover } from 'antd';
 import SortAmountAsc from 'react-icons/lib/fa/sort-amount-asc.js';
-import IoChevronDown from 'react-icons/lib/io/chevron-down';
 import IoChevronRight from 'react-icons/lib/io/chevron-right';
 
+import ChevronDown from '../ChevronDown';
+import { trackHopChange } from '../../index.track';
 import { ECheckedStatus, EDirection, THop } from '../../../../model/ddg/types';
 
 import './Selector.css';
@@ -25,6 +26,7 @@ import './Selector.css';
 type TProps = {
   direction: EDirection;
   furthestDistance: number;
+  furthestFullDistance: number;
   furthestFullness: ECheckedStatus;
   handleClick: (distance: number, direction: EDirection) => void;
   hops: THop[];
@@ -33,23 +35,28 @@ type TProps = {
 const CLASSNAME = 'HopsSelector--Selector';
 
 export default class Selector extends PureComponent<TProps> {
+  private handleClick(distance: number) {
+    const { direction, furthestFullDistance, handleClick } = this.props;
+    handleClick(distance, direction);
+    trackHopChange(furthestFullDistance, distance, direction);
+  }
+
   private makeBtn = (
     { distance, fullness, suffix = 'popover-content' }: THop & { suffix?: string },
     showChevron?: number
   ) => {
-    const { handleClick, direction } = this.props;
+    const { direction } = this.props;
     return (
-      <>
+      <React.Fragment key={`${distance} ${direction} ${suffix}`}>
         {Boolean(showChevron) && <IoChevronRight className={`${CLASSNAME}--ChevronRight is-${fullness}`} />}
         <button
-          key={`${distance} ${direction} ${suffix}`}
           className={`${CLASSNAME}--btn is-${fullness} ${CLASSNAME}--${suffix}`}
           type="button"
-          onClick={() => handleClick(distance, direction)}
+          onClick={() => this.handleClick(distance)}
         >
           {Math.abs(distance)}
         </button>
-      </>
+      </React.Fragment>
     );
   };
 
@@ -105,9 +112,10 @@ export default class Selector extends PureComponent<TProps> {
           <SortAmountAsc className={`${CLASSNAME}--AscIcon is-${streamText}`} />
           {streamLabel}
           {furthestBtn}
-          <span className={`${CLASSNAME}--slash`}>/</span>
+          <span className={`${CLASSNAME}--delimiter`}>/</span>
           {delimiterBtn}
-          <IoChevronDown className={`${CLASSNAME}--ChevronDown`} />
+          {/* <IoChevronDown className={`${CLASSNAME}--ChevronDown`} /> */}
+          <ChevronDown className="ub-ml1" />
         </span>
       </Popover>
     );
