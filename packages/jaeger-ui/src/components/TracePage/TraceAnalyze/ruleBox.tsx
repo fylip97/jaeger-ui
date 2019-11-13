@@ -1,9 +1,9 @@
 import React from 'react';
-import { NPlusOneRuleComponent } from './Rules/RuleComponent/nPlusOneRuleComponent';
-import { TimeOperationRuleComponent } from './Rules/RuleComponent/timeOperationRuleComponent';
-import { PercentSTComponent } from './Rules/RuleComponent/percentSTConponent';
-import { LongDatabasecallComponent } from './Rules/RuleComponent/longDatabasecallComponent';
-import { PercentageDeviationComponent } from './Rules/RuleComponent/percentageDeviationComponent';
+import { NPlusOneRuleComponent } from './Rules/nPlusOneRule/nPlusOneRuleComponent';
+import { TimeOperationRuleComponent } from './Rules/TimeOperationRule/timeOperationRuleComponent';
+import { PercentSTComponent } from './Rules/PercentST/percentSTConponent';
+import { LongDatabasecallComponent } from './Rules/LongDatabasecall/longDatabasecallComponent';
+import { PercentageDeviationComponent } from './Rules/PercentageDeviation/percentageDeviationComponent';
 import './ruleBox.css';
 
 /**

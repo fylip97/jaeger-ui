@@ -1,4 +1,4 @@
-import { Trace } from '../../../../types/trace';
+import { Trace } from '../../../../../types/trace';
 
 /**
  * Used to check NPlusOneRule.

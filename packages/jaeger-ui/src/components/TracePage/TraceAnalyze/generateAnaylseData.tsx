@@ -1,9 +1,9 @@
 import { Trace } from '../../../types/trace';
-import { NPlusOneRule } from './Rules/nPlusOneRule';
-import { TimeOperationRule } from './Rules/timeOperationRule';
-import { PercentageDeviation } from './Rules/percentageDeviation';
-import { LongDatabasecall } from './Rules/longDatabasecall';
-import { PercentST } from './Rules/percentST';
+import { NPlusOneRule } from './Rules/nPlusOneRule/nPlusOneRule';
+import { TimeOperationRule } from './Rules/TimeOperationRule/timeOperationRule';
+import { PercentageDeviation } from './Rules/PercentageDeviation/percentageDeviation';
+import { LongDatabasecall } from './Rules/LongDatabasecall/longDatabasecall';
+import { PercentST } from './Rules/PercentST/percentST';
 
 
 /**

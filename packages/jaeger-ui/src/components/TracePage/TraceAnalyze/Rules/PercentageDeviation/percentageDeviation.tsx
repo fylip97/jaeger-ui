@@ -1,5 +1,5 @@
-import { Trace } from '../../../../types/trace';
-import { calculateContent } from '../../TraceTagOverview/tableValues';
+import { Trace } from '../../../../../types/trace';
+import { calculateContent } from '../../../TraceTagOverview/tableValues';
 
 
 /**
