@@ -1,5 +1,5 @@
 import React from 'react';
-import { NPlusOneRuleComponent } from './nPlusOneRuleComponent';
+import { NPlusOneRuleComponent } from './NPlusOneRuleComponent';
 
 /**
  * Used to render nPlus1Rule.

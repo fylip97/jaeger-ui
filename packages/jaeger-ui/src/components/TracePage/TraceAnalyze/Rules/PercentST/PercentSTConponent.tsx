@@ -1,9 +1,8 @@
 import React from 'react';
-import './percentSTComponent.css';
+import './PercentSTComponent.css';
 
 /**
- * Used to render the PercentSTComponent
-
+ * Used to render the PercentSTComponent.
  */
 export const PercentSTComponent = (props: any) => {
 

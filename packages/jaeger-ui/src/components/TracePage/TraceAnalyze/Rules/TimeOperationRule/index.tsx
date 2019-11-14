@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimeOperationRuleComponent } from './timeOperationRuleComponent'
+import { TimeOperationRuleComponent } from './TimeOperationRuleComponent'
 
 /**
  * Used to render TimeOperationRule.

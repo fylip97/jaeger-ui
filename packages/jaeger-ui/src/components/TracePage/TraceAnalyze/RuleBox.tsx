@@ -1,6 +1,6 @@
 import React from 'react';
 import * as diffRuleComponents from './Rules/index';
-import './ruleBox.css';
+import './RuleBox.css';
 
 /**
  * Used to define the basic structure of the rule box.

@@ -37,7 +37,7 @@ export class TimeOperationRule {
             resultArray = calculateContent(allSpans[i], allSpans, resultArray);
             if (resultArray.self > TIME_THRESHOLD) {
                 this.checkRule= true;
-                this.information = this.information+allSpans[i]+"#"+resultArray.self+",";
+                this.information = this.information+allSpans[i].spanID+"#"+Math.round((resultArray.self / 1000) * 100) / 100+",";
                 
             }
         }

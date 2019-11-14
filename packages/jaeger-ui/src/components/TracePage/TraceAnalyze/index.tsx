@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import './index.css';
 import { startAnalyse } from './generateAnaylseData';
-import { RuleBox } from './ruleBox';
+import { RuleBox } from './RuleBox';
 import prefixUrl from '../../../utils/prefix-url';
 
 

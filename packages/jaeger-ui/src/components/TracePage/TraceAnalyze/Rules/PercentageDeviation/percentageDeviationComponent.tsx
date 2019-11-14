@@ -1,8 +1,8 @@
 import React from 'react';
-import './percentageDeviationComponent.css';
+import './PercentageDeviationComponent.css';
 
 /**
- * Used to render TimeOperationRuleComponent
+ * Used to render TimeOperationRuleComponent.
  */
 export const PercentageDeviationComponent = (props: any) => {
 

@@ -1,8 +1,8 @@
 import React from 'react';
-import './timeOperationRuleComponent.css';
+import './TimeOperationRuleComponent.css';
 
 /**
- * Used to render TimeOperationRuleComponent
+ * Used to render TimeOperationRuleComponent.
  */
 export const TimeOperationRuleComponent = (props: any) => {
 

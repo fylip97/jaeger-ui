@@ -1,5 +1,5 @@
 import React from 'react';
-import { LongDatabasecallComponent } from './longDatabasecallComponent'
+import { LongDatabasecallComponent } from './LongDatabasecallComponent'
 
 /**
  * Used to render LongDatabasecall. 

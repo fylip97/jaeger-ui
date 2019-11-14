@@ -1,5 +1,5 @@
 import React from 'react';
-import { PercentSTComponent } from './percentSTConponent'
+import { PercentSTComponent } from './PercentSTConponent'
 
 /**
  * Used to render PercentSTComponent.

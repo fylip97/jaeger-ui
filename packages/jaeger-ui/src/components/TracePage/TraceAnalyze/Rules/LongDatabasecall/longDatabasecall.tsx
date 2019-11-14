@@ -19,7 +19,7 @@ export class LongDatabasecall {
      */
     getInformation(trace: Trace) {
 
-        var DATABASE_DURATION_THRESHOLD = 0.01;
+        var DATABASE_DURATION_THRESHOLD = 50;
         var allSpans = trace.spans;
         for (var i = 0; i < allSpans.length; i++) {
             for (var j = 0; j < allSpans[i].tags.length; j++) {

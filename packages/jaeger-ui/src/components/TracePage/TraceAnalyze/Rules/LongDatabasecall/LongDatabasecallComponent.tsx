@@ -1,8 +1,8 @@
 import React from 'react';
-import './longDatabasecallComponent.css';
+import './LongDatabasecallComponent.css';
 
 /**
- * Used to render TimeOperationRuleComponent
+ * Used to render TimeOperationRuleComponent.
  */
 export const LongDatabasecallComponent = (props: any) => {
 
