@@ -22,7 +22,14 @@ import TNonEmptyArray from '@jaegertracing/plexus/lib/types/TNonEmptyArray';
 import DdgNodeContent from './DdgNodeContent';
 import getNodeRenderers from './getNodeRenderers';
 import getSetOnEdge from './getSetOnEdge';
-import { PathElem, TDdgVertex, EDdgDensity, EViewModifier } from '../../../model/ddg/types';
+import {
+  ECheckedStatus,
+  EDdgDensity,
+  EDirection,
+  EViewModifier,
+  PathElem,
+  TDdgVertex,
+} from '../../../model/ddg/types';
 
 import './index.css';
 
@@ -32,10 +39,14 @@ type TProps = {
   edges: TEdge[];
   edgesViewModifiers: Map<string, number>;
   extraUrlArgs?: { [key: string]: unknown };
+  focusPathsThroughVertex: (vertexKey: string) => void;
+  getGenerationVisibility: (vertexKey: string, direction: EDirection) => ECheckedStatus | null;
   getVisiblePathElems: (vertexKey: string) => PathElem[] | undefined;
-  setViewModifier: (vertexKey: string, viewModifier: EViewModifier, enable: boolean) => void;
-  showOp: boolean;
-  uiFindMatches: Set<TDdgVertex> | undefined;
+  hideVertex: (vertexKey: string) => void;
+  setOperation: (operation: string) => void;
+  setViewModifier: (visIndices: number[], viewModifier: EViewModifier, enable: boolean) => void;
+  uiFindMatches: Set<string> | undefined;
+  updateGenerationVisibility: (vertexKey: string, direction: EDirection) => void;
   vertices: TDdgVertex[];
   verticesViewModifiers: Map<string, number>;
 };
@@ -74,7 +85,7 @@ export default class Graph extends PureComponent<TProps> {
     useDotEdges: true,
   });
 
-  private emptyFindSet: Set<TDdgVertex> = new Set();
+  private emptyFindSet: Set<string> = new Set();
 
   componentWillUnmount() {
     this.layoutManager.stopAndRelease();
@@ -82,17 +93,21 @@ export default class Graph extends PureComponent<TProps> {
 
   render() {
     const {
+      baseUrl,
       density,
       edges,
       edgesViewModifiers,
+      extraUrlArgs,
+      focusPathsThroughVertex,
+      getGenerationVisibility,
       getVisiblePathElems,
+      hideVertex,
+      setOperation,
       setViewModifier,
-      showOp,
       uiFindMatches,
+      updateGenerationVisibility,
       vertices,
       verticesViewModifiers,
-      baseUrl,
-      extraUrlArgs,
     } = this.props;
     const nodeRenderers = this.getNodeRenderers(uiFindMatches || this.emptyFindSet, verticesViewModifiers);
 
@@ -107,14 +122,14 @@ export default class Graph extends PureComponent<TProps> {
         measurableNodesKey="nodes/content"
         layers={[
           {
-            key: 'nodes/find-emphasis/html',
-            layerType: 'html',
-            renderNode: nodeRenderers.htmlEmphasis,
-          },
-          {
             key: 'nodes/find-emphasis/vector-color-band',
             layerType: 'svg',
             renderNode: nodeRenderers.vectorFindColorBand,
+          },
+          {
+            key: 'nodes/find-emphasis/html',
+            layerType: 'html',
+            renderNode: nodeRenderers.htmlEmphasis,
           },
           {
             key: 'nodes/vector-border',
@@ -140,14 +155,18 @@ export default class Graph extends PureComponent<TProps> {
             layerType: 'html',
             measurable: true,
             measureNode: DdgNodeContent.measureNode,
-            renderNode: this.getNodeContentRenderer(
-              getVisiblePathElems,
-              setViewModifier,
-              density,
-              showOp,
+            renderNode: this.getNodeContentRenderer({
               baseUrl,
-              extraUrlArgs
-            ),
+              density,
+              extraUrlArgs,
+              focusPathsThroughVertex,
+              getGenerationVisibility,
+              getVisiblePathElems,
+              hideVertex,
+              setOperation,
+              setViewModifier,
+              updateGenerationVisibility,
+            }),
           },
         ]}
       />
