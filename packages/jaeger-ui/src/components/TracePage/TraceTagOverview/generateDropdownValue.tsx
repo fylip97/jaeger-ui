@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 const serviceName = "Service Name";
 const operationName = "Operation Name";
+const others = "Others";
 
 export function generateDropdownValue(trace: Trace) {
 
@@ -33,7 +34,7 @@ function getValueTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownT
 
     //add all Spans with this tag key
     for (var i = 0; i < tableValue.length; i++) {
-        if (tableValue[i].name !== 'Others') {
+        if (tableValue[i].name !== others) {
             for (var j = 0; j < allSpans.length; j++) {
                 for (var l = 0; l < allSpans[j].tags.length; l++) {
                     if (tagDropdownTitle === allSpans[j].tags[l].key) {

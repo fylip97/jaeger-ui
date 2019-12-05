@@ -355,9 +355,9 @@ export default class TraceTagOverview extends Component<Props, State>{
     const yellowSearchCollor = "rgb(255,243,215)";
     const defaultGrayCollor = "rgb(248,248,248)";
     for (var i = 0; i < allTableSpans.length; i++) {
-      if ((!allTableSpans[i].isDetail) && allTableSpans[i].name !== "Others") {
+      if ((!allTableSpans[i].isDetail) && allTableSpans[i].name !== others) {
         allTableSpans[i].searchColor = "transparent";
-      } else if (allTableSpans[i].name !== "Others") {
+      } else if (allTableSpans[i].name !== others) {
         allTableSpans[i].searchColor = defaultGrayCollor;
       } else {
         allTableSpans[i].searchColor = defaultGrayCollor

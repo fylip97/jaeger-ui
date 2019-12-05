@@ -22,9 +22,11 @@ export const DetailTableData = (props: any) => {
     background: props.searchColor,
     borderColor: props.searchColor
   }
+
+  const others = "Others";
   
-  const styleCondition = props.name === 'Others' ? styleOption1 : props.searchColor === "rgb(248,248,248)" ? styleOption2 : styleOption3;
-  const onClickOption = props.secondTagDropdownTitle === "sql" && props.name !== "Others" ? () => props.togglePopup(props.name) : undefined;
+  const styleCondition = props.name === others ? styleOption1 : props.searchColor === "rgb(248,248,248)" ? styleOption2 : styleOption3;
+  const onClickOption = props.secondTagDropdownTitle === "sql" && props.name !== others ? () => props.togglePopup(props.name) : undefined;
 
   return (
     <tr className="DetailTableData--tr" style={styleCondition}>
