@@ -27,9 +27,12 @@ export const MainTableData = (props: any) => {
     borderColor: props.color
   }
 
-  const trStyle = props.dropdowntestTitle2 !== 'No Item selected' ? trOption1 : trOption2;
-  const onClickOption = props.dropdownTestTitle1 === "sql" && props.name !== "Others" ? () => props.togglePopup(props.name) : undefined
-  const labelStyle = props.name === "Others" ? labelOption1 : labelOption2
+  const others = "Others"
+  const noItemSelected = "No Item selected"
+
+  const trStyle = props.dropdowntestTitle2 !== noItemSelected ? trOption1 : trOption2;
+  const onClickOption = props.dropdownTestTitle1 === "sql" && props.name !== others ? () => props.togglePopup(props.name) : undefined
+  const labelStyle = props.name === others ? labelOption1 : labelOption2
   return (
     <tr className="MainTableData--tr" onClick={() => props.clickColumn(props.name)} style={trStyle}>
       <td className="MainTableData--td" onClick={onClickOption}><label title={props.name} className="MainTableData--labelBorder" style={labelStyle}>{props.name}</label></td>

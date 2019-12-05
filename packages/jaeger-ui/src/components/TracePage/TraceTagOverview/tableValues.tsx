@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 
 const serviceName = "Service Name";
 const operationName = "Operation Name";
+const others = "Others";
 
 /**
  * Returns the values of the table shown after the selection of the first dropdown.   
@@ -149,7 +150,7 @@ function valueFirstDropdown(selectedTagKey: string, trace: Trace) {
             resultValue.selfAvg = resultValue.self / resultValue.count;
             resultValue.avg = resultValue.total / resultValue.count;
             var tableSpanOTHERS = {
-                name: "Others",
+                name: others,
                 count: resultValue.count,
                 total: resultValue.total,
                 avg: resultValue.avg,
@@ -365,7 +366,7 @@ function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: 
             resultValue.selfAvg = resultValue.self / resultValue.count;
             if (resultValue.count != 0) {
                 var buildOneColumnValue = {
-                    name: "Others",
+                    name: others,
                     count: resultValue.count,
                     total: resultValue.total,
                     avg: resultValue.avg,
@@ -391,7 +392,7 @@ function generateDetailRest(allColumnValues: TableSpan[], selectedTagKeySecond: 
 }
 
 /**
- * used to calculated the content.
+ * Used to calculated the content.
  */
 function calculateContent(span: Span, allSpans: Span[], resultValue: any) {
 
@@ -411,19 +412,17 @@ function calculateContent(span: Span, allSpans: Span[], resultValue: any) {
     var allOverlay = new Array();
     var longerAsParentSpan = new Array();
     if (span.hasChildren) {
-        var countChildren = 0; // todo: count kann entfernt werden
         var allChildren = new Array();
         for (var i = 0; i < allSpans.length; i++) {
             //i am a child?
             if (allSpans[i].references.length == 1) {
                 if (span.spanID == allSpans[i].references[0].spanID) {
-                    countChildren = countChildren + 1;
                     allChildren.push(allSpans[i]);
                 }
             }
         }
         // i only have one child
-        if (countChildren == 1) {
+        if (allChildren.length == 1) {
             if (span.relativeStartTime + span.duration >= (allChildren[0].relativeStartTime + allChildren[0].duration)) {
                 tempSelf = span.duration - allChildren[0].duration;
             } else {
@@ -528,7 +527,7 @@ function calculateContent(span: Span, allSpans: Span[], resultValue: any) {
 }
 
 /**
- * determines whether the cut spans belong together and then calculates the duration.
+ * Determines whether the cut spans belong together and then calculates the duration.
  */
 function getDuration(lowestStartTime: number, duration: number, allOverlay: Span[]) {
 
@@ -549,7 +548,7 @@ function getDuration(lowestStartTime: number, duration: number, allOverlay: Span
 }
 
 /**
- * return the lowest startTime.
+ * Return the lowest startTime.
  */
 function getLowestStartTime(allOverlay: Span[]) {
 
@@ -561,7 +560,7 @@ function getLowestStartTime(allOverlay: Span[]) {
 }
 
 /**
- * return the selfTime of overlay spans.
+ * Return the selfTime of overlay spans.
  */
 function onlyOverlay(allOverlay: Span[], allChildren: Span[], tempSelf: number, span: Span) {
 

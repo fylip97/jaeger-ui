@@ -7,7 +7,7 @@
     color: black;
   }
 
-  .DetailTableData--child--td{
+.DetailTableData--child--td{
     border-left: 1px solid rgb(204,204,204);
     border-right: 1px solid rgb(204,204,204);
     border-top: 1px solid rgb(230,230,230);
@@ -21,19 +21,19 @@
     white-space: nowrap;
   }
 
-  td {
+td {
     max-width: 25em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .DetailTableData--serviceBorder{
+.DetailTableData--serviceBorder{
     border-left: 4px solid transparent; 
     padding-left: 0.6em; 
   }
 
-  .DetailTableData--td{
+.DetailTableData--td{
     border-left: 1px solid rgb(204,204,204);
     border-right: 1px solid rgb(204,204,204);
     border-top: 1px solid rgb(230,230,230);

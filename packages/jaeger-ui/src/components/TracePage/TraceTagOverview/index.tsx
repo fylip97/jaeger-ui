@@ -34,6 +34,7 @@ type State = {
 };
 
 const others = "Others";
+const noItemSelected = "No Item selected";
 
 const columnsArray: any[] = [
   {
@@ -109,8 +110,6 @@ const columnsArray: any[] = [
  */
 export default class TraceTagOverview extends Component<Props, State>{
 
-  
-
   constructor(props: any) {
     super(props);
 
@@ -124,7 +123,7 @@ export default class TraceTagOverview extends Component<Props, State>{
       colorButton: false,
       wholeTable: [],
       dropdownTestTitle1: "Service Name",
-      dropdowntestTitle2: "No Item selected"
+      dropdowntestTitle2: noItemSelected
     }
 
     this.handler = this.handler.bind(this);
@@ -255,7 +254,7 @@ export default class TraceTagOverview extends Component<Props, State>{
   setDropDownTitle(title: string) {
     this.setState({
       dropdownTestTitle1: title,
-      dropdowntestTitle2: "No Item selected",
+      dropdowntestTitle2: noItemSelected,
     })
   }
 
@@ -283,7 +282,7 @@ export default class TraceTagOverview extends Component<Props, State>{
    */
   toggleColorButton() {
 
-    if (this.state.dropdowntestTitle2 !== "No item selected") {
+    if (this.state.dropdowntestTitle2 !== noItemSelected) {
       generateColor(this.state.tableValue, !this.state.colorButton)
       this.setState({
         tableValue: this.state.tableValue,
@@ -311,7 +310,7 @@ export default class TraceTagOverview extends Component<Props, State>{
    */
   clickColumn(selectedSpan: string) {
 
-    if (this.state.dropdowntestTitle2 !== "No item selected") {
+    if (this.state.dropdowntestTitle2 !== noItemSelected) {
       var add = true;
       var actualTable = this.state.tableValue;
       var newTable = new Array();

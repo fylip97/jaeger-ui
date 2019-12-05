@@ -1,9 +1,7 @@
 import { TableSpan } from './types';
 
 /**
- * Generates the background color according to the percentage.
- * @param allSpans 
- * @param colorToPercent 
+ * Generates the background color according to the percentage. 
  */
 export function generateColor(allSpans: TableSpan[], colorToPercent: boolean) {
     for (var i = 0; i < allSpans.length; i++) {
@@ -22,5 +20,4 @@ export function generateColor(allSpans: TableSpan[], colorToPercent: boolean) {
             allSpans[i].colorToPercent = "rgb(248,248,248)"
         }
     }
-    //return allSpans;
 }

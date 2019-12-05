@@ -3,7 +3,7 @@ import { Icon } from 'antd';
 import './TableOverviewHeadTag.css';
 
 /**
- * used to render the table header
+ * Used to render the table header.
  * @param props 
  */
 export const TableOverviewHeaderTag = (props: any) => {
