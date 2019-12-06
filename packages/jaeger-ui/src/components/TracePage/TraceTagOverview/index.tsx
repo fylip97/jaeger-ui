@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import './index.css';
-import TagDropdown from './tagDropdown'
-import SecondDropDown from './secondDropDown'
 import { Trace } from '../../../types/trace';
-import { TableOverviewHeaderTag } from './tableOverviewHeadTag';
-import { MainTableData } from './mainTableData';
-import { DetailTableData } from './detailTableData'
+import { TableOverviewHeaderTag } from './TableOverviewHeadTag';
+import { MainTableData } from './MainTableData';
+import { DetailTableData } from './DetailTableData';
+import DropDown from './Dropdown';
 import { TableSpan } from './types';
 import { sortTable } from './sortTable';
 import { generateColor } from './generateColor';
-import { searchInTable } from './searchInTable'
 import { TNil } from '../../../types';
-
-import PopupSQL from './popupSQL';
+import PopupSQL from './PopupSQL';
 import * as _ from 'lodash';
+import { generateDropdownValue } from './generateDropdownValue';
+import {generateSecondDropdownValue} from './generateDropdownValue';
 
 type Props = {
   trace: Trace,
@@ -26,14 +25,16 @@ type State = {
   sortIndex: number,
   sortAsc: boolean,
   isSelected: boolean,
-  tagDropdownTitle: string,
-  secondTagDropdownTitle: string,
-
   showPopup: boolean,
   popupContent: string,
   colorButton: boolean,
-  wholeTable: TableSpan[];
+  wholeTable: TableSpan[],
+  dropdownTestTitle1: string,
+  dropdowntestTitle2: string,
 };
+
+const others = "Others";
+const noItemSelected = "No Item selected";
 
 const columnsArray: any[] = [
   {
@@ -104,42 +105,41 @@ const columnsArray: any[] = [
   }
 ];
 
+/**
+ * Trace Tag Overview Component
+ */
 export default class TraceTagOverview extends Component<Props, State>{
 
   constructor(props: any) {
     super(props);
-    var firstInputA = Array();
-    var firstInput = { name: "default", count: 0, total: 0, avg: 0, min: 0, max: 0, self: 0, selfAvg: 0, selfMin: 0, selfMax: 0, percent: 0 }
-    firstInputA.push(firstInput)
+
     this.state = {
-      tableValue: firstInputA,
+      tableValue: [],
       sortIndex: 1,
       sortAsc: false,
       isSelected: false,
-      tagDropdownTitle: "",
-
       showPopup: false,
-      secondTagDropdownTitle: "No item selected",
       popupContent: "",
       colorButton: false,
       wholeTable: [],
-
+      dropdownTestTitle1: "Service Name",
+      dropdowntestTitle2: noItemSelected
     }
 
     this.handler = this.handler.bind(this);
     this.sortClick = this.sortClick.bind(this);
     this.changeIsSelected = this.changeIsSelected.bind(this);
-    this.setTagDropdownTitle = this.setTagDropdownTitle.bind(this);
-    this.setSecondDropdownTitle = this.setSecondDropdownTitle.bind(this);
     this.togglePopup = this.togglePopup.bind(this);
     this.toggleColorButton = this.toggleColorButton.bind(this);
     this.clickColumn = this.clickColumn.bind(this);
+    this.setDropDownTitle = this.setDropDownTitle.bind(this);
+    this.setDropDownTitle2 = this.setDropDownTitle2.bind(this);
 
-    searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
+    this.searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
   }
 
   /**
-   * change the sortButton an calls the sort function
+   * Change the sortButton an calls the sort function.
    * @param index the index of the clicked column
    */
   sortClick(index: number) {
@@ -149,18 +149,18 @@ export default class TraceTagOverview extends Component<Props, State>{
       this.setState({
         sortIndex: index,
         sortAsc: false,
-        tableValue: this.splitRest(tableValue, index, false),
+        tableValue: this.sortTableWithOthers(tableValue, index, false),
       });
     } else {
       this.setState({
         sortAsc: !sortAsc,
-        tableValue: this.splitRest(tableValue, index, !sortAsc),
+        tableValue: this.sortTableWithOthers(tableValue, index, !sortAsc),
       });
     }
   }
 
   /**
-   * is called from the child to change the state of the parent
+   * Is called from the child to change the state of the parent.
    * @param tableValue the values of the column
    */
   handler(tableValue: TableSpan[]) {
@@ -176,27 +176,24 @@ export default class TraceTagOverview extends Component<Props, State>{
     });
 
     this.setState({
-      tableValue: searchInTable(this.props.uiFindVertexKeys!, (this.splitRest(tableValue, 1, false)), this.props.uiFind),
+      tableValue: this.searchInTable(this.props.uiFindVertexKeys!, (this.sortTableWithOthers(tableValue, 1, false)), this.props.uiFind),
       wholeTable: tableValue
     })
   }
 
   /**
-   * searches for the rest of the share and sorts afterwards 
-   * @param tableValue 
-   * @param sortIndex 
-   * @param sortAsc 
+   * Searches for the others of the share and sorts afterwards. 
    */
-  splitRest(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
+  sortTableWithOthers(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
 
     var rememberIndexNoDetail = -1;
     var rememberIndex = -1;
-    var restInDetail = false;
+    var othersInDetail = false;
     var sortArray = new Array();
     var sortArray2 = new Array();
 
     for (var i = 0; i < tableValue.length; i++) {
-      if (tableValue[i].name !== 'rest') {
+      if (tableValue[i].name !== others) {
         sortArray.push(tableValue[i]);
       }
       else {
@@ -204,17 +201,16 @@ export default class TraceTagOverview extends Component<Props, State>{
           rememberIndexNoDetail = i;
         }
         else {
-          restInDetail = true;
+          othersInDetail = true;
         }
       }
     }
-
     sortArray = sortTable(sortArray, columnsArray[sortIndex].attribute, sortAsc);
     if (rememberIndexNoDetail != -1) {
       sortArray.push(tableValue[rememberIndexNoDetail]);
     }
 
-    if (!restInDetail) {
+    if (!othersInDetail) {
       return sortArray;
     }
     else {
@@ -229,9 +225,9 @@ export default class TraceTagOverview extends Component<Props, State>{
         sortArray2.push(parentElements[i]);
         var tempArray = new Array();
         for (var j = 0; j < tableValue.length; j++) {
-          if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name !== "rest") {
+          if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name !== others) {
             tempArray.push(tableValue[j]);
-          } else if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name === "rest") {
+          } else if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name === others) {
             rememberIndex = j;
           }
         }
@@ -254,22 +250,23 @@ export default class TraceTagOverview extends Component<Props, State>{
       isSelected: true,
     })
   }
-
-  setTagDropdownTitle(title: string) {
+  
+  setDropDownTitle(title: string) {
     this.setState({
-      tagDropdownTitle: title,
+      dropdownTestTitle1: title,
+      dropdowntestTitle2: noItemSelected,
     })
   }
 
-  setSecondDropdownTitle(title: string) {
+  setDropDownTitle2(title: string) {
     this.setState({
-      secondTagDropdownTitle: title,
+      dropdowntestTitle2: title,
       colorButton: false,
     })
   }
 
   /**
-   * opern the popup button
+   * Opern the popup button.
    * @param popupContent 
    */
   togglePopup(popupContent: string) {
@@ -281,25 +278,26 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
   /**
-   * colors the last line by percent
+   * Colors the last line by percent.
    */
   toggleColorButton() {
 
-    if (this.state.secondTagDropdownTitle !== "No item selected") {
+    if (this.state.dropdowntestTitle2 !== noItemSelected) {
+      generateColor(this.state.tableValue, !this.state.colorButton)
       this.setState({
-        tableValue: generateColor(this.state.tableValue, !this.state.colorButton),
+        tableValue: this.state.tableValue,
         colorButton: !this.state.colorButton,
       })
     }
   }
 
   /**
-  * if the search props change the search function is called
+  * If the search props change the search function is called.
   * @param props all props 
   */
   componentDidUpdate(props: any, prevState: State) {
     if ((this.props.uiFindVertexKeys !== props.uiFindVertexKeys)) {
-      searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
+      this.searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
       // reload the componente
       this.setState({
         tableValue: this.state.tableValue
@@ -308,12 +306,11 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
   /**
-   * hides the child at the first click
-   * @param selectedSpan 
+   * Hides the child at the first click.
    */
   clickColumn(selectedSpan: string) {
 
-    if (this.state.secondTagDropdownTitle !== "No item selected") {
+    if (this.state.dropdowntestTitle2 !== noItemSelected) {
       var add = true;
       var actualTable = this.state.tableValue;
       var newTable = new Array();
@@ -340,7 +337,8 @@ export default class TraceTagOverview extends Component<Props, State>{
             }
           }
         }
-        newTable = searchInTable(this.props.uiFindVertexKeys!, generateColor(this.splitRest(newTable, this.state.sortIndex, this.state.sortAsc), this.state.colorButton), this.props.uiFind);
+        generateColor(this.sortTableWithOthers(newTable, this.state.sortIndex, this.state.sortAsc), this.state.colorButton)
+        newTable = this.searchInTable(this.props.uiFindVertexKeys!, newTable, this.props.uiFind);
       }
       this.setState({
         tableValue: newTable,
@@ -348,11 +346,66 @@ export default class TraceTagOverview extends Component<Props, State>{
     }
   }
 
+  /**
+   * Colors found entries in the table.
+   * @param uiFindVertexKeys Set of found spans
+   * @param allTableSpans entries that are shown
+   */
+  searchInTable(uiFindVertexKeys: Set<string>, allTableSpans: TableSpan[], uiFind: string | null | undefined) {
+    const yellowSearchCollor = "rgb(255,243,215)";
+    const defaultGrayCollor = "rgb(248,248,248)";
+    for (var i = 0; i < allTableSpans.length; i++) {
+      if ((!allTableSpans[i].isDetail) && allTableSpans[i].name !== others) {
+        allTableSpans[i].searchColor = "transparent";
+      } else if (allTableSpans[i].name !== others) {
+        allTableSpans[i].searchColor = defaultGrayCollor;
+      } else {
+        allTableSpans[i].searchColor = defaultGrayCollor
+      }
+    }
+    if (typeof uiFindVertexKeys !== 'undefined') {
+      uiFindVertexKeys!.forEach(function (value) {
+        var uiFindVertexKeysSplit = value.split('');
+
+        for (var i = 0; i < allTableSpans.length; i++) {
+          if ((uiFindVertexKeysSplit[uiFindVertexKeysSplit.length - 1].indexOf(allTableSpans[i].name)) != -1) {
+            if (allTableSpans[i].parentElement === "none") {
+              allTableSpans[i].searchColor = yellowSearchCollor;
+            }
+            else if (uiFindVertexKeysSplit[uiFindVertexKeysSplit.length - 1].indexOf(allTableSpans[i].parentElement) != -1) {
+              allTableSpans[i].searchColor = yellowSearchCollor;
+            }
+          }
+        }
+      });
+    }
+    if (uiFind) {
+      for (var i = 0; i < allTableSpans.length; i++) {
+        if (allTableSpans[i].name.indexOf(uiFind!) != -1) {
+          allTableSpans[i].searchColor = yellowSearchCollor;
+
+          for (var j = 0; j < allTableSpans.length; j++) {
+            if (allTableSpans[j].parentElement === allTableSpans[i].name) {
+              allTableSpans[j].searchColor = yellowSearchCollor;
+            }
+          }
+          if (allTableSpans[i].isDetail) {
+            for (var j = 0; j < allTableSpans.length; j++) {
+              if (allTableSpans[i].parentElement === allTableSpans[j].name) {
+                allTableSpans[j].searchColor = yellowSearchCollor;
+              }
+            }
+          }
+        }
+      }
+    }
+    return allTableSpans;
+  }
+
   renderTableData() {
     return this.state.tableValue.map((oneSpan, index) => {
       const { name, count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent, color, searchColor, colorToPercent } = oneSpan
       const values: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
-
       if (!oneSpan.isDetail) {
         return (
           <MainTableData
@@ -363,7 +416,8 @@ export default class TraceTagOverview extends Component<Props, State>{
             values={values}
             columnsArray={columnsArray}
             togglePopup={this.togglePopup}
-            tagDropdownTitle={this.state.tagDropdownTitle}
+            dropdownTestTitle1={this.state.dropdownTestTitle1}
+            dropdowntestTitle2={this.state.dropdowntestTitle2}
             color={color}
             clickColumn={this.clickColumn} />
         )
@@ -377,7 +431,7 @@ export default class TraceTagOverview extends Component<Props, State>{
             columnsArray={columnsArray}
             color={color}
             togglePopup={this.togglePopup}
-            secondTagDropdownTitle={this.state.secondTagDropdownTitle}
+            secondTagDropdownTitle={this.state.dropdowntestTitle2}
             colorToPercent={colorToPercent} />
         )
       }
@@ -401,26 +455,33 @@ export default class TraceTagOverview extends Component<Props, State>{
   }
 
   render() {
+    var values = generateDropdownValue(this.props.trace);
+    var values2 = generateSecondDropdownValue(this.state.tableValue, this.props.trace,this.state.dropdownTestTitle1);
     return (
       <div>
         <h3 id="title"> Trace Overview</h3>
-        <TagDropdown trace={this.props.trace}
-          key={'parent'}
+        <DropDown
+          position= {1}
+          tableValue= {this.state.tableValue}
+          trace={this.props.trace}
+          content={values}
+          setDropDownTitle={this.setDropDownTitle}
+          title={this.state.dropdownTestTitle1}
+          firstDropdownTitle={this.state.dropdownTestTitle1}
           handler={this.handler}
-          changeIsSelected={this.changeIsSelected}
-          setTagDropdownTitle={this.setTagDropdownTitle}
-          setSecondDropdownTitle={this.setSecondDropdownTitle}
+
         />
-        <SecondDropDown trace={this.props.trace}
-          key={'child'}
-          handler={this.handler}
-          isSelected={this.state.isSelected}
+        <DropDown
+          position={2}
           tableValue={this.state.tableValue}
-          tagDropdownTitle={this.state.tagDropdownTitle}
-          setSecondTagDropdownTitle={this.setSecondDropdownTitle}
-          secondTagDropdownTitle={this.state.secondTagDropdownTitle}
+          trace={this.props.trace}
+          content={values2}
+          setDropDownTitle={this.setDropDownTitle2}
+          title={this.state.dropdowntestTitle2}
+          firstDropdownTitle={this.state.dropdownTestTitle1}
+          handler={this.handler}
         />
-        <button style={this.state.colorButton ? { color: "red" } : { color: "rgba(0, 0, 0, 0.65)" }} onClick={this.toggleColorButton} id="ButtonColor"> color</button>
+        <button style={this.state.colorButton ? { color: "red" } : { color: "rgba(0, 0, 0, 0.65)" }} onClick={this.toggleColorButton} className="ButtonColor"> color</button>
 
         {this.state.showPopup ?
           <PopupSQL

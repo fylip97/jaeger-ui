@@ -3,16 +3,16 @@
     padding-top: 0.3%;
     padding-bottom: 0.3%;
     padding-left: 0.4%;
-    background: #ECECEC;
+    background: rgb(236,236,236);
     margin-bottom: 0.0%
   }
 
   #DetailTraceTableTbody{
     position: absolute;
-    border-bottom: 1px solid #CCCCCC;
+    border-bottom: 1px solid rgb(204,204,204);
   }
 
-  #ButtonColor{
+  .ButtonColor{
     line-height: 1.5;
     display: inline-block;
     font-weight: 400;
@@ -26,23 +26,19 @@
     font-size: 14px;
     border-radius: 4px;
     height: 32px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
     position: relative;
     color: rgba(0, 0, 0, 0.65);
-    background-color: #fff;
-    border-color: #d9d9d9;
+    background-color: rgb(255,255,255);
+    border-color: rgb(217,217,217);
     position: absolute;
     right: 0;
     margin-right: 8px;
     margin-top: 0.6em;
-
   }
 
-  #ButtonColor:focus {
+  .ButtonColor:focus {
     outline:none;
     box-shadow: none;
   }

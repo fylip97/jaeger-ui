@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import { calculateContent } from '../TraceTagOverview/tableValues';
-import { sortByKeyDown } from '../TraceTagOverview/sortTable';
+import { sortByKey } from '../TraceTagOverview/sortTable';
 import ListObject from './listObject';
 import './table.css'
 
@@ -44,7 +44,7 @@ export default class Table extends Component<Props, State> {
             }
             allCalcSpans.push(calculateContent(allSpans[i], allSpans, resultArray));
         }
-        temp = sortByKeyDown(allCalcSpans, "self");
+        temp = sortByKey(allCalcSpans, "self",false);
         var sortedSpans = new Array();
         for(var i=0; i<temp.length; i++){
             if(i<=9){

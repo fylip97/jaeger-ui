@@ -1,0 +1,20 @@
+.TableOverviewHeaderTag--sortButton{
+    border: none;
+    background: transparent;
+  }
+
+.TableOverviewHeadTag--th{
+    background: rgb(236,236,236);
+    border: 1px solid rgb(204,204,204);
+    font-size: 100%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: rgb(35,35,35);
+    font-weight: 15;
+    line-height: 2em;
+    padding-left: 1em;
+  }
+
+  .TableOverviewHeaderTag--buttonPosition{
+    float: right;
+  }
+

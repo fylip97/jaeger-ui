@@ -58,8 +58,7 @@ type TracePageHeaderEmbedProps = {
   textFilter: string | TNil;
   toSearch: string | null;
   trace: Trace;
-  traceGraphView: boolean;
-  selectedTraceGraphView: number;
+  selectedTraceView: number;
   updateNextViewRangeTime: (update: ViewRangeTimeUpdate) => void;
   updateViewRangeTime: TUpdateViewRangeTimeFunction;
   viewRange: IViewRange;
@@ -127,8 +126,8 @@ export function TracePageHeaderFn(props: TracePageHeaderEmbedProps & { forwarded
     textFilter,
     toSearch,
     trace,
-    traceGraphView,
-    selectedTraceGraphView,
+    
+    selectedTraceView,
     updateNextViewRangeTime,
     updateViewRangeTime,
     viewRange,
@@ -184,15 +183,14 @@ export function TracePageHeaderFn(props: TracePageHeaderEmbedProps & { forwarded
           ref={forwardedRef}
           resultCount={resultCount}
           textFilter={textFilter}
-          navigable={!traceGraphView}
+          navigable={!(selectedTraceView!=0)}
         />
         {showShortcutsHelp && <KeyboardShortcutsHelp className="ub-m2" />}
         {showViewOptions && (
           <AltViewOptions
             onTraceGraphViewClicked={onTraceGraphViewClicked}
-            traceGraphView={traceGraphView}
             traceID={trace.traceID}
-            selectedTraceGraphView={selectedTraceGraphView}
+            selectedTraceView={selectedTraceView}
           />
         )}
         {showArchiveButton && (
