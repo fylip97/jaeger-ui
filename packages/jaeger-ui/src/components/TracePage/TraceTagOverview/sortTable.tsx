@@ -88,7 +88,7 @@ function groupBy(tempArray: TableSpan[], key: string) {
  * @param array input whitch is sorted 
  * @param key attribut which is used for sorting
  */
-function sortByKeyUp(array: TableSpan[], key: string) {
+export function sortByKeyUp(array: TableSpan[], key: string) {
     return array.sort(function (a, b) {
         var x = (a as any)[key]; var y = (b as any)[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
@@ -100,7 +100,7 @@ function sortByKeyUp(array: TableSpan[], key: string) {
  * @param array input whitch is sorted 
  * @param key attribut whitch is used for sorting
  */
-function sortByKeyDown(array: TableSpan[], key: string) {
+export function sortByKeyDown(array: TableSpan[], key: string) {
     return array.sort(function (a, b) {
         var x = (a as any)[key]; var y = (b as any)[key];
         return ((x < y) ? 1 : ((x > y) ? -1 : 0));

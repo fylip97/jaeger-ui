@@ -56,7 +56,7 @@ import { EmbeddedState } from '../../types/embedded';
 import filterSpans from '../../utils/filter-spans';
 import updateUiFind from '../../utils/update-ui-find';
 import TraceTagOverview from './TraceTagOverview/index';
-import TraceAnalyse from './TraceAnalyze/index';
+import TraceAnalyse from './TraceAnalyse/index';
 
 import './index.css';
 

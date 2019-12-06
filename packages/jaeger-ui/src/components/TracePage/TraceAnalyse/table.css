@@ -1,0 +1,31 @@
+.header--tr--table{
+
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    height: 50px;
+}
+
+.title--table{
+
+    width: 100%;
+    padding-top: 0.3%;
+    padding-bottom: 0.3%;
+    padding-left: 10px;
+    background: #ECECEC;
+    margin-bottom: 0.0%
+}
+
+.table--table{
+
+    width: 100%
+}
+
+.name--th--table{
+    padding-left: 45px;
+}
+
+.self--th--table{
+    padding-left: 45px;
+}

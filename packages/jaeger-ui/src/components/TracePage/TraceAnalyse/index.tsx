@@ -4,6 +4,7 @@ import './index.css';
 import { startAnalyse } from './generateAnaylseData';
 import { RuleBox } from './RuleBox';
 import prefixUrl from '../../../utils/prefix-url';
+import Table from './table';
 
 
 type Props = {
@@ -127,13 +128,21 @@ export default class TraceAnalyse extends Component<Props, State>{
     render() {
         return (
             <div>
-                <h3 className="title">
-                    Trace Analyze
+                <h3 className="title--index">
+                    Trace Analyse
                 </h3>
-                {this.state.output.length > 0 ? <div className="frameRule">
-                    {this.renderRuleBox()}
-                </div> : <div className="noProblemRuleBox">No Problem found </div>}
-
+                <div>
+                    <div className="table--div">
+                        <Table
+                            trace={this.props.trace}
+                        />
+                    </div>
+                    <div className="rule--div">
+                        {this.state.output.length > 0 ? <div className="frameRule">
+                            {this.renderRuleBox()}
+                        </div> : <div className="noProblemRuleBox">No Problem found </div>}
+                    </div>
+                </div>
             </div>
         );
     }

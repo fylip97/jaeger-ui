@@ -1,4 +1,5 @@
 .title{
+
     width: 100%;
     padding-top: 0.3%;
     padding-bottom: 0.3%;
@@ -9,6 +10,7 @@
 
 
 .frameRule{
+
     width: 70%;
     height: auto;
     display: block;
@@ -19,6 +21,7 @@
 }
 
 #textarea{
+
     width: 70%;
     height: 600px;
     display: block; 
@@ -29,7 +32,8 @@
     margin-top: 10px;
 }
 
-#labelSpanDuration{   
+#labelSpanDuration{ 
+
     font-size: 14px;
     color: black;
     padding-left: 24px;
@@ -38,16 +42,41 @@
 }
 
 .noProblemRuleBox{
+
     font-size: 25px;
-    
     margin: 0;
     position: absolute;
     top: 50%;
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
-    
-    
+}
+
+.table--div{
+    float: left;
+    width: 30%;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    border-bottom: 1px solid #CCCCCC;
+    margin-top: 10px;
+
+}
+
+.rule--div{
+
+    float:right;
+    width: 70%;
+}
+
+.title--index{
+     
+    width: 100%;
+    padding-top: 0.3%;
+    padding-bottom: 0.3%;
+    padding-left: 0.4%;
+    background: #ECECEC;
+    margin-bottom: 0.0%
 }
 
 
