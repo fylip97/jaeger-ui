@@ -4,7 +4,7 @@ import './index.css';
 import { startAnalyse } from './generateAnaylseData';
 import { RuleBox } from './RuleBox';
 import prefixUrl from '../../../utils/prefix-url';
-import Table from './table';
+import ListTopST from './ListTopST';
 
 
 type Props = {
@@ -133,7 +133,7 @@ export default class TraceAnalyse extends Component<Props, State>{
                 </h3>
                 <div>
                     <div className="table--div">
-                        <Table
+                        <ListTopST
                             trace={this.props.trace}
                         />
                     </div>

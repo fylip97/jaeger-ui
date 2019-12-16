@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './listObject.css';
+import './ListObject.css';
 
 type Props = {
     spanId: string,

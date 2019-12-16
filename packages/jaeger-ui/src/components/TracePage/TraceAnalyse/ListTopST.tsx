@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
 import { calculateContent } from '../TraceTagOverview/tableValues';
 import { sortByKey } from '../TraceTagOverview/sortTable';
-import ListObject from './listObject';
-import './table.css'
+import ListObject from './ListObject';
+import './ListTopST.css'
 
 type Props = {
     trace: Trace;
@@ -13,7 +13,7 @@ type State = {
     topTen: any
 }
 
-export default class Table extends Component<Props, State> {
+export default class ListTopST extends Component<Props, State> {
 
     constructor(props: any) {
         super(props);
@@ -47,7 +47,7 @@ export default class Table extends Component<Props, State> {
         temp = sortByKey(allCalcSpans, "self",false);
         var sortedSpans = new Array();
         for(var i=0; i<temp.length; i++){
-            if(i<=9){
+            if(i<10){
                 sortedSpans.push(temp[i])
             }
         }
