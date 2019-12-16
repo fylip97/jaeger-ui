@@ -339,6 +339,7 @@ export default class TraceTagOverview extends Component<Props, State>{
         }
         generateColor(this.sortTableWithOthers(newTable, this.state.sortIndex, this.state.sortAsc), this.state.colorButton)
         newTable = this.searchInTable(this.props.uiFindVertexKeys!, newTable, this.props.uiFind);
+        newTable= this.sortTableWithOthers(newTable, this.state.sortIndex, this.state.sortAsc);
       }
       this.setState({
         tableValue: newTable,
