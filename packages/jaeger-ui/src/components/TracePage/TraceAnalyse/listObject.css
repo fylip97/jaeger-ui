@@ -18,3 +18,7 @@
 .tr--ListObject{
     background: #f8f8f8;
 }
+
+.tr--ListObject:hover{
+    background: #ECECEC;
+}

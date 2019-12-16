@@ -13,22 +13,22 @@ type State = {
     topTen: any
 }
 
-
 export default class Table extends Component<Props, State> {
 
     constructor(props: any) {
         super(props);
-
         this.state = {
             topTen: this.calcTopTen()
         }
     }
 
+    /**
+     * Used to get the top ten of the spans with the longest self time.
+     */
     calcTopTen() {
         var allSpans = this.props.trace.spans;
         var temp = new Array();
         var allCalcSpans = new Array();
-
 
         for (var i = 0; i < allSpans.length; i++) {
             var resultArray = {
@@ -54,7 +54,6 @@ export default class Table extends Component<Props, State> {
         return sortedSpans;
     }
 
-
     render() {
         return (
             <div>
@@ -62,7 +61,7 @@ export default class Table extends Component<Props, State> {
                 <table className ="table--table">
                     <tbody>
                         <tr className="header--tr--table">
-                            <th className="name--th--table">Name</th>
+                            <th className="name--th--table">Name (Span Id)</th>
                             <th className="self--th--table">Self Time (ms)</th>
                         </tr>
                         {this.state.topTen.map((value: any, index: number) => (

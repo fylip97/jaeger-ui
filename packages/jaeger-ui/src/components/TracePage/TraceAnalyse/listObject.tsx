@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import './listObject.css';
 
 type Props = {
-
     spanId: string,
     self: number
 }
 
-
+/**
+ * Content of the list.
+ */
 export default class ListObject extends Component<Props> {
-
-
 
     render() {
         return (
@@ -23,9 +22,5 @@ export default class ListObject extends Component<Props> {
                 </th>
             </tr>
         )
-
-
     }
-
-
 }
