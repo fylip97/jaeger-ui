@@ -12,62 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { TableSpan } from './types';
 import * as _ from 'lodash';
-
-/**
- * Sorts the table according to the key that is passed.
- * @param array Input which is sorted
- * @param key Which attribute is used for sorting
- * @param upDown How should the data be sorted? Up or down
- */
-export function sortTable(array: any[], key: string, sortAsc: boolean) {
-  var isDetailArray = [];
-  var isNoDetail = [];
-  for (var i = 0; i < array.length; i++) {
-    if (array[i].isDetail) {
-      isDetailArray.push(array[i]);
-    } else {
-      isNoDetail.push(array[i]);
-    }
-  }
-  sortByKey(isNoDetail, key, sortAsc);
-  var diffParentNames = new Array();
-  for (var i = 0; i < isDetailArray.length; i++) {
-    if (diffParentNames.length == 0) {
-      diffParentNames.push(isDetailArray[i]);
-    } else {
-      var lookup = { parentElement: isDetailArray[i].parentElement };
-      var hasSameName = _.some(diffParentNames, lookup);
-      if (!hasSameName) {
-        diffParentNames.push(isDetailArray[i]);
-      }
-    }
-  }
-  for (var j = 0; j < diffParentNames.length; j++) {
-    var tempArray = _.chain(isDetailArray)
-      .filter(filter_by => filter_by.parentElement == diffParentNames[j].parentElement)
-      .groupBy(x => x.parentElement)
-      .map((value, key) => ({ parentElement: key, groupedArry: value }))
-      .value()[0].groupedArry;
-
-    sortByKey(tempArray, key, sortAsc);
-    if (tempArray.length > 0) {
-      // build whole array
-      var rememberIndex = 0;
-      for (var i = 0; i < isNoDetail.length; i++) {
-        if (isNoDetail[i].name === tempArray[0].parentElement) {
-          rememberIndex = i;
-        }
-      }
-      for (var i = 0; i < tempArray.length; i++) {
-        isNoDetail.splice(rememberIndex + 1, 0, tempArray[i]);
-        rememberIndex += 1;
-      }
-    }
-  }
-  return isNoDetail;
-}
+import { ITableSpan } from './types';
 
 /**
  * Sort
@@ -75,14 +21,79 @@ export function sortTable(array: any[], key: string, sortAsc: boolean) {
  * @param key attribut which is used for sorting
  * @param sortAsc Specifies the direction in which the sort is to take place.
  */
-function sortByKey(array: TableSpan[], key: string, sortAsc: boolean) {
-  return array.sort(function(a, b) {
-    var x = (a as any)[key];
-    var y = (b as any)[key];
+function sortByKey(array: ITableSpan[], key: string, sortAsc: boolean) {
+  return array.sort(function calc(a, b) {
+    const x = (a as any)[key];
+    const y = (b as any)[key];
     if (sortAsc) {
-      return x < y ? -1 : x > y ? 1 : 0;
-    } else {
-      return x < y ? 1 : x > y ? -1 : 0;
+      if (x < y) {
+        return -1;
+      }
+      if (x > y) {
+        return 1;
+      }
+      return 0;
     }
+    if (x < y) {
+      return 1;
+    }
+    if (x > y) {
+      return -1;
+    }
+    return 0;
   });
+}
+
+/**
+ * Sorts the table according to the key that is passed.
+ * @param array Input which is sorted
+ * @param key Which attribute is used for sorting
+ * @param upDown How should the data be sorted? Up or down
+ */
+export default function sortTable(array: any[], key: string, sortAsc: boolean) {
+  const isDetailArray = [];
+  const isNoDetail = [];
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].isDetail) {
+      isDetailArray.push(array[i]);
+    } else {
+      isNoDetail.push(array[i]);
+    }
+  }
+  sortByKey(isNoDetail, key, sortAsc);
+  const diffParentNames = [] as any;
+  for (let i = 0; i < isDetailArray.length; i++) {
+    if (diffParentNames.length === 0) {
+      diffParentNames.push(isDetailArray[i]);
+    } else {
+      const lookup = { parentElement: isDetailArray[i].parentElement };
+      const hasSameName = _.some(diffParentNames, lookup);
+      if (!hasSameName) {
+        diffParentNames.push(isDetailArray[i]);
+      }
+    }
+  }
+  for (let j = 0; j < diffParentNames.length; j++) {
+    const tempArray = _.chain(isDetailArray)
+      .filter(filterBy => filterBy.parentElement === diffParentNames[j].parentElement)
+      .groupBy(x => x.parentElement)
+      .map(value => ({ parentElement: key, groupedArry: value }))
+      .value()[0].groupedArry;
+
+    sortByKey(tempArray, key, sortAsc);
+    if (tempArray.length > 0) {
+      // build whole array
+      let rememberIndex = 0;
+      for (let i = 0; i < isNoDetail.length; i++) {
+        if (isNoDetail[i].name === tempArray[0].parentElement) {
+          rememberIndex = i;
+        }
+      }
+      for (let i = 0; i < tempArray.length; i++) {
+        isNoDetail.splice(rememberIndex + 1, 0, tempArray[i]);
+        rememberIndex += 1;
+      }
+    }
+  }
+  return isNoDetail;
 }

@@ -12,63 +12,98 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
+import * as _ from 'lodash';
+import React, { Component } from 'react';
 import './MainTableData.css';
+import { ITableSpan } from './types';
+
+type Props = {
+  oneSpan: ITableSpan;
+  name: string;
+  searchColor: string;
+  values: any[];
+  columnsArray: any;
+  togglePopup: any;
+  dropdownTestTitle1: string;
+  dropdowntestTitle2: string;
+  color: string;
+  clickColumn: (name: string) => void;
+};
+
+type State = {
+  element: any;
+};
 
 /**
  * Used to render the main column.
  */
-export const MainTableData = (props: any) => {
-  const trOption1 = {
-    background: props.searchColor,
-    borderColor: props.searchColor,
-    cursor: 'pointer',
-  };
+export default class MainTableData extends Component<Props, State> {
+  componentWillMount() {
+    const element = this.props.values.map(item => {
+      return { uid: _.uniqueId('id'), value: item };
+    });
 
-  const trOption2 = {
-    background: props.searchColor,
-    borderColor: props.searchColor,
-  };
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        element,
+      };
+    });
+  }
 
-  const labelOption1 = {
-    borderColor: props.color,
-    color: 'rgb(153,153,153)',
-    fontStyle: 'italic',
-  };
+  render() {
+    const trOption1 = {
+      background: this.props.searchColor,
+      borderColor: this.props.searchColor,
+      cursor: 'pointer',
+    };
 
-  const labelOption2 = {
-    borderColor: props.color,
-  };
+    const trOption2 = {
+      background: this.props.searchColor,
+      borderColor: this.props.searchColor,
+    };
 
-  const others = 'Others';
-  const noItemSelected = 'No Item selected';
+    const labelOption1 = {
+      borderColor: this.props.color,
+      color: 'rgb(153,153,153)',
+      fontStyle: 'italic',
+    };
 
-  const trStyle = props.dropdowntestTitle2 !== noItemSelected ? trOption1 : trOption2;
-  const onClickOption =
-    props.dropdownTestTitle1 === 'sql' && props.name !== others
-      ? () => props.togglePopup(props.name)
-      : undefined;
-  const labelStyle = props.name === others ? labelOption1 : labelOption2;
-  return (
-    <tr className="MainTableData--tr" onClick={() => props.clickColumn(props.name)} style={trStyle}>
-      <td className="MainTableData--td" onClick={onClickOption}>
-        <label title={props.name} className="MainTableData--labelBorder" style={labelStyle}>
-          {props.name}
-        </label>
-      </td>
-      {props.values.map(
-        (value: any, index: number, content1: any, content2: any) => (
-          (content1 = props.columnsArray[index + 1].isDecimal ? value.toFixed(2) : value),
-          (content2 = props.columnsArray[index + 1].suffix),
-          (
-            <td key={index} className="MainTableData--td">
-              {' '}
-              {content1}
-              {content2}
-            </td>
-          )
-        )
-      )}
-    </tr>
-  );
-};
+    const labelOption2 = {
+      borderColor: this.props.color,
+    };
+
+    const others = 'Others';
+    const noItemSelected = 'No Item selected';
+
+    const trStyle = this.props.dropdowntestTitle2 !== noItemSelected ? trOption1 : trOption2;
+    const onClickOption =
+      this.props.dropdownTestTitle1 === 'sql' && this.props.name !== others
+        ? () => this.props.togglePopup(this.props.name)
+        : undefined;
+    const labelStyle = this.props.name === others ? labelOption1 : labelOption2;
+    return (
+      <tr
+        className="MainTableData--tr"
+        onClick={() => this.props.clickColumn(this.props.name)}
+        style={trStyle}
+      >
+        <td className="MainTableData--td">
+          <a role="button" onClick={onClickOption} style={{ color: 'inherit' }}>
+            <label title={this.props.name} className="MainTableData--labelBorder" style={labelStyle}>
+              {this.props.name}
+            </label>
+          </a>
+        </td>
+
+        {this.state.element.map((element: any, index: number) => (
+          <td key={element.uid} className="MainTableData--td">
+            {' '}
+            {this.props.columnsArray[index + 1].isDecimal ? element.value.toFixed(2) : element.value}
+            {this.props.columnsArray[index + 1].suffix}
+          </td>
+        ))}
+      </tr>
+    );
+  }
+}

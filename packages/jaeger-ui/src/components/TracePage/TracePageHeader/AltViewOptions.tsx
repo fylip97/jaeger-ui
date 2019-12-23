@@ -33,8 +33,8 @@ export default function AltViewOptions(props: Props) {
   const menu = (
     <Menu>
       {menuItems.map((item, index) =>
-        index == selectedTraceView ? null : (
-          <Menu.Item key={index}>
+        index === selectedTraceView ? null : (
+          <Menu.Item key={item}>
             <a onClick={() => onTraceGraphViewClicked(index)} role="button">
               {item}
             </a>

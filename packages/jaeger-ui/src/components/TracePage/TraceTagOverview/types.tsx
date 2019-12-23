@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export type TableSpan = {
+export interface ITableSpan {
   name: string;
   count: number;
   total: number;
@@ -29,4 +29,4 @@ export type TableSpan = {
   color: string; // If it is a service name, the color will be set.
   searchColor: string;
   colorToPercent: string; // Color created by percent
-};
+}

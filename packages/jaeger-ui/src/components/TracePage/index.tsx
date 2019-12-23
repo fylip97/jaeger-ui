@@ -276,7 +276,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
   };
 
   toogleTraceView = (index: number) => {
-    var { selectedTraceView } = this.state;
+    let { selectedTraceView } = this.state;
 
     if (this.props.trace && this.props.trace.data) {
       this.traceDagEV = calculateTraceDagEV(this.props.trace.data);
@@ -287,7 +287,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       selectedTraceView = 0;
     }
 
-    this.setState({ selectedTraceView: selectedTraceView });
+    this.setState({ selectedTraceView });
   };
 
   archiveTrace = () => {
@@ -345,7 +345,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     let graphFindMatches: Set<string> | null | undefined;
     let spanFindMatches: Set<string> | null | undefined;
     if (uiFind) {
-      if (selectedTraceView != 0) {
+      if (selectedTraceView !== 0) {
         graphFindMatches = getUiFindVertexKeys(uiFind, _get(this.traceDagEV, 'vertices', []));
         findCount = graphFindMatches ? graphFindMatches.size : 0;
       } else {
@@ -363,7 +363,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       viewRange,
       canCollapse: !embedded || !embedded.timeline.hideSummary || !embedded.timeline.hideMinimap,
       clearSearch: this.clearSearch,
-      hideMap: Boolean(selectedTraceView != 0 || (embedded && embedded.timeline.hideMinimap)),
+      hideMap: Boolean(selectedTraceView !== 0 || (embedded && embedded.timeline.hideMinimap)),
       hideSummary: Boolean(embedded && embedded.timeline.hideSummary),
       linkToStandalone: getUrl(id),
       nextResult: this.nextResult,

@@ -17,22 +17,17 @@ import { Button, Dropdown, Icon, Menu } from 'antd';
 import './Dropdown.css';
 import { Trace } from '../../../types/trace';
 import { getColumnValues, getColumnValuesSecondDropdown } from './tableValues';
-import { TableSpan } from './types';
+import { ITableSpan } from './types';
 
 type Props = {
   position: number;
   trace: Trace;
-  tableValue: TableSpan[];
+  tableValue: ITableSpan[];
   content: string[];
   setDropDownTitle: (title: string) => void;
   title: string;
   firstDropdownTitle: string;
-  handler: (tableSpan: TableSpan[]) => void;
-};
-
-type State = {
-  displayMenu: boolean;
-  title: string;
+  handler: (tableSpan: ITableSpan[]) => void;
 };
 
 const serviceName = 'Service Name';
@@ -42,15 +37,11 @@ const noItemSelected = 'No Item selected';
 /**
  * Used to build the Dropdown.
  */
-export default class DropDown extends Component<Props, State> {
+export default class DropDown extends Component<Props> {
   constructor(props: any) {
     super(props);
 
-    this.state = {
-      displayMenu: false,
-      title: noItemSelected,
-    };
-    if (this.props.position == 1) {
+    if (this.props.position === 1) {
       this.props.handler(getColumnValues(serviceName, this.props.trace));
     }
   }
@@ -60,11 +51,8 @@ export default class DropDown extends Component<Props, State> {
    * @param title name of the clicked tag
    */
   tagIsClicked(title: string) {
-    this.setState({
-      title: title,
-    });
     this.props.setDropDownTitle(title);
-    if (this.props.position == 1) {
+    if (this.props.position === 1) {
       this.props.handler(getColumnValues(title, this.props.trace));
     } else {
       this.props.handler(
@@ -81,31 +69,26 @@ export default class DropDown extends Component<Props, State> {
   render() {
     const menu = (
       <Menu>
-        {this.props.content.map(
-          (title: any, index: number, menuTitle: any) => (
-            (menuTitle = title !== serviceName && title !== operationName ? 'Tag: ' + title : title),
-            (
-              <Menu.Item key={title}>
-                <a onClick={() => this.tagIsClicked(title)} role="button">
-                  {menuTitle}
-                </a>
-              </Menu.Item>
-            )
-          )
-        )}
+        {this.props.content.map((title: any) => (
+          <Menu.Item key={title}>
+            <a onClick={() => this.tagIsClicked(title)} role="button">
+              {title !== serviceName && title !== operationName ? `Tag: ${title}` : `${title}`}
+            </a>
+          </Menu.Item>
+        ))}
       </Menu>
     );
     const buttonTitleTag =
       this.props.title !== serviceName &&
       this.props.title !== operationName &&
       this.props.title !== noItemSelected
-        ? 'Tag: ' + this.props.title
-        : this.props.title;
+        ? `Tag: ${this.props.title}`
+        : `${this.props.title}`;
     return (
       <div className="DropDown">
         <Dropdown overlay={menu}>
           <Button>
-            {buttonTitleTag} <Icon type={'down'} />
+            {buttonTitleTag} <Icon type="down" />
           </Button>
         </Dropdown>
       </div>

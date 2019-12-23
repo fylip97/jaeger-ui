@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import * as _ from 'lodash';
 import React, { Component } from 'react';
 import './index.css';
 import { Trace } from '../../../types/trace';
-import { TableOverviewHeaderTag } from './TableOverviewHeadTag';
-import { MainTableData } from './MainTableData';
-import { DetailTableData } from './DetailTableData';
+import TableOverviewHeaderTag from './TableOverviewHeadTag';
+import MainTableData from './MainTableData';
+import DetailTableData from './DetailTableData';
 import DropDown from './Dropdown';
-import { TableSpan } from './types';
-import { sortTable } from './sortTable';
-import { generateColor } from './generateColor';
+import { ITableSpan } from './types';
+import sortTable from './sortTable';
+import generateColor from './generateColor';
 import { TNil } from '../../../types';
 import PopupSQL from './PopupSQL';
-import * as _ from 'lodash';
-import { generateDropdownValue } from './generateDropdownValue';
-import { generateSecondDropdownValue } from './generateDropdownValue';
+import { generateDropdownValue, generateSecondDropdownValue } from './generateDropdownValue';
 
 type Props = {
   trace: Trace;
@@ -35,14 +34,14 @@ type Props = {
 };
 
 type State = {
-  tableValue: TableSpan[];
+  tableValue: ITableSpan[];
   sortIndex: number;
   sortAsc: boolean;
   isSelected: boolean;
   showPopup: boolean;
   popupContent: string;
   colorButton: boolean;
-  wholeTable: TableSpan[];
+  wholeTable: ITableSpan[];
   dropdownTestTitle1: string;
   dropdowntestTitle2: string;
 };
@@ -152,129 +151,136 @@ export default class TraceTagOverview extends Component<Props, State> {
   }
 
   /**
-   * Change the sortButton an calls the sort function.
-   * @param index the index of the clicked column
+   * If the search props change the search function is called.
+   * @param props all props
    */
-  sortClick(index: number) {
-    const { tableValue, sortIndex, sortAsc } = this.state;
-    if (sortIndex != index) {
-      this.setState({
-        sortIndex: index,
-        sortAsc: false,
-        tableValue: this.sortTableWithOthers(tableValue, index, false),
-      });
-    } else {
-      this.setState({
-        sortAsc: !sortAsc,
-        tableValue: this.sortTableWithOthers(tableValue, index, !sortAsc),
-      });
+  componentDidUpdate(props: any) {
+    if (this.props.uiFindVertexKeys !== props.uiFindVertexKeys) {
+      this.changeTableValueSearch();
     }
+  }
+
+  changeTableValueSearch() {
+    this.searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
+    // reload the componente
+    const tableValueState = this.state.tableValue;
+    this.setState(prevState => ({
+      ...prevState,
+      tableValue: tableValueState,
+    }));
   }
 
   /**
    * Is called from the child to change the state of the parent.
    * @param tableValue the values of the column
    */
-  handler(tableValue: TableSpan[]) {
-    const { sortIndex, sortAsc } = this.state;
-    this.setState((previousState, currentProps) => {
+  handler(tableValue: ITableSpan[]) {
+    this.setState(prevState => {
       return {
-        ...previousState,
-        tableValue: tableValue,
+        ...prevState,
+        tableValue,
         sortIndex: 1,
         sortAsc: false,
       };
     });
 
-    this.setState({
-      tableValue: this.searchInTable(
-        this.props.uiFindVertexKeys!,
-        this.sortTableWithOthers(tableValue, 1, false),
-        this.props.uiFind
-      ),
-      wholeTable: tableValue,
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        tableValue: this.searchInTable(
+          this.props.uiFindVertexKeys!,
+          this.sortTableWithOthers(tableValue, 1, false),
+          this.props.uiFind
+        ),
+        wholeTable: tableValue,
+      };
     });
   }
 
   /**
    * Searches for the others of the share and sorts afterwards.
    */
-  sortTableWithOthers(tableValue: TableSpan[], sortIndex: number, sortAsc: boolean) {
-    var rememberIndexNoDetail = -1;
-    var rememberIndex = -1;
-    var othersInDetail = false;
-    var sortArray = new Array();
-    var sortArray2 = new Array();
+  sortTableWithOthers = (tableValue: ITableSpan[], sortIndex: number, sortAsc: boolean) => {
+    let rememberIndexNoDetail = -1;
+    let rememberIndex = -1;
+    let othersInDetail = false;
+    let sortArray = [];
+    const sortArray2 = [];
+    let i;
 
-    for (var i = 0; i < tableValue.length; i++) {
+    for (i = 0; i < tableValue.length; i++) {
       if (tableValue[i].name !== others) {
         sortArray.push(tableValue[i]);
+      } else if (!tableValue[i].isDetail) {
+        rememberIndexNoDetail = i;
       } else {
-        if (!tableValue[i].isDetail) {
-          rememberIndexNoDetail = i;
-        } else {
-          othersInDetail = true;
-        }
+        othersInDetail = true;
       }
     }
     sortArray = sortTable(sortArray, columnsArray[sortIndex].attribute, sortAsc);
-    if (rememberIndexNoDetail != -1) {
+    if (rememberIndexNoDetail !== -1) {
       sortArray.push(tableValue[rememberIndexNoDetail]);
     }
 
     if (!othersInDetail) {
       return sortArray;
-    } else {
-      var parentElements = new Array();
-      for (var i = 0; i < tableValue.length; i++) {
-        if (!tableValue[i].isDetail) {
-          parentElements.push(tableValue[i]);
-        }
-      }
-      parentElements = sortTable(parentElements, columnsArray[sortIndex].attribute, sortAsc);
-      for (var i = 0; i < parentElements.length; i++) {
-        sortArray2.push(parentElements[i]);
-        var tempArray = new Array();
-        for (var j = 0; j < tableValue.length; j++) {
-          if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name !== others) {
-            tempArray.push(tableValue[j]);
-          } else if (
-            parentElements[i].name === tableValue[j].parentElement &&
-            tableValue[j].name === others
-          ) {
-            rememberIndex = j;
-          }
-        }
-        tempArray = sortTable(tempArray, columnsArray[sortIndex].attribute, sortAsc);
-        if (rememberIndex != -1) {
-          tempArray.push(tableValue[rememberIndex]);
-          rememberIndex = -1;
-        }
-        for (var j = 0; j < tempArray.length; j++) {
-          sortArray2.push(tempArray[j]);
-        }
-      }
-      return sortArray2;
     }
-  }
+
+    let parentElements = [];
+    for (i = 0; i < tableValue.length; i++) {
+      if (!tableValue[i].isDetail) {
+        parentElements.push(tableValue[i]);
+      }
+    }
+    parentElements = sortTable(parentElements, columnsArray[sortIndex].attribute, sortAsc);
+    for (i = 0; i < parentElements.length; i++) {
+      sortArray2.push(parentElements[i]);
+      let tempArray = [];
+      for (let j = 0; j < tableValue.length; j++) {
+        if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name !== others) {
+          tempArray.push(tableValue[j]);
+        } else if (parentElements[i].name === tableValue[j].parentElement && tableValue[j].name === others) {
+          rememberIndex = j;
+        }
+      }
+      tempArray = sortTable(tempArray, columnsArray[sortIndex].attribute, sortAsc);
+      if (rememberIndex !== -1) {
+        tempArray.push(tableValue[rememberIndex]);
+        rememberIndex = -1;
+      }
+      for (let j = 0; j < tempArray.length; j++) {
+        sortArray2.push(tempArray[j]);
+      }
+    }
+    return sortArray2;
+  };
 
   changeIsSelected() {
-    this.setState({
-      isSelected: true,
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        isSelected: true,
+      };
     });
   }
 
   setDropDownTitle(title: string) {
-    this.setState({
-      dropdownTestTitle1: title,
-      dropdowntestTitle2: noItemSelected,
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        dropdownTestTitle1: title,
+        dropdowntestTitle2: noItemSelected,
+      };
     });
   }
 
   setDropDownTitle2(title: string) {
-    this.setState({
-      dropdowntestTitle2: title,
-      colorButton: false,
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        dropdowntestTitle2: title,
+        colorButton: false,
+      };
     });
   }
 
@@ -283,9 +289,13 @@ export default class TraceTagOverview extends Component<Props, State> {
    * @param popupContent
    */
   togglePopup(popupContent: string) {
-    this.setState({
-      showPopup: !this.state.showPopup,
-      popupContent: popupContent,
+    const showPopupState = this.state.showPopup;
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        showPopup: !showPopupState,
+        popupContent,
+      };
     });
   }
 
@@ -295,23 +305,38 @@ export default class TraceTagOverview extends Component<Props, State> {
   toggleColorButton() {
     if (this.state.dropdowntestTitle2 !== noItemSelected) {
       generateColor(this.state.tableValue, !this.state.colorButton);
-      this.setState({
-        tableValue: this.state.tableValue,
-        colorButton: !this.state.colorButton,
-      });
+      const tableValueState = this.state.tableValue;
+      const colorButtonState = this.state.colorButton;
+      this.setState(previousState => ({
+        ...previousState,
+        tableValue: tableValueState,
+        colorButton: !colorButtonState,
+      }));
     }
   }
 
   /**
-   * If the search props change the search function is called.
-   * @param props all props
+   * Change the sortButton an calls the sort function.
+   * @param index the index of the clicked column
    */
-  componentDidUpdate(props: any, prevState: State) {
-    if (this.props.uiFindVertexKeys !== props.uiFindVertexKeys) {
-      this.searchInTable(this.props.uiFindVertexKeys!, this.state.tableValue, this.props.uiFind);
-      // reload the componente
-      this.setState({
-        tableValue: this.state.tableValue,
+  sortClick(index: number) {
+    const { tableValue, sortIndex, sortAsc } = this.state;
+    if (sortIndex !== index) {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          sortIndex: index,
+          sortAsc: false,
+          tableValue: this.sortTableWithOthers(tableValue, index, false),
+        };
+      });
+    } else {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          sortAsc: !sortAsc,
+          tableValue: this.sortTableWithOthers(tableValue, index, !sortAsc),
+        };
       });
     }
   }
@@ -321,10 +346,10 @@ export default class TraceTagOverview extends Component<Props, State> {
    */
   clickColumn(selectedSpan: string) {
     if (this.state.dropdowntestTitle2 !== noItemSelected) {
-      var add = true;
-      var actualTable = this.state.tableValue;
-      var newTable = new Array();
-      for (var i = 0; i < actualTable.length; i++) {
+      let add = true;
+      const actualTable = this.state.tableValue;
+      let newTable = [];
+      for (let i = 0; i < actualTable.length; i++) {
         if (actualTable[i].parentElement === selectedSpan) {
           add = false;
         }
@@ -334,12 +359,12 @@ export default class TraceTagOverview extends Component<Props, State> {
       }
       if (add) {
         newTable = [];
-        for (var i = 0; i < actualTable.length; i++) {
+        for (let i = 0; i < actualTable.length; i++) {
           if (actualTable[i].name !== selectedSpan) {
             newTable.push(actualTable[i]);
           } else {
             newTable.push(actualTable[i]);
-            for (var j = 0; j < this.state.wholeTable.length; j++) {
+            for (let j = 0; j < this.state.wholeTable.length; j++) {
               if (this.state.wholeTable[j].parentElement === selectedSpan) {
                 newTable.push(this.state.wholeTable[j]);
               }
@@ -353,6 +378,7 @@ export default class TraceTagOverview extends Component<Props, State> {
         newTable = this.searchInTable(this.props.uiFindVertexKeys!, newTable, this.props.uiFind);
         newTable = this.sortTableWithOthers(newTable, this.state.sortIndex, this.state.sortAsc);
       }
+
       this.setState({
         tableValue: newTable,
       });
@@ -364,68 +390,71 @@ export default class TraceTagOverview extends Component<Props, State> {
    * @param uiFindVertexKeys Set of found spans
    * @param allTableSpans entries that are shown
    */
-  searchInTable(
+  searchInTable = (
     uiFindVertexKeys: Set<string>,
-    allTableSpans: TableSpan[],
+    allTableSpans: ITableSpan[],
     uiFind: string | null | undefined
-  ) {
+  ) => {
+    const allTableSpansChange = allTableSpans;
     const yellowSearchCollor = 'rgb(255,243,215)';
     const defaultGrayCollor = 'rgb(248,248,248)';
-    for (var i = 0; i < allTableSpans.length; i++) {
-      if (!allTableSpans[i].isDetail && allTableSpans[i].name !== others) {
-        allTableSpans[i].searchColor = 'transparent';
-      } else if (allTableSpans[i].name !== others) {
-        allTableSpans[i].searchColor = defaultGrayCollor;
+    for (let i = 0; i < allTableSpansChange.length; i++) {
+      if (!allTableSpansChange[i].isDetail && allTableSpansChange[i].name !== others) {
+        allTableSpansChange[i].searchColor = 'transparent';
+      } else if (allTableSpansChange[i].name !== others) {
+        allTableSpansChange[i].searchColor = defaultGrayCollor;
       } else {
-        allTableSpans[i].searchColor = defaultGrayCollor;
+        allTableSpansChange[i].searchColor = defaultGrayCollor;
       }
     }
     if (typeof uiFindVertexKeys !== 'undefined') {
-      uiFindVertexKeys!.forEach(function(value) {
-        var uiFindVertexKeysSplit = value.split('');
+      uiFindVertexKeys!.forEach(function calc(value) {
+        const uiFindVertexKeysSplit = value.split('');
 
-        for (var i = 0; i < allTableSpans.length; i++) {
-          if (uiFindVertexKeysSplit[uiFindVertexKeysSplit.length - 1].indexOf(allTableSpans[i].name) != -1) {
-            if (allTableSpans[i].parentElement === 'none') {
-              allTableSpans[i].searchColor = yellowSearchCollor;
+        for (let i = 0; i < allTableSpansChange.length; i++) {
+          if (
+            uiFindVertexKeysSplit[uiFindVertexKeysSplit.length - 1].indexOf(allTableSpansChange[i].name) !==
+            -1
+          ) {
+            if (allTableSpansChange[i].parentElement === 'none') {
+              allTableSpansChange[i].searchColor = yellowSearchCollor;
             } else if (
               uiFindVertexKeysSplit[uiFindVertexKeysSplit.length - 1].indexOf(
-                allTableSpans[i].parentElement
-              ) != -1
+                allTableSpansChange[i].parentElement
+              ) !== -1
             ) {
-              allTableSpans[i].searchColor = yellowSearchCollor;
+              allTableSpansChange[i].searchColor = yellowSearchCollor;
             }
           }
         }
       });
     }
     if (uiFind) {
-      for (var i = 0; i < allTableSpans.length; i++) {
-        if (allTableSpans[i].name.indexOf(uiFind!) != -1) {
-          allTableSpans[i].searchColor = yellowSearchCollor;
+      for (let i = 0; i < allTableSpansChange.length; i++) {
+        if (allTableSpansChange[i].name.indexOf(uiFind!) !== -1) {
+          allTableSpansChange[i].searchColor = yellowSearchCollor;
 
-          for (var j = 0; j < allTableSpans.length; j++) {
-            if (allTableSpans[j].parentElement === allTableSpans[i].name) {
-              allTableSpans[j].searchColor = yellowSearchCollor;
+          for (let j = 0; j < allTableSpansChange.length; j++) {
+            if (allTableSpansChange[j].parentElement === allTableSpansChange[i].name) {
+              allTableSpansChange[j].searchColor = yellowSearchCollor;
             }
           }
-          if (allTableSpans[i].isDetail) {
-            for (var j = 0; j < allTableSpans.length; j++) {
-              if (allTableSpans[i].parentElement === allTableSpans[j].name) {
-                allTableSpans[j].searchColor = yellowSearchCollor;
+          if (allTableSpansChange[i].isDetail) {
+            for (let j = 0; j < allTableSpansChange.length; j++) {
+              if (allTableSpansChange[i].parentElement === allTableSpansChange[j].name) {
+                allTableSpansChange[j].searchColor = yellowSearchCollor;
               }
             }
           }
         }
       }
     }
-    return allTableSpans;
-  }
+    return allTableSpansChange;
+  };
 
   renderTableData() {
-    return this.state.tableValue.map((oneSpan, index) => {
+    return this.state.tableValue.map(oneSpan => {
       const {
-        name,
         count,
         total,
         avg,
@@ -441,10 +470,11 @@ export default class TraceTagOverview extends Component<Props, State> {
         colorToPercent,
       } = oneSpan;
       const values: any[] = [count, total, avg, min, max, self, selfAvg, selfMin, selfMax, percent];
+      const uid = _.uniqueId('id');
       if (!oneSpan.isDetail) {
         return (
           <MainTableData
-            key={name + index}
+            key={uid}
             oneSpan={oneSpan}
             name={oneSpan.name}
             searchColor={searchColor}
@@ -457,26 +487,25 @@ export default class TraceTagOverview extends Component<Props, State> {
             clickColumn={this.clickColumn}
           />
         );
-      } else {
-        return (
-          <DetailTableData
-            key={oneSpan.name + index}
-            name={oneSpan.name}
-            searchColor={searchColor}
-            values={values}
-            columnsArray={columnsArray}
-            color={color}
-            togglePopup={this.togglePopup}
-            secondTagDropdownTitle={this.state.dropdowntestTitle2}
-            colorToPercent={colorToPercent}
-          />
-        );
       }
+      return (
+        <DetailTableData
+          key={uid}
+          name={oneSpan.name}
+          searchColor={searchColor}
+          values={values}
+          columnsArray={columnsArray}
+          color={color}
+          togglePopup={this.togglePopup}
+          secondTagDropdownTitle={this.state.dropdowntestTitle2}
+          colorToPercent={colorToPercent}
+        />
+      );
     });
   }
 
   renderTableHead() {
-    var { sortAsc, sortIndex } = this.state;
+    const { sortAsc, sortIndex } = this.state;
     return (
       <tr>
         {columnsArray.map((element: any, index: number) => (
@@ -494,8 +523,8 @@ export default class TraceTagOverview extends Component<Props, State> {
   }
 
   render() {
-    var values = generateDropdownValue(this.props.trace);
-    var values2 = generateSecondDropdownValue(
+    const values = generateDropdownValue(this.props.trace);
+    const values2 = generateSecondDropdownValue(
       this.state.tableValue,
       this.props.trace,
       this.state.dropdownTestTitle1
@@ -524,6 +553,7 @@ export default class TraceTagOverview extends Component<Props, State> {
           handler={this.handler}
         />
         <button
+          type="submit"
           style={this.state.colorButton ? { color: 'red' } : { color: 'rgba(0, 0, 0, 0.65)' }}
           onClick={this.toggleColorButton}
           className="ButtonColor"

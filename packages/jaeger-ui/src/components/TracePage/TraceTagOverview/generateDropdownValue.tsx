@@ -12,13 +12,75 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Trace } from '../../../types/trace';
-import { TableSpan } from './types';
 import _ from 'lodash';
+import { Trace } from '../../../types/trace';
+import { ITableSpan } from './types';
 
 const serviceName = 'Service Name';
 const operationName = 'Operation Name';
 const others = 'Others';
+
+/**
+ * Used to get the values if no tag is picked from the first dropdown.
+ */
+function getValueTagIsPicked(tableValue: ITableSpan[], trace: Trace, tagDropdownTitle: string) {
+  const allSpans = trace.spans;
+  let availableTags = [];
+
+  // add all Spans with this tag key
+
+  for (let i = 0; i < tableValue.length; i++) {
+    if (tableValue[i].name !== others) {
+      for (let j = 0; j < allSpans.length; j++) {
+        for (let l = 0; l < allSpans[j].tags.length; l++) {
+          if (tagDropdownTitle === allSpans[j].tags[l].key) {
+            availableTags.push(allSpans[j]);
+          }
+        }
+      }
+    }
+  }
+  availableTags = [...new Set(availableTags)];
+
+  const tags = _(availableTags)
+    .map('tags')
+    .flatten()
+    .value();
+  let tagKeys = _(tags)
+    .map('key')
+    .uniq()
+    .value();
+  tagKeys = _.filter(tagKeys, function calc(o) {
+    return o !== tagDropdownTitle;
+  });
+  availableTags = [];
+  availableTags.push(serviceName);
+  availableTags.push(operationName);
+  availableTags = availableTags.concat(tagKeys);
+
+  return availableTags;
+}
+
+/**
+ * Used to get the values if no tag is picked from the first dropdown.
+ */
+function getValueNoTagIsPicked(tableValue: ITableSpan[], trace: Trace, tagDropdownTitle: string) {
+  let availableTags = [];
+  const allSpans = trace.spans;
+  if (tagDropdownTitle === serviceName) {
+    availableTags.push(operationName);
+  } else {
+    availableTags.push(serviceName);
+  }
+  for (let i = 0; i < allSpans.length; i++) {
+    for (let j = 0; j < allSpans[i].tags.length; j++) {
+      availableTags.push(allSpans[i].tags[j].key);
+    }
+  }
+  availableTags = [...new Set(availableTags)];
+
+  return availableTags;
+}
 
 export function generateDropdownValue(trace: Trace) {
   const allSpans = trace.spans;
@@ -35,74 +97,12 @@ export function generateDropdownValue(trace: Trace) {
 }
 
 export function generateSecondDropdownValue(
-  tableValue: TableSpan[],
+  tableValue: ITableSpan[],
   trace: Trace,
   dropdownTestTitle1: string
 ) {
-  if (dropdownTestTitle1 !== serviceName && dropdownTestTitle1 != operationName) {
+  if (dropdownTestTitle1 !== serviceName && dropdownTestTitle1 !== operationName) {
     return getValueTagIsPicked(tableValue, trace, dropdownTestTitle1);
-  } else {
-    return getValueNoTagIsPicked(tableValue, trace, dropdownTestTitle1);
   }
-}
-
-/**
- * Used to get the values if no tag is picked from the first dropdown.
- */
-function getValueTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
-  var allSpans = trace.spans;
-  var availableTags = new Array();
-
-  //add all Spans with this tag key
-  for (var i = 0; i < tableValue.length; i++) {
-    if (tableValue[i].name !== others) {
-      for (var j = 0; j < allSpans.length; j++) {
-        for (var l = 0; l < allSpans[j].tags.length; l++) {
-          if (tagDropdownTitle === allSpans[j].tags[l].key) {
-            availableTags.push(allSpans[j]);
-          }
-        }
-      }
-    }
-  }
-  availableTags = [...new Set(availableTags)];
-
-  var tags = _(availableTags)
-    .map('tags')
-    .flatten()
-    .value();
-  var tagKeys = _(tags)
-    .map('key')
-    .uniq()
-    .value();
-  tagKeys = _.filter(tagKeys, function(o) {
-    return o != tagDropdownTitle;
-  });
-  var availableTags = new Array();
-  availableTags.push(serviceName);
-  availableTags.push(operationName);
-  availableTags = availableTags.concat(tagKeys);
-
-  return availableTags;
-}
-
-/**
- * Used to get the values if no tag is picked from the first dropdown.
- */
-function getValueNoTagIsPicked(tableValue: TableSpan[], trace: Trace, tagDropdownTitle: string) {
-  var availableTags = new Array();
-  var allSpans = trace.spans;
-  if (tagDropdownTitle === serviceName) {
-    availableTags.push(operationName);
-  } else {
-    availableTags.push(serviceName);
-  }
-  for (var i = 0; i < allSpans.length; i++) {
-    for (var j = 0; j < allSpans[i].tags.length; j++) {
-      availableTags.push(allSpans[i].tags[j].key);
-    }
-  }
-  availableTags = [...new Set(availableTags)];
-
-  return availableTags;
+  return getValueNoTagIsPicked(tableValue, trace, dropdownTestTitle1);
 }

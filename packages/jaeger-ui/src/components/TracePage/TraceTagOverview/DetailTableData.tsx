@@ -12,65 +12,91 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
+import * as _ from 'lodash';
+import React, { Component } from 'react';
 import './DetailTableData.css';
+
+type Props = {
+  name: string;
+  searchColor: string;
+  values: any[];
+  columnsArray: any[];
+  color: string;
+  togglePopup: (name: string) => void;
+  secondTagDropdownTitle: string;
+  colorToPercent: string;
+};
+
+type State = {
+  element: any;
+};
 
 /**
  * Used to render the detail column.
  */
-export const DetailTableData = (props: any) => {
-  const styleOption1 = {
-    background: 'rgb(248,248,248)',
-    color: 'rgb(153,153,153)',
-    fontStyle: 'italic',
-  };
+export default class DetailTableData extends Component<Props, State> {
+  componentWillMount() {
+    const element = this.props.values.map(item => {
+      return { uid: _.uniqueId('id'), value: item };
+    });
 
-  const styleOption2 = {
-    background: props.colorToPercent,
-    borderColor: props.colorToPercent,
-  };
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        element,
+      };
+    });
+  }
 
-  const styleOption3 = {
-    background: props.searchColor,
-    borderColor: props.searchColor,
-  };
+  render() {
+    const styleOption1 = {
+      background: 'rgb(248,248,248)',
+      color: 'rgb(153,153,153)',
+      fontStyle: 'italic',
+    };
 
-  const others = 'Others';
+    const styleOption2 = {
+      background: this.props.colorToPercent,
+      borderColor: this.props.colorToPercent,
+    };
 
-  const styleCondition =
-    props.name === others
-      ? styleOption1
-      : props.searchColor === 'rgb(248,248,248)'
-      ? styleOption2
-      : styleOption3;
-  const onClickOption =
-    props.secondTagDropdownTitle === 'sql' && props.name !== others
-      ? () => props.togglePopup(props.name)
-      : undefined;
-
-  return (
-    <tr className="DetailTableData--tr" style={styleCondition}>
-      <td className="DetailTableData--child--td" onClick={onClickOption}>
-        <label
-          title={props.name}
-          className="DetailTableData--serviceBorder"
-          style={{ borderColor: props.color }}
-        >
-          {props.name}
-        </label>
-      </td>
-      {props.values.map(
-        (value: any, index: number, content1: any, content2: any) => (
-          (content1 = props.columnsArray[index + 1].isDecimal ? Number(value).toFixed(2) : value),
-          (content2 = props.columnsArray[index + 1].suffix),
-          (
-            <td key={index} className="DetailTableData--td">
-              {content1}
-              {content2}
-            </td>
-          )
-        )
-      )}
-    </tr>
-  );
-};
+    const styleOption3 = {
+      background: this.props.searchColor,
+      borderColor: this.props.searchColor,
+    };
+    const others = 'Others';
+    let styleCondition;
+    if (this.props.name === others) {
+      styleCondition = styleOption1;
+    } else if (this.props.searchColor === 'rgb(248,248,248)') {
+      styleCondition = styleOption2;
+    } else {
+      styleCondition = styleOption3;
+    }
+    const onClickOption =
+      this.props.secondTagDropdownTitle === 'sql' && this.props.name !== others
+        ? () => this.props.togglePopup(this.props.name)
+        : undefined;
+    return (
+      <tr className="DetailTableData--tr" style={styleCondition}>
+        <td className="DetailTableData--child--td">
+          <a role="button" onClick={onClickOption} style={{ color: 'inherit' }}>
+            <label
+              title={this.props.name}
+              className="DetailTableData--serviceBorder"
+              style={{ borderColor: this.props.color }}
+            >
+              {this.props.name}
+            </label>
+          </a>
+        </td>
+        {this.state.element.map((element: any, index: number) => (
+          <td key={element.uid} className="DetailTableData--td">
+            {this.props.columnsArray[index + 1].isDecimal ? Number(element.value).toFixed(2) : element.value}
+            {this.props.columnsArray[index + 1].suffix}
+          </td>
+        ))}
+      </tr>
+    );
+  }
+}

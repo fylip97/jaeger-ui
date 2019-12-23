@@ -12,26 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { TableSpan } from './types';
+import { ITableSpan } from './types';
 
 /**
  * Generates the background color according to the percentage.
  */
-export function generateColor(allSpans: TableSpan[], colorToPercent: boolean) {
-  for (var i = 0; i < allSpans.length; i++) {
+export default function generateColor(allSpans: ITableSpan[], colorToPercent: boolean) {
+  const allSpans2 = allSpans;
+  let color;
+  let colorString;
+  for (let i = 0; i < allSpans.length; i++) {
     if (colorToPercent) {
       if (allSpans[i].isDetail) {
-        var color;
         if (allSpans[i].percent < 40) {
           color = 236 - 80 * (allSpans[i].percent / 100);
         } else {
           color = 236 - 166 * (allSpans[i].percent / 100);
         }
-        var colorString = 'rgb(248,' + color + ',' + color + ')';
-        allSpans[i].colorToPercent = colorString;
+        colorString = `rgb(248,${color},${color})`;
+        allSpans2[i].colorToPercent = colorString;
       }
     } else {
-      allSpans[i].colorToPercent = 'rgb(248,248,248)';
+      allSpans2[i].colorToPercent = `rgb(248,248,248)`;
     }
   }
 }
