@@ -44,6 +44,7 @@ type TProps = TDispatchProps & {
   updateNextViewRangeTime: (update: ViewRangeTimeUpdate) => void;
   updateViewRangeTime: TUpdateViewRangeTimeFunction;
   viewRange: IViewRange;
+  jumpSpanID: string | undefined;
 };
 
 const NUM_TICKS = 5;
@@ -88,7 +89,7 @@ export class TraceTimelineViewerImpl extends React.PureComponent<TProps> {
       viewRange,
       ...rest
     } = this.props;
-    const { spanNameColumnWidth, trace } = rest;
+    const { spanNameColumnWidth, trace, jumpSpanID } = rest;
     return (
       <div className="TraceTimelineViewer">
         <TimelineHeaderRow

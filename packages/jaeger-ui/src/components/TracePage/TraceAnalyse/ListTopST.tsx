@@ -7,7 +7,7 @@ import './ListTopST.css'
 
 type Props = {
     trace: Trace,
-    jumpIsClicked: ()=> void,
+    jumpIsClicked: (spanID:string)=> void,
 }
 
 type State = {
@@ -42,11 +42,12 @@ export default class ListTopST extends Component<Props, State> {
                 self: 0,
                 percent: 0,
                 operationName: allSpans[i].operationName,
+                spanID: allSpans[i].spanID,
             }
             allCalcSpans.push(calculateContent(allSpans[i], allSpans, resultArray));
         }
         temp = sortByKey(allCalcSpans, "self", false);
-        var sortedSpans = new Array();
+        var sortedSpans = [];
         for (var i = 0; i < temp.length; i++) {
             if (i < 10) {
                 sortedSpans.push(temp[i])
@@ -67,6 +68,7 @@ export default class ListTopST extends Component<Props, State> {
                         </tr>
                         {this.state.topTen.map((value: any, index: number) => (
                             <ListObject
+                                spanID={value.spanID}
                                 operationName={value.operationName}
                                 self={value.self}
                                 key={index + "table"}

@@ -3,9 +3,10 @@ import './ListObject.css';
 import TraceTimelineViewer from '../TraceTimelineViewer'
 
 type Props = {
+    spanID: string,
     operationName: string,
     self: number,
-    jumpIsClicked: ()=> void
+    jumpIsClicked: (spanId: string) => void
 
 }
 
@@ -14,7 +15,7 @@ type Props = {
  */
 export default class ListObject extends Component<Props> {
 
-    constructor(props:any){
+    constructor(props: any) {
         super(props);
 
         this.clickMe = this.clickMe.bind(this);
@@ -23,20 +24,20 @@ export default class ListObject extends Component<Props> {
 
     render() {
         return (
-            <tr className="tr--ListObject" onClick={this.clickMe}>
+            <tr className="tr--ListObject" onClick={() => this.clickMe(this.props.spanID)}>
                 <th className="name--ListObject">
                     <p>{this.props.operationName}</p>
                 </th>
-                <th className= "self--ListObject">
+                <th className="self--ListObject">
                     <p>{(Math.round((this.props.self / 1000) * 100) / 100)}ms</p>
                 </th>
             </tr>
         )
     }
 
-    clickMe(){
-      console.log(this.props)
-      this.props.jumpIsClicked();
+    clickMe(spanID: string) {
+        console.log(this.props)
+        this.props.jumpIsClicked(spanID);
 
     }
 }

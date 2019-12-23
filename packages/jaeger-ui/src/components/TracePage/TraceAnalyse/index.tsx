@@ -10,8 +10,7 @@ import ListTopST from './ListTopST';
 type Props = {
     trace: Trace,
     backend: number,
-
-    jumpIsClicked: () => void,
+    jumpIsClicked: (spanID:string) => void,
 
 }
 type State = {

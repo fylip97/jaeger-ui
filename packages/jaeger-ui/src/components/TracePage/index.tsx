@@ -90,6 +90,7 @@ type TState = {
   headerHeight: number | TNil;
   slimView: boolean;
   selectedTraceView: number;
+  jumpSpanID: string | undefined;
   viewRange: IViewRange;
 };
 
@@ -138,6 +139,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       headerHeight: null,
       slimView: Boolean(embedded && embedded.timeline.collapseTitle),
       selectedTraceView: 0,
+      jumpSpanID: undefined,
       viewRange: {
         time: {
           current: [0, 1],
@@ -202,6 +204,9 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       this.updateViewRangeTime(0, 1);
       this.clearSearch();
     }
+    this.setState({
+      jumpSpanID: undefined
+    })
   }
 
   componentWillUnmount() {
@@ -279,9 +284,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     this.setState({ slimView: !slimView });
   };
 
-
-
-
   toogleTraceView = (index: number) => {
     var { selectedTraceView } = this.state;
 
@@ -296,11 +298,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
 
     this.setState({ selectedTraceView: selectedTraceView });
   };
-
-
-
-
-
 
   archiveTrace = () => {
     const { id, archiveTrace } = this.props;
@@ -342,9 +339,11 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     this._scrollManager.scrollToPrevVisibleSpan();
   };
 
-  jumpIsClicked() {
+  jumpIsClicked(spanID: string) {
 
+    console.log("Clicked"+ spanID);
     this.setState({
+      jumpSpanID: spanID,
       selectedTraceView: 0
     })
   }
@@ -426,6 +425,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                       updateNextViewRangeTime={this.updateNextViewRangeTime}
                       updateViewRangeTime={this.updateViewRangeTime}
                       viewRange={viewRange}
+                      jumpSpanID={this.state.jumpSpanID}
                     />
                   </section>
                 )
