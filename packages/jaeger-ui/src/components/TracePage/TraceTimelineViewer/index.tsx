@@ -89,7 +89,6 @@ export class TraceTimelineViewerImpl extends React.PureComponent<TProps> {
       ...rest
     } = this.props;
     const { spanNameColumnWidth, trace } = rest;
-
     return (
       <div className="TraceTimelineViewer">
         <TimelineHeaderRow

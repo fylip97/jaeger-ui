@@ -180,6 +180,12 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
   }
 
   componentWillUpdate(nextProps: VirtualizedTraceViewProps) {
+    
+    var  test1 = new DetailState();
+    nextProps.detailStates.set("caca52f712be8057",test1)
+    console.log(nextProps.detailStates);
+   
+   
     const { childrenHiddenIDs, detailStates, registerAccessors, trace, currentViewRangeTime } = this.props;
     const {
       currentViewRangeTime: nextViewRangeTime,
@@ -190,6 +196,11 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
       trace: nextTrace,
       uiFind,
     } = nextProps;
+    console.log(this.rowStates);
+    var test;
+    test ={isDetail:true, span: trace.spans[3], spanIndex:3}
+    this.rowStates.push(test);
+
     if (trace !== nextTrace) {
       setTrace(nextTrace, uiFind);
     }
@@ -209,6 +220,7 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
     if (this.listView && registerAccessors !== nextRegisterAccessors) {
       nextRegisterAccessors(this.getAccessors());
     }
+    
   }
 
   componentDidUpdate() {

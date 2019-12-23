@@ -10,6 +10,9 @@ import ListTopST from './ListTopST';
 type Props = {
     trace: Trace,
     backend: number,
+
+    jumpIsClicked: () => void,
+
 }
 type State = {
     output: any[],
@@ -135,7 +138,8 @@ export default class TraceAnalyse extends Component<Props, State>{
                     <div className="table--div">
                         <ListTopST
                             trace={this.props.trace}
-                        />
+                            jumpIsClicked={this.props.jumpIsClicked}
+                    />
                     </div>
                     <div className="rule--div">
                         {this.state.output.length > 0 ? <div className="frameRule">

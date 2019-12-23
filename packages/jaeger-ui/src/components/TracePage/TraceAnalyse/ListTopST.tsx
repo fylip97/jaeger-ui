@@ -6,7 +6,8 @@ import ListObject from './ListObject';
 import './ListTopST.css'
 
 type Props = {
-    trace: Trace;
+    trace: Trace,
+    jumpIsClicked: ()=> void,
 }
 
 type State = {
@@ -40,14 +41,14 @@ export default class ListTopST extends Component<Props, State> {
                 selfMax: 0,
                 self: 0,
                 percent: 0,
-                spanId: allSpans[i].spanID,
+                operationName: allSpans[i].operationName,
             }
             allCalcSpans.push(calculateContent(allSpans[i], allSpans, resultArray));
         }
-        temp = sortByKey(allCalcSpans, "self",false);
+        temp = sortByKey(allCalcSpans, "self", false);
         var sortedSpans = new Array();
-        for(var i=0; i<temp.length; i++){
-            if(i<10){
+        for (var i = 0; i < temp.length; i++) {
+            if (i < 10) {
                 sortedSpans.push(temp[i])
             }
         }
@@ -58,18 +59,19 @@ export default class ListTopST extends Component<Props, State> {
         return (
             <div>
                 <h3 className="title--table">Spans with longest Self Time</h3>
-                <table className ="table--table">
+                <table className="table--table">
                     <tbody>
                         <tr className="header--tr--table">
-                            <th className="name--th--table">Name (Span Id)</th>
+                            <th className="name--th--table">Name</th>
                             <th className="self--th--table">Self Time (ms)</th>
                         </tr>
                         {this.state.topTen.map((value: any, index: number) => (
-                                <ListObject
-                                    spanId={value.spanId}
-                                    self={value.self}
-                                    key= {index+"table"}
-                                />
+                            <ListObject
+                                operationName={value.operationName}
+                                self={value.self}
+                                key={index + "table"}
+                                jumpIsClicked= {this.props.jumpIsClicked}
+                            />
                         ))}
                     </tbody>
                 </table>

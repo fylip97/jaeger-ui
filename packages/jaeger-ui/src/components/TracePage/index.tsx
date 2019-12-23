@@ -158,6 +158,8 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     });
     this._searchBar = React.createRef();
     resetShortcuts();
+
+    this.jumpIsClicked = this.jumpIsClicked.bind(this);
   }
 
   componentDidMount() {
@@ -340,9 +342,16 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     this._scrollManager.scrollToPrevVisibleSpan();
   };
 
+  jumpIsClicked() {
+
+    this.setState({
+      selectedTraceView: 0
+    })
+  }
+
   render() {
     const { archiveEnabled, archiveTraceState, embedded, id, searchUrl, uiFind, trace } = this.props;
-    const { slimView, selectedTraceView, headerHeight, viewRange } = this.state;
+    const { slimView, selectedTraceView, headerHeight, viewRange,} = this.state;
     if (!trace || trace.state === fetchedState.LOADING) {
       return <LoadingIndicator className="u-mt-vast" centered />;
     }
@@ -432,14 +441,18 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                   </section>
                 )
               case 2:
+
+
                 return (
                   <section style={{ paddingTop: headerHeight }}>
                     <TraceAnalyse
                       trace={data}
                       backend={0}
+                      jumpIsClicked={this.jumpIsClicked}
                     />
                   </section>
                 )
+
               default:
                 return (
                   <section style={{ paddingTop: headerHeight }}>
