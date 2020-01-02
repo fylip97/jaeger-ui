@@ -49,7 +49,7 @@ type TracePageHeaderEmbedProps = {
   nextResult: () => void;
   onArchiveClicked: () => void;
   onSlimViewClicked: () => void;
-  onTraceGraphViewClicked: (index:number) => void;
+  onTraceGraphViewClicked: (index: number) => void;
   prevResult: () => void;
   resultCount: number;
   showArchiveButton: boolean;
@@ -128,7 +128,7 @@ export function TracePageHeaderFn(props: TracePageHeaderEmbedProps & { forwarded
     textFilter,
     toSearch,
     trace,
-    
+
     selectedTraceView,
     updateNextViewRangeTime,
     updateViewRangeTime,
@@ -188,7 +188,7 @@ export function TracePageHeaderFn(props: TracePageHeaderEmbedProps & { forwarded
           ref={forwardedRef}
           resultCount={resultCount}
           textFilter={textFilter}
-          navigable={!(selectedTraceView!=0)}
+          navigable={!(selectedTraceView !== 0)}
         />
         {showShortcutsHelp && <KeyboardShortcutsHelp className="ub-m2" />}
         {showViewOptions && (

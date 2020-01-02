@@ -31,14 +31,15 @@ export default function AltViewOptions(props: Props) {
   
   const menu = (
     <Menu>
-      {menuItems.map((item, index) => (
-          index == selectedTraceView ? null :
-            <Menu.Item key={index}>
-              <a onClick={() => onTraceGraphViewClicked(index)} role="button">
-                {item}
-              </a>
-            </Menu.Item>
-        ))}
+      {menuItems.map((item, index) =>
+        index === selectedTraceView ? null : (
+          <Menu.Item key={item}>
+            <a onClick={() => onTraceGraphViewClicked(index)} role="button">
+              {item}
+            </a>
+          </Menu.Item>
+        )
+      )}
       <Menu.Item>
         <Link
           to={prefixUrl(`/api/traces/${traceID}?prettyPrint=true`)}
@@ -63,7 +64,11 @@ export default function AltViewOptions(props: Props) {
   );
   return (
     <Dropdown overlay={menu}>
-      <Button className="ub-mr2" htmlType="button" onClick={() => onTraceGraphViewClicked(selectedTraceView+1)}>
+      <Button
+        className="ub-mr2"
+        htmlType="button"
+        onClick={() => onTraceGraphViewClicked(selectedTraceView + 1)}
+      >
         {menuItems[selectedTraceView]} <Icon type="down" />
       </Button>
     </Dropdown>
