@@ -60,7 +60,6 @@ import TraceAnalyse from './TraceAnalyse/index';
 
 import './index.css';
 
-
 type TDispatchProps = {
   acknowledgeArchive: (id: string) => void;
   archiveTrace: (id: string) => void;
@@ -204,9 +203,9 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       this.updateViewRangeTime(0, 1);
       this.clearSearch();
     }
-    this.setState({
-      jumpSpanID: undefined
-    })
+    if (this.state.jumpSpanID !== undefined) {
+      this.changeJumpSpanID();
+    }
   }
 
   componentWillUnmount() {
@@ -218,6 +217,12 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       scrollTo,
     });
   }
+
+  changeJumpSpanID = () => {
+    this.setState({
+      jumpSpanID: undefined,
+    });
+  };
 
   _adjustViewRange(startChange: number, endChange: number, trackSrc: string) {
     const [viewStart, viewEnd] = this.state.viewRange.time.current;
@@ -295,8 +300,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     if (selectedTraceView > 3) {
       selectedTraceView = 0;
     }
-
-    this.setState({ selectedTraceView: selectedTraceView });
+    this.setState({ selectedTraceView });
   };
 
   archiveTrace = () => {
@@ -340,12 +344,10 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
   };
 
   jumpIsClicked(spanID: string) {
-
-    console.log("Clicked"+ spanID);
     this.setState({
       jumpSpanID: spanID,
-      selectedTraceView: 0
-    })
+      selectedTraceView: 0,
+    });
   }
 
   render() {
@@ -399,11 +401,9 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       trace: data,
       updateNextViewRangeTime: this.updateNextViewRangeTime,
       updateViewRangeTime: this.updateViewRangeTime,
-
     };
 
     return (
-
       <div>
         {archiveEnabled && (
           <ArchiveNotifier acknowledge={this.acknowledgeArchive} archivedState={archiveTraceState} />
@@ -428,7 +428,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                       jumpSpanID={this.state.jumpSpanID}
                     />
                   </section>
-                )
+                );
               case 1:
                 return (
                   <section style={{ paddingTop: headerHeight }}>
@@ -439,29 +439,20 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                       uiFindVertexKeys={graphFindMatches}
                     />
                   </section>
-                )
+                );
               case 2:
-
-
                 return (
                   <section style={{ paddingTop: headerHeight }}>
-                    <TraceAnalyse
-                      trace={data}
-                      backend={0}
-                      jumpIsClicked={this.jumpIsClicked}
-                    />
+                    <TraceAnalyse trace={data} backend={0} jumpIsClicked={this.jumpIsClicked} />
                   </section>
-                )
+                );
 
               default:
                 return (
                   <section style={{ paddingTop: headerHeight }}>
-                    <TraceTagOverview trace={data}
-                      uiFindVertexKeys={graphFindMatches}
-                      uiFind={uiFind}
-                    />
+                    <TraceTagOverview trace={data} uiFindVertexKeys={graphFindMatches} uiFind={uiFind} />
                   </section>
-                )
+                );
             }
           })()}
       </div>

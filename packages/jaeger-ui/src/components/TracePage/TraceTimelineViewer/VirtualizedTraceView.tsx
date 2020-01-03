@@ -55,7 +55,7 @@ type TVirtualizedTraceViewOwnProps = {
   scrollToFirstVisibleSpan: () => void;
   registerAccessors: (accesors: Accessors) => void;
   trace: Trace;
-  jumpSpanID: string | undefined
+  jumpSpanID: string | undefined;
 };
 
 type TDispatchProps = {
@@ -162,13 +162,9 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
     this.rowStates = generateRowStates(trace.spans, childrenHiddenIDs, detailStates);
 
     setTrace(trace, uiFind);
-
-    //this.props.childrenToggle("f66d0966e643aef0");
-    console.log(this.props.jumpSpanID);
-    if(this.props.jumpSpanID!==undefined){
+    if (this.props.jumpSpanID !== undefined) {
       this.props.detailToggle(this.props.jumpSpanID);
     }
-    //this.props.detailToggle("f66d0966e643aef0")
   }
 
   shouldComponentUpdate(nextProps: VirtualizedTraceViewProps) {
@@ -188,13 +184,6 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
   }
 
   componentWillUpdate(nextProps: VirtualizedTraceViewProps) {
-   
-    /*
-    var  test1 = new DetailState();
-    nextProps.detailStates.set("f66d0966e643aef0",test1)
-    console.log(nextProps.detailStates);
-   */
-   
     const { childrenHiddenIDs, detailStates, registerAccessors, trace, currentViewRangeTime } = this.props;
     const {
       currentViewRangeTime: nextViewRangeTime,
@@ -205,15 +194,7 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
       trace: nextTrace,
       uiFind,
     } = nextProps;
-    /*
-    //console.log(this.rowStates);
-    var test;
-    test ={isDetail:true, span: trace.spans[8], spanIndex:8}
-    this.rowStates.push(test);
 
-    //console.log(this.rowStates);
-*/
-          
     if (trace !== nextTrace) {
       setTrace(nextTrace, uiFind);
     }
@@ -233,7 +214,6 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
     if (this.listView && registerAccessors !== nextRegisterAccessors) {
       nextRegisterAccessors(this.getAccessors());
     }
-    
   }
 
   componentDidUpdate() {

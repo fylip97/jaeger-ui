@@ -28,7 +28,10 @@ function getLowestStartTime(allOverlay: Span[]) {
   const temp = _.minBy(allOverlay, function calc(a) {
     return a.relativeStartTime;
   });
-  const result = { duration: temp!.duration, lowestStartTime: temp!.relativeStartTime };
+  let result = { duration: 0, lowestStartTime: 0 };
+  if (temp !== undefined) {
+    result = { duration: temp.duration, lowestStartTime: temp.relativeStartTime };
+  }
   return result;
 }
 
@@ -90,7 +93,7 @@ function onlyOverlay(allOverlay: Span[], allChildren: Span[], tempSelf: number, 
 /**
  * Used to calculated the content.
  */
-function calculateContent(span: Span, allSpans: Span[], resultValue: any) {
+export function calculateContent(span: Span, allSpans: Span[], resultValue: any) {
   const resultValueChange = resultValue;
   resultValueChange.count += 1;
   resultValueChange.total += span.duration;

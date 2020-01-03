@@ -21,7 +21,7 @@ import { ITableSpan } from './types';
  * @param key attribut which is used for sorting
  * @param sortAsc Specifies the direction in which the sort is to take place.
  */
-function sortByKey(array: ITableSpan[], key: string, sortAsc: boolean) {
+export function sortByKey(array: ITableSpan[], key: string, sortAsc: boolean) {
   return array.sort(function calc(a, b) {
     const x = (a as any)[key];
     const y = (b as any)[key];

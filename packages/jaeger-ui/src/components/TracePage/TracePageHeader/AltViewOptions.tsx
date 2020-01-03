@@ -26,9 +26,9 @@ type Props = {
 };
 
 export default function AltViewOptions(props: Props) {
-  const { onTraceGraphViewClicked, traceID, selectedTraceView, } = props;
-  const menuItems = ["Trace Timeline", "Trace Graph", "Trace Analyse","Trace Overview"]
-  
+  const { onTraceGraphViewClicked, traceID, selectedTraceView } = props;
+  const menuItems = ['Trace Timeline', 'Trace Graph', 'Trace Analyse', 'Trace Overview'];
+
   const menu = (
     <Menu>
       {menuItems.map((item, index) =>
