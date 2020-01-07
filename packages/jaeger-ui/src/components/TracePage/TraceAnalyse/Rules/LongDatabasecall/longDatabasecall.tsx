@@ -32,7 +32,7 @@ export default class LongDatabasecall {
    * Checks the rule and returns information.
    */
   getInformation(trace: Trace) {
-    const DATABASE_DURATION_THRESHOLD = 0;
+    const DATABASE_DURATION_THRESHOLD = 50;
     const allSpans = trace.spans;
     for (let i = 0; i < allSpans.length; i++) {
       for (let j = 0; j < allSpans[i].tags.length; j++) {

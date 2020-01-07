@@ -43,6 +43,7 @@ limitations under the License.
   outline-color: #008080;
   padding: 5px;
   resize: none;
+  white-space: nowrap;
 }
 
 .TimeOperationRuleComponent--label {
