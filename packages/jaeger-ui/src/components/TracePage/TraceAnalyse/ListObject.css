@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.name--ListObject {
+.ListObject--name {
   padding-top: 8px;
   padding-left: 45px;
   border-bottom: 1px solid #cccccc;
@@ -22,7 +22,7 @@ limitations under the License.
   border-right: 1px solid #cccccc;
 }
 
-.self--ListObject {
+.ListObject--self {
   padding-top: 8px;
   padding-left: 45px;
   border-bottom: 1px solid #cccccc;
@@ -30,11 +30,11 @@ limitations under the License.
   border-right: 1px solid #cccccc;
 }
 
-.tr--ListObject {
+.ListObject--tr {
   background: #f8f8f8;
 }
 
-.tr--ListObject:hover {
+.ListObject--tr:hover {
   background: #ececec;
   cursor: pointer;
 }

@@ -74,12 +74,12 @@ export default class ListTopST extends Component<Props, State> {
   render() {
     return (
       <div>
-        <h3 className="title--table">Spans with longest Self Time</h3>
-        <table className="table--table">
+        <h3 className="ListTopST--title">Spans with longest Self Time</h3>
+        <table className="ListTopST--table">
           <tbody>
-            <tr className="header--tr--table">
-              <th className="name--th--table">Name</th>
-              <th className="self--th--table">Self Time (ms)</th>
+            <tr className="ListTopST--header--tr">
+              <th className="ListTopST--name--th">Name</th>
+              <th className="ListTopST--self--th">Self Time (ms)</th>
             </tr>
             {this.state.topTen.map((value: any) => (
               <ListObject

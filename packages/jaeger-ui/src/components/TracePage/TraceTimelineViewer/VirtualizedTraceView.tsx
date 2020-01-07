@@ -162,7 +162,7 @@ export class VirtualizedTraceViewImpl extends React.Component<VirtualizedTraceVi
     this.rowStates = generateRowStates(trace.spans, childrenHiddenIDs, detailStates);
 
     setTrace(trace, uiFind);
-    if (this.props.jumpSpanID !== undefined) {
+    if (this.props.jumpSpanID !== undefined && !this.props.detailStates.has(this.props.jumpSpanID!)) {
       this.props.detailToggle(this.props.jumpSpanID);
     }
   }

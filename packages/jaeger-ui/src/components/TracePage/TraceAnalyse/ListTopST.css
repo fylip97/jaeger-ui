@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-.header--tr--table {
+.ListTopST--header--tr {
   border-left: 1px solid #cccccc;
   border-right: 1px solid #cccccc;
   border-top: 1px solid #cccccc;
@@ -21,7 +21,7 @@ limitations under the License.
   height: 35px;
 }
 
-.title--table {
+.ListTopST--title {
   width: 100%;
   padding-top: 0.3%;
   padding-left: 10px;
@@ -29,14 +29,14 @@ limitations under the License.
   margin-bottom: 0%;
 }
 
-.table--table {
+.ListTopST--table {
   width: 100%;
 }
 
-.name--th--table {
+.ListTopST--name--th {
   padding-left: 45px;
 }
 
-.self--th--table {
+.ListTopST--self--th {
   padding-left: 45px;
 }

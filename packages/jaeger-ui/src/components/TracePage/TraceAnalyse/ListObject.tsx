@@ -41,11 +41,11 @@ export default class ListObject extends Component<Props> {
 
   render() {
     return (
-      <tr className="tr--ListObject" onClick={() => this.clickIntoList(this.props.spanID)}>
-        <th className="name--ListObject">
+      <tr className="ListObject--tr" onClick={() => this.clickIntoList(this.props.spanID)}>
+        <th className="ListObject--name">
           <p>{this.props.operationName}</p>
         </th>
-        <th className="self--ListObject">
+        <th className="ListObject--self">
           <p>{Math.round((this.props.self / 1000) * 100) / 100}ms</p>
         </th>
       </tr>
