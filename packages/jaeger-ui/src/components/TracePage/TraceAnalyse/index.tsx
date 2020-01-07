@@ -118,7 +118,9 @@ export default class TraceAnalyse extends Component<Props, State> {
             {this.state.output.length > 0 ? (
               <div className="frameRule">{this.renderRuleBox()}</div>
             ) : (
-              <div className="noProblemRuleBox">No Problem found </div>
+              <div>
+                <label className="noProblemRuleBoxLabel">No Problem found</label>
+              </div>
             )}
           </div>
         </div>

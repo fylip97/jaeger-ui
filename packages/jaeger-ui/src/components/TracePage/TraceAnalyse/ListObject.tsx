@@ -29,16 +29,19 @@ export default class ListObject extends Component<Props> {
   constructor(props: any) {
     super(props);
 
-    this.clickMe = this.clickMe.bind(this);
+    this.clickIntoList = this.clickIntoList.bind(this);
   }
 
-  clickMe(spanID: string) {
+  /**
+   * Changes the view to trace timeline and opens the span.
+   */
+  clickIntoList(spanID: string) {
     this.props.jumpIsClicked(spanID);
   }
 
   render() {
     return (
-      <tr className="tr--ListObject" onClick={() => this.clickMe(this.props.spanID)}>
+      <tr className="tr--ListObject" onClick={() => this.clickIntoList(this.props.spanID)}>
         <th className="name--ListObject">
           <p>{this.props.operationName}</p>
         </th>
