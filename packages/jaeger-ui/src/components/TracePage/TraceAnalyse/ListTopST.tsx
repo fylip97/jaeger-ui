@@ -59,7 +59,7 @@ export default class ListTopST extends Component<Props, State> {
         operationName: allSpans[i].operationName,
         spanID: allSpans[i].spanID,
       };
-      allCalcSpans.push(calculateContent(this.props.trace,allSpans[i], allSpans, resultArray));
+      allCalcSpans.push(calculateContent(this.props.trace, allSpans[i], allSpans, resultArray));
     }
     temp = sortByKey(allCalcSpans, 'self', false);
     const sortedSpans = [];

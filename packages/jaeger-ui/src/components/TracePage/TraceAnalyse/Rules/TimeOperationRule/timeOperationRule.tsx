@@ -47,7 +47,7 @@ export default class TimeOperationRule {
         selfAvg: 0,
         percent: 0,
       };
-      resultArray = calculateContent(trace,allSpans[i], allSpans, resultArray);
+      resultArray = calculateContent(trace, allSpans[i], allSpans, resultArray);
       if (resultArray.self > TIME_THRESHOLD) {
         this.checkRule = true;
         this.information = `

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { Trace } from '../../../../../types/trace';
-import { calculateContent }  from '../../../TraceStatistics/tableValues';
+import { calculateContent } from '../../../TraceStatistics/tableValues';
 
 /**
  * Used to check the long databasecall.
@@ -49,7 +49,7 @@ export default class LongDatabasecall {
             selfAvg: 0,
             percent: 0,
           };
-          resultArray = calculateContent(trace ,allSpans[i], allSpans, resultArray);
+          resultArray = calculateContent(trace, allSpans[i], allSpans, resultArray);
           if (Math.round((resultArray.total / 1000) * 100) / 100 > DATABASE_DURATION_THRESHOLD) {
             this.checkRule = true;
             this.information = `

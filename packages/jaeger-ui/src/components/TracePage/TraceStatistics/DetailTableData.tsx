@@ -66,6 +66,7 @@ export default class DetailTableData extends Component<Props, State> {
       background: this.props.searchColor,
       borderColor: this.props.searchColor,
     };
+
     const others = 'undefined';
     let styleCondition;
     if (this.props.type === others) {
