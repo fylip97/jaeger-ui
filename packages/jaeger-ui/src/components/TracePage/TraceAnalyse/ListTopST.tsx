@@ -15,8 +15,8 @@
 import * as _ from 'lodash';
 import React, { Component } from 'react';
 import { Trace } from '../../../types/trace';
-import { calculateContent } from '../TraceTagOverview/tableValues';
-import { sortByKey } from '../TraceTagOverview/sortTable';
+import { calculateContent } from '../TraceStatistics/tableValues';
+import { sortByKey } from '../TraceStatistics/sortTable';
 import ListObject from './ListObject';
 import './ListTopST.css';
 
@@ -59,7 +59,7 @@ export default class ListTopST extends Component<Props, State> {
         operationName: allSpans[i].operationName,
         spanID: allSpans[i].spanID,
       };
-      allCalcSpans.push(calculateContent(allSpans[i], allSpans, resultArray));
+      allCalcSpans.push(calculateContent(this.props.trace,allSpans[i], allSpans, resultArray));
     }
     temp = sortByKey(allCalcSpans, 'self', false);
     const sortedSpans = [];

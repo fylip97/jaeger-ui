@@ -94,7 +94,7 @@ function onlyOverlay(allOverlay: Span[], allChildren: Span[], tempSelf: number, 
 /**
  * Used to calculated the content.
  */
-function calculateContent(trace: Trace, span: Span, allSpans: Span[], resultValue: any) {
+export function calculateContent(trace: Trace, span: Span, allSpans: Span[], resultValue: any) {
   const resultValueChange = resultValue;
   resultValueChange.count += 1;
   resultValueChange.total += span.duration;

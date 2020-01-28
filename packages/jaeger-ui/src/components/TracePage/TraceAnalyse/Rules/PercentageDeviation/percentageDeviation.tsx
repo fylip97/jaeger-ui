@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { Trace } from '../../../../../types/trace';
-import { calculateContent } from '../../../TraceTagOverview/tableValues';
+import { calculateContent } from '../../../TraceStatistics/tableValues';
 
 /**
  * Used to check the percentage deviation.
@@ -49,7 +49,7 @@ export default class PercentageDeviation {
         selfAvg: 0,
         percent: 0,
       };
-      resultArray = calculateContent(allSpans[i], allSpans, resultArray);
+      resultArray = calculateContent(trace, allSpans[i], allSpans, resultArray);
       calculatedSpan.push(resultArray);
       totalSelf += resultArray.self;
     }

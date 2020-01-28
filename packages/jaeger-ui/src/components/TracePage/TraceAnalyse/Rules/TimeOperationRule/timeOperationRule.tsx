@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { Trace } from '../../../../../types/trace';
-import { calculateContent } from '../../../TraceTagOverview/tableValues';
+import { calculateContent } from '../../../TraceStatistics/tableValues';
 
 /**
  * Used to check the time operation rule.
@@ -47,7 +47,7 @@ export default class TimeOperationRule {
         selfAvg: 0,
         percent: 0,
       };
-      resultArray = calculateContent(allSpans[i], allSpans, resultArray);
+      resultArray = calculateContent(trace,allSpans[i], allSpans, resultArray);
       if (resultArray.self > TIME_THRESHOLD) {
         this.checkRule = true;
         this.information = `
