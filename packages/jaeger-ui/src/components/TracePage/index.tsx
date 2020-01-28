@@ -55,8 +55,9 @@ import { TraceArchive } from '../../types/archive';
 import { EmbeddedState } from '../../types/embedded';
 import filterSpans from '../../utils/filter-spans';
 import updateUiFind from '../../utils/update-ui-find';
-import TraceTagOverview from './TraceTagOverview/index';
+import TraceStatistics from './TraceStatistics/index';
 import TraceAnalyse from './TraceAnalyse/index';
+
 
 import './index.css';
 
@@ -139,6 +140,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       slimView: Boolean(embedded && embedded.timeline.collapseTitle),
       selectedTraceView: 0,
       jumpSpanID: undefined,
+
       viewRange: {
         time: {
           current: [0, 1],
@@ -296,7 +298,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
       this.traceDagEV = calculateTraceDagEV(this.props.trace.data);
     }
     selectedTraceView = index;
-
     if (selectedTraceView > 3) {
       selectedTraceView = 0;
     }
@@ -426,6 +427,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                       updateViewRangeTime={this.updateViewRangeTime}
                       viewRange={viewRange}
                       jumpSpanID={this.state.jumpSpanID}
+
                     />
                   </section>
                 );
@@ -450,7 +452,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
               default:
                 return (
                   <section style={{ paddingTop: headerHeight }}>
-                    <TraceTagOverview trace={data} uiFindVertexKeys={graphFindMatches} uiFind={uiFind} />
+                    <TraceStatistics trace={data} uiFindVertexKeys={graphFindMatches} uiFind={uiFind} />
                   </section>
                 );
             }
