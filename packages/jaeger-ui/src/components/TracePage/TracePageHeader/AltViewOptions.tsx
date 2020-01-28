@@ -33,7 +33,6 @@ type Props = {
 };
 
 export default function AltViewOptions(props: Props) {
-
   const { onTraceGraphViewClicked, selectedTraceView, traceID } = props;
   const menuItems = ['Trace Timeline', 'Trace Graph', 'Trace Analyse', 'Trace Statistics'];
 
@@ -43,10 +42,9 @@ export default function AltViewOptions(props: Props) {
     } else if (item === menuItems[1]) {
       trackGraphView();
     } else if (item === menuItems[2]) {
-      trackAnalyseView()
+      trackAnalyseView();
     } else if (item === menuItems[3]) {
       trackStatisticsView();
-      
     }
     onTraceGraphViewClicked(index);
   };

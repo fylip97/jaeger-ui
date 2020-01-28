@@ -33,7 +33,7 @@ export const trackGraphView = () => trackEvent(CATEGORY_ALT_VIEW, ACTION_GRAPH);
 export const trackJsonView = () => trackEvent(CATEGORY_ALT_VIEW, ACTION_JSON);
 export const trackRawJsonView = () => trackEvent(CATEGORY_ALT_VIEW, ACTION_RAW_JSON);
 export const trackStatisticsView = () => trackEvent(CATEGORY_ALT_VIEW, ACTION_STATISTICS);
-export const trackAnalyseView = () => trackEvent(CATEGORY_ALT_VIEW,ACTION_ANALYSE);
+export const trackAnalyseView = () => trackEvent(CATEGORY_ALT_VIEW, ACTION_ANALYSE);
 
 export const trackSlimHeaderToggle = (isOpen: boolean) =>
   trackEvent(CATEGORY_SLIM_HEADER, getToggleValue(isOpen));

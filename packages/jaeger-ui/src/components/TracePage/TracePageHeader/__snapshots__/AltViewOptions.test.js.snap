@@ -24,6 +24,14 @@ exports[`AltViewOptions renders correctly 1`] = `
           onClick={[Function]}
           role="button"
         >
+          Trace Analyse
+        </a>
+      </MenuItem>
+      <MenuItem>
+        <a
+          onClick={[Function]}
+          role="button"
+        >
           Trace Statistics
         </a>
       </MenuItem>

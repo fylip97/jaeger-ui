@@ -25,6 +25,7 @@ describe('AltViewOptions', () => {
   let trackJsonView;
   let trackRawJsonView;
   let trackStatisticsView;
+  let trackAnalyseView;
 
   let wrapper;
   const getLink = text => {
@@ -54,6 +55,7 @@ describe('AltViewOptions', () => {
     trackJsonView = jest.spyOn(track, 'trackJsonView');
     trackRawJsonView = jest.spyOn(track, 'trackRawJsonView');
     trackStatisticsView = jest.spyOn(track, 'trackStatisticsView');
+    trackAnalyseView = jest.spyOn(track, 'trackAnalyseView');
   });
 
   beforeEach(() => {
@@ -85,9 +87,9 @@ describe('AltViewOptions', () => {
     getLink('Trace Graph').simulate('click');
     expect(trackGraphView).toHaveBeenCalledTimes(1);
     expect(props.onTraceGraphViewClicked).toHaveBeenCalledTimes(1);
-    expect(trackStatisticsView).not.toHaveBeenCalled();
-    getLink('Trace Statistics').simulate('click');
-    expect(trackStatisticsView).toHaveBeenCalledTimes(1);
+    expect(trackAnalyseView).not.toHaveBeenCalled();
+    getLink('Trace Analyse').simulate('click');
+    expect(trackAnalyseView).toHaveBeenCalledTimes(1);
     expect(props.onTraceGraphViewClicked).toHaveBeenCalledTimes(2);
 
     wrapper.setProps({ selectedTraceView: 1 });
@@ -95,8 +97,8 @@ describe('AltViewOptions', () => {
     getLink('Trace Timeline').simulate('click');
     expect(trackGanttView).toHaveBeenCalledTimes(1);
     expect(props.onTraceGraphViewClicked).toHaveBeenCalledTimes(3);
-    getLink('Trace Statistics').simulate('click');
-    expect(trackStatisticsView).toHaveBeenCalledTimes(2);
+    getLink('Trace Analyse').simulate('click');
+    expect(trackAnalyseView).toHaveBeenCalledTimes(2);
     expect(props.onTraceGraphViewClicked).toHaveBeenCalledTimes(4);
 
     wrapper.setProps({ selectedTraceView: 2 });
@@ -116,15 +118,15 @@ describe('AltViewOptions', () => {
     expect(props.onTraceGraphViewClicked).toHaveBeenCalledTimes(1);
 
     wrapper.setProps({ selectedTraceView: 1 });
-    expect(trackStatisticsView).not.toHaveBeenCalled();
+    expect(trackAnalyseView).not.toHaveBeenCalled();
     wrapper.find(Button).simulate('click');
-    expect(trackStatisticsView).toHaveBeenCalledTimes(1);
+    expect(trackAnalyseView).toHaveBeenCalledTimes(1);
     expect(props.onTraceGraphViewClicked).toHaveBeenCalledTimes(2);
 
     wrapper.setProps({ selectedTraceView: 2 });
-    expect(trackGanttView).not.toHaveBeenCalled();
+    expect(trackStatisticsView).not.toHaveBeenCalled();
     wrapper.find(Button).simulate('click');
-    expect(trackGanttView).toHaveBeenCalledTimes(1);
+    expect(trackStatisticsView).toHaveBeenCalledTimes(1);
     expect(props.onTraceGraphViewClicked).toHaveBeenCalledTimes(3);
   });
 });

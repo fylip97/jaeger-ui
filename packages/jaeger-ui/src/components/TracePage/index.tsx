@@ -58,7 +58,6 @@ import updateUiFind from '../../utils/update-ui-find';
 import TraceStatistics from './TraceStatistics/index';
 import TraceAnalyse from './TraceAnalyse/index';
 
-
 import './index.css';
 
 type TDispatchProps = {
@@ -427,7 +426,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
                       updateViewRangeTime={this.updateViewRangeTime}
                       viewRange={viewRange}
                       jumpSpanID={this.state.jumpSpanID}
-
                     />
                   </section>
                 );
