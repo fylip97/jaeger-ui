@@ -19,6 +19,7 @@ type Props = {
   spanID: string;
   operationName: string;
   self: number;
+  searchColor: string
   jumpIsClicked: (spanId: string) => void;
 };
 
@@ -41,7 +42,7 @@ export default class ListObject extends Component<Props> {
 
   render() {
     return (
-      <tr className="ListObject--tr" onClick={() => this.clickIntoList(this.props.spanID)}>
+      <tr style={{background:this.props.searchColor}} className="ListObject--tr" onClick={() => this.clickIntoList(this.props.spanID)}>
         <th className="ListObject--name">
           <p>{this.props.operationName}</p>
         </th>

@@ -18,12 +18,14 @@ import './index.css';
 import startAnalyse from './generateAnaylseData';
 import RuleBox from './RuleBox';
 import prefixUrl from '../../../utils/prefix-url';
+import { TNil } from '../../../types';
 import ListTopST from './ListTopST';
 
 type Props = {
   trace: Trace;
   backend: number;
   jumpIsClicked: (spanID: string) => void;
+  findMatchesIDs: Set<string> | TNil;
 };
 type State = {
   output: any[];
@@ -92,6 +94,7 @@ export default class TraceAnalyse extends Component<Props, State> {
   }
 
   renderRuleBox() {
+    
     return this.state.output.map((oneRule, index) => {
       return (
         <RuleBox
@@ -112,7 +115,7 @@ export default class TraceAnalyse extends Component<Props, State> {
         <h3 className="title--index">Trace Analyse</h3>
         <div>
           <div className="table--div">
-            <ListTopST trace={this.props.trace} jumpIsClicked={this.props.jumpIsClicked} />
+            <ListTopST trace={this.props.trace} jumpIsClicked={this.props.jumpIsClicked} findMatchesIDs={this.props.findMatchesIDs} />
           </div>
           <div className="rule--div">
             {this.state.output.length > 0 ? (

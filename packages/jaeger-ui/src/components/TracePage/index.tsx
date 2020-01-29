@@ -365,7 +365,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
     let graphFindMatches: Set<string> | null | undefined;
     let spanFindMatches: Set<string> | null | undefined;
     if (uiFind) {
-      if (selectedTraceView !== 0) {
+      if (selectedTraceView !== 0 && selectedTraceView !== 2) {
         graphFindMatches = getUiFindVertexKeys(uiFind, _get(this.traceDagEV, 'vertices', []));
         findCount = graphFindMatches ? graphFindMatches.size : 0;
       } else {
@@ -373,7 +373,6 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
         findCount = spanFindMatches ? spanFindMatches.size : 0;
       }
     }
-
     const isEmbedded = Boolean(embedded);
     const headerProps = {
       focusUiFindMatches: this.focusUiFindMatches,
@@ -443,7 +442,7 @@ export class TracePageImpl extends React.PureComponent<TProps, TState> {
               case 2:
                 return (
                   <section style={{ paddingTop: headerHeight }}>
-                    <TraceAnalyse trace={data} backend={0} jumpIsClicked={this.jumpIsClicked} />
+                    <TraceAnalyse trace={data} backend={0} jumpIsClicked={this.jumpIsClicked} findMatchesIDs={spanFindMatches} />
                   </section>
                 );
 

@@ -18,11 +18,14 @@ import { Trace } from '../../../types/trace';
 import { calculateContent } from '../TraceStatistics/tableValues';
 import { sortByKey } from '../TraceStatistics/sortTable';
 import ListObject from './ListObject';
+import { TNil } from '../../../types';
 import './ListTopST.css';
 
 type Props = {
   trace: Trace;
   jumpIsClicked: (spanID: string) => void;
+  findMatchesIDs: Set<string> | TNil;
+
 };
 
 type State = {
@@ -35,7 +38,37 @@ export default class ListTopST extends Component<Props, State> {
     this.state = {
       topTen: this.calcTopTen(),
     };
+
+    this.search(this.props.findMatchesIDs);
   }
+
+  componentDidUpdate(props: any) {
+    if (this.props.findMatchesIDs !== props.test) {
+      this.search(this.props.findMatchesIDs);
+    }
+  }
+
+  search(test: Set<string> | TNil) {
+
+    let topTen = this.state.topTen;
+    let testTemp;
+    
+    for (let i = 0; i < topTen.length; i++) {
+      topTen[i].searchColor = "#f8f8f8";
+    }
+    if (test !== null && test !== undefined) {
+      testTemp = Array.from(test);
+
+      for (let i = 0; i < testTemp.length; i++) {
+        for (let j = 0; j < topTen.length; j++) {
+          if (topTen[j].spanID === testTemp[i]) {
+            topTen[j].searchColor = "rgb(255,243,215)";
+          }
+        }
+      }
+    }
+  }
+
 
   /**
    * Used to get the top ten of the spans with the longest self time.
@@ -58,6 +91,7 @@ export default class ListTopST extends Component<Props, State> {
         percent: 0,
         operationName: allSpans[i].operationName,
         spanID: allSpans[i].spanID,
+        searchColor: "",
       };
       allCalcSpans.push(calculateContent(this.props.trace, allSpans[i], allSpans, resultArray));
     }
@@ -87,6 +121,7 @@ export default class ListTopST extends Component<Props, State> {
                 operationName={value.operationName}
                 self={value.self}
                 key={`${value.uid} + table`}
+                searchColor={value.searchColor}
                 jumpIsClicked={this.props.jumpIsClicked}
               />
             ))}

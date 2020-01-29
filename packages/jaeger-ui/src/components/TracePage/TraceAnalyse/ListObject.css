@@ -35,6 +35,5 @@ limitations under the License.
 }
 
 .ListObject--tr:hover {
-  background: #ececec;
   cursor: pointer;
 }

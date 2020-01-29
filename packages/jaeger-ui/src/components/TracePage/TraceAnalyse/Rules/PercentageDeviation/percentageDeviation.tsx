@@ -19,7 +19,7 @@ import { calculateContent } from '../../../TraceStatistics/tableValues';
  * Used to check the percentage deviation.
  */
 export default class PercentageDeviation {
-  name = 'percentage deviation rule';
+  name = 'Percentage Deviation Rule';
   id = 'percentageDeviation';
   checkRule = false;
   information = '';
@@ -29,7 +29,7 @@ export default class PercentageDeviation {
   }
 
   /**
-   * Checks the rule and returns information.
+   * Return the affected span where the percentage deviation is higher the threshold.
    */
   getInformation(trace: Trace) {
     const PERCENTAGE_DEVIATION_THRESHOLD = 90;

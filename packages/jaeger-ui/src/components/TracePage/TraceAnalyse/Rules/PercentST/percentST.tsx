@@ -19,7 +19,7 @@ import { calculateContent } from '../../../TraceStatistics/tableValues';
  * Used to check the percentage self time.
  */
 export default class PercentST {
-  name = 'Percent self time rule';
+  name = 'Percent ST Rule';
   id = 'percentST';
   checkRule = false;
   information = '';
@@ -29,7 +29,7 @@ export default class PercentST {
   }
 
   /**
-   * Checks the rule and returns information.
+   * Returns the spanId if the self time is higher then the threshold.
    */
   getInformation(trace: Trace) {
     const allSpans = trace.spans;
