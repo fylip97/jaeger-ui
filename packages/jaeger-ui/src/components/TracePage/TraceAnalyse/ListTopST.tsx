@@ -43,7 +43,7 @@ export default class ListTopST extends Component<Props, State> {
   }
 
   componentDidUpdate(props: any) {
-    if (this.props.findMatchesIDs !== props.test) {
+    if (this.props.findMatchesIDs !== props.findMatchesIDs) {
       this.search(this.props.findMatchesIDs);
     }
   }
