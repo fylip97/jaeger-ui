@@ -52,8 +52,8 @@ export default class NPlusOneRuleComponent extends Component<Props, State> {
             const value = element.oneInfo.split('#');
             return (
               <tr key={`${element.uid} nPlusOneRule`}>
-                <th key={`${element.uid} calls`} className="requestTH">
-                  <label>Request: {value[0]}</label>
+                <th key={`${element.uid} calls`} className="nPlusOneRuleComponent--requestTH">
+                  <label>Calls: {value[0]}</label>
                 </th>
                 <th className="nPlusOneRuleComponent--sqlTH">
                   <textarea

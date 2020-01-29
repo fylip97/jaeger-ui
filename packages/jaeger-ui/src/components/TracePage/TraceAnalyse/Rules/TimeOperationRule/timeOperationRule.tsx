@@ -19,7 +19,7 @@ import { calculateContent } from '../../../TraceStatistics/tableValues';
  * Used to check the time operation rule.
  */
 export default class TimeOperationRule {
-  name = 'time operation rule';
+  name = 'Time Operation Rule';
   id = 'timeOperationRule';
   checkRule = false;
   information = '';
@@ -29,10 +29,10 @@ export default class TimeOperationRule {
   }
 
   /**
-   * Checks the rule and returns information.
+   * Checks if the self time is higher than the threshold.
    */
   getInformation(trace: Trace) {
-    const TIME_THRESHOLD = 55000;
+    const TIME_THRESHOLD = 100000;
     const allSpans = trace.spans;
     for (let i = 0; i < allSpans.length; i++) {
       let resultArray = {
@@ -48,7 +48,7 @@ export default class TimeOperationRule {
         percent: 0,
       };
       resultArray = calculateContent(trace, allSpans[i], allSpans, resultArray);
-      if (resultArray.self > TIME_THRESHOLD) {
+      if (resultArray.self > TIME_THRESHOLD && allSpans[i].hasChildren) {
         this.checkRule = true;
         this.information = `
           ${this.information}

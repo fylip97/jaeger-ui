@@ -60,7 +60,7 @@ export default class PercentSTComponent extends Component<Props, State> {
                     key={`${element.uid} PercentSTDuration`}
                     className="PercentSTComponent--durationInformation"
                     readOnly
-                    value={`${value[1]} ms`}
+                    value={`${value[1]} %`}
                   />
                 </th>
               </tr>
