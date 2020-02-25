@@ -13,6 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+.ListTopST--div{
+  width:100%;
+
+}
+
 .ListTopST--header--tr {
   border-left: 1px solid #cccccc;
   border-right: 1px solid #cccccc;
@@ -22,7 +27,6 @@ limitations under the License.
 }
 
 .ListTopST--title {
-  width: 100%;
   padding-top: 0.3%;
   padding-left: 10px;
   background: #ececec;
@@ -35,8 +39,10 @@ limitations under the License.
 
 .ListTopST--name--th {
   padding-left: 45px;
+  width: 70%;
 }
 
 .ListTopST--self--th {
   padding-left: 45px;
+  width: 30%;
 }

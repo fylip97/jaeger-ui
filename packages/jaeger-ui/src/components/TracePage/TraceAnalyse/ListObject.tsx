@@ -44,10 +44,10 @@ export default class ListObject extends Component<Props> {
     return (
       <tr style={{background:this.props.searchColor}} className="ListObject--tr" onClick={() => this.clickIntoList(this.props.spanID)}>
         <th className="ListObject--name">
-          <p>{this.props.operationName}</p>
+         {this.props.operationName}
         </th>
         <th className="ListObject--self">
-          <p>{Math.round((this.props.self / 1000) * 100) / 100}ms</p>
+         {Math.round((this.props.self / 1000) * 100) / 100}ms
         </th>
       </tr>
     );

@@ -69,7 +69,6 @@ export default class ListTopST extends Component<Props, State> {
     }
   }
 
-
   /**
    * Used to get the top ten of the spans with the longest self time.
    */
@@ -107,7 +106,7 @@ export default class ListTopST extends Component<Props, State> {
 
   render() {
     return (
-      <div>
+      <div className="ListTopST--div">
         <h3 className="ListTopST--title">Spans with longest Self Time</h3>
         <table className="ListTopST--table">
           <tbody>
